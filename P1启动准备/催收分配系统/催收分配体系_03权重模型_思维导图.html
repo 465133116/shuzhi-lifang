@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>权重模型 · 详细思维导图（V3.2）</title>
+<style>body{margin:0;background:#0b1120;display:flex;justify-content:center}svg{display:block}</style>
+</head>
+<body>
+<svg width="1660" height="1250" viewBox="0 0 1660 1250" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1660" height="1250" fill="#0b1120"/>
+  <rect x="20" y="20" width="1620" height="1210" rx="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <rect x="530" y="30" width="600" height="72" rx="12" fill="#10b981"/>
+  <text x="830" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#fff" font-family="PingFang SC, Microsoft YaHei">⚖️ 二维权重模型 · 详细说明（V3.2）</text>
+  <text x="830" y="86" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.85)" font-family="PingFang SC, Microsoft YaHei">金额分档定配额（第一维）+ 六因子加性 score（第二维）+ 五键排序</text>
+
+  <g stroke="#334155" stroke-width="1.5" fill="none">
+    <path d="M 830 102 L 830 122 L 280 122 L 280 148"/>
+    <path d="M 830 102 L 830 122 L 1380 122 L 1380 148"/>
+  </g>
+
+  <!-- ============ 第一维：金额四档 ============ -->
+  <rect x="50" y="148" width="740" height="430" rx="10" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+  <rect x="50" y="148" width="740" height="38" rx="10" fill="#0a2e1f"/>
+  <text x="70" y="173" font-size="17" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">第一维 · 金额分档（决定每档火力配额）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="206" fill="#94a3b8">切点：金额分位数（月初重标定一次，月内固定）｜ 真实数据6047笔实测</text>
+  </g>
+  <!-- 四档卡片 -->
+  <rect x="70" y="218" width="330" height="88" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="86" y="240" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">档1 超大额（top10%）</text>
+  <text x="86" y="262" font-size="11" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">604笔 · 金额占比51.9%</text>
+  <text x="86" y="282" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">配额 62/人/周（310）· 1.9周打透</text>
+  <text x="86" y="300" font-size="10" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">打透后配额自动下传（属正常）</text>
+
+  <rect x="420" y="218" width="350" height="88" rx="8" fill="#0f1a2b" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="436" y="240" font-size="13" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">档2 大额（top11-30%）</text>
+  <text x="436" y="262" font-size="11" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">1210笔 · 金额占比25.9%</text>
+  <text x="436" y="282" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">配额 83/人/周（415）· 3周打透</text>
+  <text x="436" y="300" font-size="10" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">承接档1缺额（补位链第2环）</text>
+
+  <rect x="70" y="320" width="330" height="88" rx="8" fill="#0f1a2b" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="86" y="342" font-size="13" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">档3 中额（top31-55%）</text>
+  <text x="86" y="364" font-size="11" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">1511笔 · 金额占比12.2%</text>
+  <text x="86" y="384" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">配额 73/人/周（365）· 4周打透</text>
+  <text x="86" y="402" font-size="10" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">承接档2缺额</text>
+
+  <rect x="420" y="320" width="350" height="88" rx="8" fill="#0f1a2b" stroke="#64748b" stroke-width="1.5"/>
+  <text x="436" y="342" font-size="13" font-weight="700" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">档4 小额（bottom45%）</text>
+  <text x="436" y="364" font-size="11" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">2722笔 · 金额占比10.0%</text>
+  <text x="436" y="384" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">配额 42/人/周（210）· W4-5扛大头</text>
+  <text x="436" y="402" font-size="10" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">打完后门槛池(&lt;500)补位</text>
+
+  <rect x="70" y="424" width="700" height="132" rx="8" fill="#0f1a2b" stroke="#10b981" stroke-width="1"/>
+  <text x="86" y="446" font-size="13" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">档级补位（B版·覆盖生命线）</text>
+  <text x="86" y="468" font-size="11" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">每档只取"豁免户+call=0新户"，不足部分 carry 下传下一档</text>
+  <text x="86" y="488" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">模拟验证：B版5周100%覆盖 vs A版(不下传)仅72.3%——1672户饿死</text>
+  <text x="86" y="508" font-size="11" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">设计意图：大额优先（档1火力24%）+ 补位兜底（覆盖全池）</text>
+  <text x="86" y="528" font-size="11" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">极端降级：池&lt;500户不分档全按五键；池&gt;15000户告警延长周期</text>
+  <text x="86" y="546" font-size="10" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">配额比例24/32/28/16维持现状（圆桌四轮拍板）；新数据40/人不占档配额</text>
+
+  <!-- ============ 第二维：六因子 ============ -->
+  <rect x="820" y="148" width="790" height="430" rx="10" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+  <rect x="820" y="148" width="790" height="38" rx="10" fill="#0a2e1f"/>
+  <text x="840" y="173" font-size="17" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">第二维 · 六因子加性 score（档内排序）</text>
+  <text x="840" y="200" font-size="11" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">score = 0.30AI + 0.20标签 + 0.10感受 + 0.15数据新鲜度 + 0.20探索 + 0.05等待（满值100）</text>
+
+  <rect x="840" y="212" width="370" height="112" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="856" y="234" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">① AI评价分 · 权重30%（最高）</text>
+  <text x="856" y="256" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">五维度合成各0-20：还款态度/沟通配合度/</text>
+  <text x="856" y="272" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">困难真实性/承诺可信度/争议严重度(反向)</text>
+  <text x="856" y="292" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">仅客服通话产生；外呼不给；未接通缺省50</text>
+  <text x="856" y="308" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">缺省值影子首月后换分布中位数</text>
+
+  <rect x="1230" y="212" width="360" height="112" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="1246" y="234" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">② 标签分 · 权重20%</text>
+  <text x="1246" y="256" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">B=100 D=72 C=60 无标签=60 A=40 E=20</text>
+  <text x="1246" y="272" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">F不参与（出列）；标签分待影子数据回测</text>
+  <text x="1246" y="288" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">实际回款率后重排（线性假设待验证）</text>
+  <text x="1246" y="308" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">与AI评分同源nt→相关矩阵验证</text>
+
+  <rect x="840" y="338" width="370" height="96" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="856" y="360" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">③ 感受分 · 权重10%</text>
+  <text x="856" y="382" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">1-5 ×20 → 20/40/60/80/100（序数变量）</text>
+  <text x="856" y="398" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">通话结束必选；NULL标记待补录不进缺省</text>
+  <text x="856" y="414" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">一致性抽查：与AI评分差≥2档→复核</text>
+  <text x="856" y="430" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">锚定标准见客服手册；5人标定测试P0</text>
+
+  <rect x="1230" y="338" width="360" height="96" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="1246" y="360" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">④ 数据新鲜度分 · 权重15%</text>
+  <text x="1246" y="382" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">≤7天=100 / 8-14天=80 / 15-21天=60 / 22-28天=40 / 29-60天=28 / >60天=20</text>
+  <text x="1246" y="398" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">基准=上传时间（衡量数据新鲜非账龄）</text>
+  <text x="1246" y="414" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">账龄因子 arrear_age 留接口（第七因子）</text>
+  <text x="1246" y="430" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">新数据通道内不叠加（避免双重计数）</text>
+
+  <rect x="840" y="446" width="370" height="96" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="856" y="468" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">⑤ 探索分 · 权重20%</text>
+  <text x="856" y="490" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">本月未接通：0次=100 / 1次=50 / 2次=25 / ≥3=0</text>
+  <text x="856" y="506" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">本月口径，每月1日与call_count一起清零</text>
+  <text x="856" y="522" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">加性设计：人人平等不被金额放大</text>
+  <text x="856" y="538" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">覆盖保护由call_count第一键主责</text>
+
+  <rect x="1230" y="446" width="360" height="96" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="1246" y="468" font-size="13" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">⑥ 等待分 · 权重5%</text>
+  <text x="1246" y="490" font-size="10.5" fill="#cbd5e1" font-family="PingFang SC, Microsoft YaHei">回流户&gt;14天起每天+5，34天封顶100</text>
+  <text x="1246" y="506" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">平滑插队防饿死（call_count第一键主责）</text>
+  <text x="1246" y="522" font-size="10.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">本月口径；圆桌五轮"暂定"维持</text>
+  <text x="1246" y="538" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">力度问题待影子模式观察</text>
+
+  <!-- ============ 排序键五键 ============ -->
+  <rect x="50" y="612" width="740" height="180" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="50" y="612" width="740" height="38" rx="10" fill="#3b2e0a"/>
+  <text x="70" y="637" font-size="17" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">五键排序（档内）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="666">排序键 = (豁免标志, call_count, score, 金额DESC, debt_id)</text>
+  </g>
+  <rect x="70" y="678" width="140" height="56" rx="6" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="140" y="700" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">第0键 豁免</text>
+  <text x="140" y="718" text-anchor="middle" font-size="9.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">promise前3天+失信&lt;3</text>
+  <rect x="222" y="678" width="140" height="56" rx="6" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="292" y="700" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">第1键 call_count</text>
+  <text x="292" y="718" text-anchor="middle" font-size="9.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">本月人工沟通记录数</text>
+  <rect x="374" y="678" width="140" height="56" rx="6" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="444" y="700" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">第2键 score</text>
+  <text x="444" y="718" text-anchor="middle" font-size="9.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">六因子加性分</text>
+  <rect x="526" y="678" width="130" height="56" rx="6" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="591" y="700" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">第3键 金额</text>
+  <text x="591" y="718" text-anchor="middle" font-size="9.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">DESC 同分大额优先</text>
+  <rect x="668" y="678" width="100" height="56" rx="6" fill="#0f1a2b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="718" y="700" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">第4键 ID</text>
+  <text x="718" y="718" text-anchor="middle" font-size="9.5" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">确定性兜底</text>
+  <text x="70" y="762" font-size="11" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">设计逻辑：回款为主，覆盖为基——第0键守承诺、第1键保覆盖、第2键比价值、第3/4键保确定</text>
+  <text x="70" y="782" font-size="10.5" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">模拟验证：确定性✓ 同分大额✓ 豁免排最前✓ call让位✓ 均衡4.37%✓</text>
+
+  <!-- ============ 承诺豁免分两类型（业主承诺时间无统一定义） ============ -->
+  <rect x="820" y="612" width="790" height="180" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="820" y="612" width="790" height="38" rx="10" fill="#3b2e0a"/>
+  <text x="840" y="637" font-size="17" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">承诺承诺豁免分两类型（业主承诺时间无统一定义）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="840" y="668" fill="#fbbf24">生效：promise_due 前3天 且 promise_count &lt; 3 → 排本档最前</text>
+    <text x="840" y="690" fill="#94a3b8">　　　（失信≥3次的户不再豁免——承诺失去可信度，按正常催收阶段流程走）</text>
+    <text x="840" y="718" fill="#fbbf24">到期检查：promise_due 当日 08:00 未回款 →</text>
+    <text x="840" y="740" fill="#94a3b8">　　　① 豁免撤销（不再排最前）</text>
+    <text x="840" y="758" fill="#94a3b8">　　　② promise_count + 1（失信计数 → D类判定素材）</text>
+    <text x="840" y="776" fill="#94a3b8">　　　③ call_count 重置为 1（给一次正常回流机会，不重复惩罚）</text>
+  </g>
+
+  <!-- ============ 计算示例 ============ -->
+  <rect x="50" y="824" width="1560" height="170" rx="12" fill="#0f1a2b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="830" y="854" text-anchor="middle" font-size="15" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">档内 score 计算示例（满值100）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="884">① B类·AI=85·感受5·10天·未触达：25.5+20+10+12+20+0 = <tspan fill="#34d399" font-weight="700">87.5</tspan>（AI认为会还钱的人显著前移）</text>
+    <text x="70" y="906">② C类·AI=40·感受2·10天·未触达：12+12+4+12+20+0 = <tspan fill="#f59e0b" font-weight="700">60.0</tspan>（低分户档内中低位）</text>
+    <text x="70" y="928">③ 无标签·5天·未触达：15+12+5+15+20+0 = <tspan fill="#34d399" font-weight="700">67.0</tspan>（探索分100保证新户先打）</text>
+    <text x="70" y="950">④ A类·AI=60·感受3·60天·打过1次：18+8+6+4.2+10+0 = <tspan fill="#f59e0b" font-weight="700">46.2</tspan>（争议户降速不放弃）</text>
+    <text x="70" y="976" fill="#94a3b8">观察：AI评价分拉开的差距最大（30%权重）；无标签新户(67)压过打过无响应的老户(57)——覆盖机制完好</text>
+  </g>
+
+  <text x="830" y="1040" text-anchor="middle" font-size="12" fill="#475569" font-family="PingFang SC, Microsoft YaHei">数治理方 · 权重模型 V3.2 ｜ 配套：催收分配逻辑_V3.2_权重模型.md · 五键排序模拟.xlsx</text>
+</svg>
+</body>
+</html>

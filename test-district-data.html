@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多小区数据测试</title>
+  <script src="ecosystem-bridge.js"></script>
+  <script src="ecosystem-district-management.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section { margin-bottom: 30px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+    .district-card { 
+      display: inline-block; 
+      width: 300px; 
+      margin: 10px; 
+      padding: 15px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      background: #f9f9f9;
+    }
+    .district-card h3 { color: #333; margin-bottom: 10px; }
+    .district-card p { margin: 5px 0; }
+    .property-info { background: #e8f4f8; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    .config-info { background: #f0f8e8; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    button { 
+      padding: 10px 20px; 
+      margin: 5px; 
+      background: #007bff; 
+      color: white; 
+      border: none; 
+      border-radius: 5px; 
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    #output { 
+      background: #f8f9fa; 
+      padding: 15px; 
+      border-radius: 5px; 
+      margin: 10px 0; 
+      min-height: 100px;
+      white-space: pre-wrap;
+    }
+    .stats { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 15px; 
+      margin: 20px 0;
+    }
+    .stat-card { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      padding: 20px; 
+      border-radius: 10px; 
+      text-align: center;
+    }
+    .stat-card h4 { margin-bottom: 10px; }
+    .stat-card .value { font-size: 24px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>多小区数据测试页面</h1>
+    
+    <div class="section">
+      <h2>数据加载状态</h2>
+      <button onclick="testDataLoading()">测试数据加载</button>
+      <button onclick="displayDistricts()">显示所有小区</button>
+      <button onclick="displayProperties()">显示所有物业</button>
+      <button onclick="displayConfigs()">显示所有配置</button>
+      <button onclick="displayPermissions()">显示权限设置</button>
+      <button onclick="clearAllData()">清除所有数据</button>
+      <div id="output"></div>
+    </div>
+
+    <div class="section">
+      <h2>小区统计概览</h2>
+      <div id="stats" class="stats"></div>
+    </div>
+
+    <div class="section">
+      <h2>小区详细信息</h2>
+      <div id="districtDetails"></div>
+    </div>
+
+    <div class="section">
+      <h2>功能测试</h2>
+      <button onclick="testCRUDOperations()">测试CRUD操作</button>
+      <button onclick="testDataIsolation()">测试数据隔离</button>
+      <button onclick="testPermissions()">测试权限控制</button>
+      <button onclick="testStatistics()">测试统计功能</button>
+      <button onclick="testExport()">测试数据导出</button>
+    </div>
+  </div>
+
+  <script>
+    function log(message) {
+      document.getElementById('output').textContent += message + '\n';
+      console.log(message);
+    }
+
+    function testDataLoading() {
+      log('=== 开始测试数据加载 ===');
+      
+      try {
+        // 测试基本数据加载
+        const districts = EcosystemBridge.getDistricts();
+        log(`✓ 成功加载 ${districts.length} 个小区`);
+        
+        const properties = EcosystemBridge.getPropertyManagement();
+        log(`✓ 成功加载 ${properties.length} 个物业信息`);
+        
+        const configs = EcosystemBridge.getDistrictConfigurations();
+        log(`✓ 成功加载 ${configs.length} 个配置项`);
+        
+        const permissions = EcosystemBridge.getDistrictPermissions();
+        log(`✓ 成功加载 ${permissions.length} 个权限设置`);
+        
+        log('✓ 所有数据加载成功！');
+      } catch (error) {
+        log('✗ 数据加载失败: ' + error.message);
+      }
+    }
+
+    function displayDistricts() {
+      log('=== 显示所有小区 ===');
+      const districts = EcosystemBridge.getDistricts();
+      
+      districts.forEach(district => {
+        log(`小区: ${district.name}`);
+        log(`地址: ${district.address}`);
+        log(`总户数: ${district.totalHouseholds}`);
+        log(`建成年份: ${district.builtYear}`);
+        log(`物业类型: ${district.propertyType}`);
+        log(`状态: ${district.status}`);
+        log('---');
+      });
+    }
+
+    function displayProperties() {
+      log('=== 显示所有物业信息 ===');
+      const properties = EcosystemBridge.getPropertyManagement();
+      
+      properties.forEach(property => {
+        const district = EcosystemBridge.findDistrict(property.districtId);
+        const districtName = district ? district.name : '未知';
+        
+        log(`物业: ${property.propertyName}`);
+        log(`所在小区: ${districtName}`);
+        log(`物业经理: ${property.propertyManager}`);
+        log(`联系电话: ${property.managerPhone}`);
+        log(`月费: ${property.monthlyFee}元/㎡`);
+        log(`评分: ${property.rating}/5`);
+        log(`投诉率: ${property.complaintRate}`);
+        log('---');
+      });
+    }
+
+    function displayConfigs() {
+      log('=== 显示所有配置信息 ===');
+      const configs = EcosystemBridge.getDistrictConfigurations();
+      
+      // 按小区分组显示配置
+      const configsByDistrict = {};
+      configs.forEach(config => {
+        if (!configsByDistrict[config.districtId]) {
+          configsByDistrict[config.districtId] = [];
+        }
+        configsByDistrict[config.districtId].push(config);
+      });
+      
+      Object.keys(configsByDistrict).forEach(districtId => {
+        const district = EcosystemBridge.findDistrict(districtId);
+        const districtName = district ? district.name : '未知';
+        
+        log(`小区: ${districtName}`);
+        configsByDistrict[districtId].forEach(config => {
+          log(`  配置类型: ${config.type}`);
+          log(`  配置名称: ${config.name}`);
+          log(`  状态: ${config.status}`);
+          log('  配置详情: ' + JSON.stringify(config.config, null, 2));
+          log('  ---');
+        });
+      });
+    }
+
+    function displayPermissions() {
+      log('=== 显示权限设置 ===');
+      const permissions = EcosystemBridge.getDistrictPermissions();
+      
+      permissions.forEach(permission => {
+        log(`用户ID: ${permission.userId}`);
+        log(`角色: ${permission.role}`);
+        log(`辖区范围: ${permission.scope}`);
+        log(`小区ID: ${permission.districtId}`);
+        log(`权限: ${permission.permissions.join(', ')}`);
+        log(`状态: ${permission.status}`);
+        log('---');
+      });
+    }
+
+    function clearAllData() {
+      if (confirm('确定要清除所有数据吗？')) {
+        EcosystemBridge.clearWorkOrderData();
+        log('✓ 所有数据已清除');
+      }
+    }
+
+    function testCRUDOperations() {
+      log('=== 测试CRUD操作 ===');
+      
+      try {
+        // 测试添加小区
+        const newDistrict = {
+          name: '测试小区',
+          address: '测试地址 123 号',
+          description: '这是一个测试小区',
+          totalHouseholds: 100,
+          builtYear: 2023,
+          area: 50000,
+          buildingCount: 5,
+          floorsPerBuilding: 10,
+          unitsPerFloor: 2,
+          propertyType: 'test',
+          facilities: ['测试设施']
+        };
+        
+        const addedDistrict = EcosystemBridge.addDistrict(newDistrict);
+        log(`✓ 添加小区成功: ${addedDistrict.name} (ID: ${addedDistrict.id})`);
+        
+        // 测试更新小区
+        const updated = EcosystemBridge.updateDistrict(addedDistrict.id, {
+          description: '更新后的描述',
+          totalHouseholds: 150
+        });
+        log(`✓ 更新小区成功: ${updated.name}`);
+        
+        // 测试查找小区
+        const found = EcosystemBridge.findDistrict(addedDistrict.id);
+        log(`✓ 查找小区成功: ${found.name}`);
+        
+        // 测试删除小区
+        const deleted = EcosystemBridge.deleteDistrict(addedDistrict.id);
+        log(`✓ 删除小区成功: ${deleted}`);
+        
+        log('✓ 所有CRUD操作测试通过！');
+      } catch (error) {
+        log('✗ CRUD操作测试失败: ' + error.message);
+      }
+    }
+
+    function testDataIsolation() {
+      log('=== 测试数据隔离 ===');
+      
+      try {
+        // 测试按小区隔离的工单
+        const tickets = EcosystemBridge.getIsolatedTickets('district_001');
+        log(`✓ 阳光小区隔离工单数量: ${tickets.length}`);
+        
+        const bulletins = EcosystemBridge.getIsolatedBulletins('district_002');
+        log(`✓ 翠湖小区隔离公告数量: ${bulletins.length}`);
+        
+        const consults = EcosystemBridge.getIsolatedConsults('district_003');
+        log(`✓ 锦绣小区隔离咨询数量: ${consults.length}`);
+        
+        log('✓ 数据隔离测试通过！');
+      } catch (error) {
+        log('✗ 数据隔离测试失败: ' + error.message);
+      }
+    }
+
+    function testPermissions() {
+      log('=== 测试权限控制 ===');
+      
+      try {
+        // 测试超级管理员权限
+        const hasPermission1 = EcosystemBridge.checkPermission('admin_001', 'district_001', 'district_write');
+        log(`✓ 超级管理员district_write权限: ${hasPermission1}`);
+        
+        // 测试社区管理员权限
+        const hasPermission2 = EcosystemBridge.checkPermission('community_001', 'district_002', 'district_read');
+        log(`✓ 社区管理员district_read权限: ${hasPermission2}`);
+        
+        // 测试小区管理员权限
+        const hasPermission3 = EcosystemBridge.checkPermission('manager_001', 'district_001', 'district_write');
+        log(`✓ 小区管理员district_write权限: ${hasPermission3}`);
+        
+        // 测试只读权限
+        const hasPermission4 = EcosystemBridge.checkPermission('viewer_001', 'district_001', 'district_read');
+        log(`✓ 只读用户district_read权限: ${hasPermission4}`);
+        
+        log('✓ 权限控制测试通过！');
+      } catch (error) {
+        log('✗ 权限控制测试失败: ' + error.message);
+      }
+    }
+
+    function testStatistics() {
+      log('=== 测试统计功能 ===');
+      
+      try {
+        const stats = EcosystemBridge.getDistrictStatistics('district_001');
+        if (stats) {
+          log(`✓ 阳光小区统计:`);
+          log(`  总户数: ${stats.totalHouseholds}`);
+          log(`  工单统计: ${JSON.stringify(stats.ticketStats)}`);
+          log(`  公告统计: ${JSON.stringify(stats.bulletinStats)}`);
+          log(`  咨询统计: ${JSON.stringify(stats.consultStats)}`);
+          log(`  物业评分: ${stats.propertyRating}`);
+          log(`  合规评分: ${stats.complianceScore}`);
+        }
+        
+        log('✓ 统计功能测试通过！');
+      } catch (error) {
+        log('✗ 统计功能测试失败: ' + error.message);
+      }
+    }
+
+    function testExport() {
+      log('=== 测试数据导出 ===');
+      
+      try {
+        const jsonExport = EcosystemBridge.exportDistrictData('district_001', 'json');
+        log(`✓ JSON格式导出成功，数据长度: ${jsonExport.length} 字符`);
+        
+        const csvExport = EcosystemBridge.exportDistrictData('district_001', 'csv');
+        log(`✓ CSV格式导出成功，数据长度: ${csvExport.length} 字符`);
+        
+        log('✓ 数据导出测试通过！');
+      } catch (error) {
+        log('✗ 数据导出测试失败: ' + error.message);
+      }
+    }
+
+    function displayStats() {
+      const districts = EcosystemBridge.getDistricts();
+      const statsContainer = document.getElementById('stats');
+      
+      const totalHouseholds = districts.reduce((sum, district) => sum + district.totalHouseholds, 0);
+      const averageRating = districts.reduce((sum, district) => {
+        const property = EcosystemBridge.findPropertyManagement(district.id);
+        return sum + (property ? property.rating : 0);
+      }, 0) / districts.length;
+      
+      const totalArea = districts.reduce((sum, district) => sum + district.area, 0);
+      
+      statsContainer.innerHTML = `
+        <div class="stat-card">
+          <h4>总小区数</h4>
+          <div class="value">${districts.length}</div>
+        </div>
+        <div class="stat-card">
+          <h4>总户数</h4>
+          <div class="value">${totalHouseholds.toLocaleString()}</div>
+        </div>
+        <div class="stat-card">
+          <h4>平均物业评分</h4>
+          <div class="value">${averageRating.toFixed(1)}/5</div>
+        </div>
+        <div class="stat-card">
+          <h4>总面积(㎡)</h4>
+          <div class="value">${(totalArea / 10000).toFixed(1)}万</div>
+        </div>
+      `;
+    }
+
+    function displayDistrictDetails() {
+      const districts = EcosystemBridge.getDistricts();
+      const detailsContainer = document.getElementById('districtDetails');
+      
+      let html = '';
+      districts.forEach(district => {
+        const property = EcosystemBridge.findPropertyManagement(district.id);
+        const configs = EcosystemBridge.getDistrictConfigurations().filter(c => c.districtId === district.id);
+        
+        const propertyColor = property.rating >= 4.5 ? '#d4edda' : property.rating >= 4.0 ? '#fff3cd' : '#f8d7da';
+        const statusColor = district.status === 'active' ? '#28a745' : '#dc3545';
+        
+        html += `
+          <div class="district-card" style="border-left: 5px solid ${statusColor}">
+            <h3 style="color: ${statusColor}">${district.name}</h3>
+            <p><strong>地址:</strong> ${district.address}</p>
+            <p><strong>总户数:</strong> ${district.totalHouseholds}</p>
+            <p><strong>建成年份:</strong> ${district.builtYear}</p>
+            <p><strong>面积:</strong> ${district.area.toLocaleString()}㎡</p>
+            <p><strong>物业类型:</strong> ${district.propertyType}</p>
+            <p><strong>状态:</strong> <span style="color: ${statusColor}">${district.status}</span></p>
+            
+            <div class="property-info" style="background: ${propertyColor}">
+              <h4>物业管理信息</h4>
+              <p><strong>物业名称:</strong> ${property.propertyName}</p>
+              <p><strong>物业经理:</strong> ${property.propertyManager}</p>
+              <p><strong>联系电话:</strong> ${property.managerPhone}</p>
+              <p><strong>月费:</strong> ${property.monthlyFee}元/㎡</p>
+              <p><strong>评分:</strong> ${property.rating}/5</p>
+              <p><strong>投诉率:</strong> ${property.complaintRate}</p>
+            </div>
+            
+            <div class="config-info">
+              <h4>配置项数量</h4>
+              <p>门禁配置: ${configs.filter(c => c.type === 'access_control').length}</p>
+              <p>停车配置: ${configs.filter(c => c.type === 'parking_management').length}</p>
+              <p>设施配置: ${configs.filter(c => c.type === 'public_facilities').length}</p>
+            </div>
+          </div>
+        `;
+      });
+      
+      detailsContainer.innerHTML = html;
+    }
+
+    // 页面加载时自动执行测试
+    window.onload = function() {
+      log('页面加载完成，开始初始化测试...');
+      testDataLoading();
+      displayStats();
+      displayDistrictDetails();
+      log('初始化测试完成！');
+    };
+  </script>
+</body>
+</html>

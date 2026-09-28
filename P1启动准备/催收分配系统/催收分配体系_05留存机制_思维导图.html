@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>留存机制 · 详细思维导图（V3.2）</title>
+<style>body{margin:0;background:#0b1120;display:flex;justify-content:center}svg{display:block}</style>
+</head>
+<body>
+<svg width="1660" height="1180" viewBox="0 0 1660 1180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1660" height="1180" fill="#0b1120"/>
+  <rect x="20" y="20" width="1620" height="1140" rx="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <rect x="580" y="30" width="500" height="72" rx="12" fill="#8b5cf6"/>
+  <text x="830" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#fff" font-family="PingFang SC, Microsoft YaHei">📌 留存机制 · 详细说明（V3.2）</text>
+  <text x="830" y="86" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.85)" font-family="PingFang SC, Microsoft YaHei">正向跟单 · 意向池 · 跨月清点 · E类复查 · A类工单化 · 回款口径</text>
+
+  <g stroke="#334155" stroke-width="1.5" fill="none">
+    <path d="M 830 102 L 830 122 L 280 122 L 280 148"/>
+    <path d="M 830 102 L 830 122 L 830 148"/>
+    <path d="M 830 102 L 830 122 L 1380 122 L 1380 148"/>
+  </g>
+
+  <!-- ============ 正向跟单 ============ -->
+  <rect x="50" y="148" width="510" height="330" rx="10" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="50" y="148" width="510" height="38" rx="10" fill="#2d1b4e"/>
+  <text x="70" y="173" font-size="16" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">正向跟单（月窗口·行为口径）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="206" fill="#fbbf24">入选条件（三同时）：</text>
+    <text x="70" y="226" fill="#94a3b8">① 本月接通（rs=picked）</text>
+    <text x="70" y="246" fill="#94a3b8">② AI 评分 ≥ 61</text>
+    <text x="70" y="266" fill="#94a3b8">③ 客服感受分 ≥ 4</text>
+    <text x="70" y="292" fill="#fbbf24">安排方式：</text>
+    <text x="70" y="312" fill="#94a3b8">每次轮换定向原客服（跟人走）</text>
+    <text x="70" y="332" fill="#94a3b8">占配额第1优先级（先于新数据/档1）</text>
+    <text x="70" y="358" fill="#fbbf24">上限：100户/人/周</text>
+    <text x="70" y="378" fill="#94a3b8">超出按 score 取前100，其余顺延下周</text>
+    <text x="70" y="404" fill="#34d399">退出规则：</text>
+    <text x="70" y="424" fill="#94a3b8">回款 → done ｜ 拉入意向池 → intent</text>
+    <text x="70" y="444" fill="#94a3b8">判E/F/A → 对应池（标签变化即时生效）</text>
+    <text x="70" y="464" fill="#94a3b8">跨月清点：pos_month≠本月 且 本月无新接通 → 回主池</text>
+  </g>
+
+  <!-- ============ 意向池 ============ -->
+  <rect x="575" y="148" width="510" height="330" rx="10" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="575" y="148" width="510" height="38" rx="10" fill="#2d1b4e"/>
+  <text x="595" y="173" font-size="16" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">意向池（唯一留人通道·定稿）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="206" fill="#fbbf24">拉入：客服挂断后手动拉入（无门槛，挂断即可拉）</text>
+    <text x="595" y="226" fill="#fbbf24">上限：50户/人；满额时系统提醒，客服自行选择剔除一户</text>
+    <text x="595" y="252" fill="#94a3b8">三态计数（只数这三态）：</text>
+    <text x="595" y="272" fill="#94a3b8">催收中 ｜ 暂停（管理员/物业触发） ｜ 部分还款（还1分也算）</text>
+    <text x="595" y="298" fill="#94a3b8">全局锁定：其他客服看不到也不能分走</text>
+    <text x="595" y="318" fill="#94a3b8">周三不回收 · 跟人走 · 排序按金额降序</text>
+    <text x="595" y="344" fill="#34d399">移出：回款（物业报数）→ 自动移出终止</text>
+    <text x="595" y="364" fill="#34d399">踢出/手动移出 → 回主池（避开原客服）</text>
+    <text x="595" y="384" fill="#34d399">结案终止 → 管理员；投诉 → 仅物业/管理员暂停</text>
+    <text x="595" y="410" fill="#94a3b8">离职：回收后重新分派 ｜ 取消管理员标记可超50</text>
+    <text x="595" y="436" fill="#94a3b8">与正向跟单区别：意向=手动长期锁定；正向=自动月度窗口</text>
+  </g>
+
+  <!-- ============ 跨月清点 ============ -->
+  <rect x="1100" y="148" width="510" height="330" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="1100" y="148" width="510" height="38" rx="10" fill="#12233d"/>
+  <text x="1120" y="173" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">跨月清点（每月1日·五合一）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="206" fill="#fbbf24">① 正向跟单跨月清点</text>
+    <text x="1120" y="226" fill="#94a3b8">pos_month≠本月 且 本月无新接通 → 回主池（retry）</text>
+    <text x="1120" y="252" fill="#fbbf24">② call_count / 探索分 清零</text>
+    <text x="1120" y="272" fill="#94a3b8">新月周期：全员"未触达"重新开始覆盖</text>
+    <text x="1120" y="298" fill="#fbbf24">③ 金额分档切点重标定</text>
+    <text x="1120" y="318" fill="#94a3b8">分位数法重算四档切点（事务内，结果存表可查）</text>
+    <text x="1120" y="344" fill="#fbbf24">④ 六因子权重参数复核</text>
+    <text x="1120" y="364" fill="#94a3b8">权重调整仅每月1日生效（月中锁定）</text>
+    <text x="1120" y="390" fill="#fbbf24">⑤ E类跨月复查</text>
+    <text x="1120" y="410" fill="#94a3b8">shelf_month &lt; 当前月份 → 回主池按C标签分重评</text>
+    <text x="1120" y="436" fill="#34d399">⑥ 承诺豁免两类型检查：明确时间→记promise_due+到期检查；口头答应→不豁免（AI评分体现）</text>
+    <text x="1120" y="456" fill="#94a3b8">promise_due=今天未回款 → 撤销+失信+1+call重置1</text>
+  </g>
+
+  <!-- ============ A类工单化 ============ -->
+  <rect x="50" y="508" width="510" height="220" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="50" y="508" width="510" height="38" rx="10" fill="#3b2e0a"/>
+  <text x="70" y="533" font-size="16" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">A类争议反馈工单化</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="566" fill="#fbbf24">流程：客服录入争议（哪栋哪户什么事）→ 管理员每日汇总发物业群</text>
+    <text x="70" y="586" fill="#94a3b8">→ 物业群内回应 → 管理员回写状态</text>
+    <text x="70" y="612" fill="#fbbf24">跟进：反馈 7 天无回应 → 客服端弹提醒 + 管理员任务</text>
+    <text x="70" y="632" fill="#94a3b8">无回应累计 14 天 → 升级告警</text>
+    <text x="70" y="658" fill="#34d399">缴费不停：争议走物业线，催缴走缴费线，并行不悖</text>
+    <text x="70" y="678" fill="#94a3b8">争议解决（物业反馈/业主确认）→ 标签重评，标签分自然恢复</text>
+    <text x="70" y="704" fill="#64748b">dispute_ref 字段记录争议内容（转物业用·自由文本）</text>
+  </g>
+
+  <!-- ============ 回款口径 ============ -->
+  <rect x="575" y="508" width="510" height="220" rx="10" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+  <rect x="575" y="508" width="510" height="38" rx="10" fill="#0a2e1f"/>
+  <text x="595" y="533" font-size="16" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">回款口径（校准数据的地基）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="566" fill="#fbbf24">全额 = 终止（done）</text>
+    <text x="595" y="586" fill="#94a3b8">物业报数为准 → 系统当天自动终止</text>
+    <text x="595" y="612" fill="#fbbf24">部分还款 = 意向池三态（进度信号）</text>
+    <text x="595" y="632" fill="#94a3b8">不算回款终止，单独记录；还1分也算部分还款</text>
+    <text x="595" y="658" fill="#34d399">拨打前校验：今日已报数清单（缓存10分钟）</text>
+    <text x="595" y="678" fill="#94a3b8">防止报数延迟导致已回款户被重复催收</text>
+    <text x="595" y="704" fill="#64748b">金额依合同，不写死（数据一致性铁律）</text>
+  </g>
+
+  <!-- ============ 组合规则 ============ -->
+  <rect x="1100" y="508" width="510" height="220" rx="10" fill="#0f1a2b" stroke="#64748b" stroke-width="2"/>
+  <rect x="1100" y="508" width="510" height="38" rx="10" fill="#1e293b"/>
+  <text x="1120" y="533" font-size="16" font-weight="700" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">留存机制组合规则</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="566" fill="#fbbf24">正向跟单户 → 可手动拉意向池（pos→intent）</text>
+    <text x="1120" y="586" fill="#94a3b8">拉入意向池后退出正向跟单名单</text>
+    <text x="1120" y="612" fill="#fbbf24">意向池户 → 判E/F/A 即时移出？</text>
+    <text x="1120" y="632" fill="#94a3b8">否——意向池为锁定态，标签变化不自动移出；回款/结案才移出</text>
+    <text x="1120" y="658" fill="#fbbf24">承诺豁免户 → 周三不回收 + 正向跟单可叠加</text>
+    <text x="1120" y="678" fill="#94a3b8">豁免户若符合正向条件（AI≥61+感受≥4）双通道并存</text>
+    <text x="1120" y="704" fill="#64748b">各机制独立判断，互不排斥（除 pos→intent 互斥）</text>
+  </g>
+
+  <!-- 底部留存全景 -->
+  <rect x="50" y="758" width="1560" height="150" rx="12" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="830" y="788" text-anchor="middle" font-size="15" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">留存全景（一条业主从接通到回款的完整路径）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="12" fill="#cbd5e1">
+    <text x="830" y="820" text-anchor="middle">接通 + AI≥61 + 感受≥4 → 正向跟单（月内定向原人） → 客服判断能留 → 意向池（≤50锁定）</text>
+    <text x="830" y="842" text-anchor="middle">意向池内：催收中/暂停/部分还款三态 → 物业报数全额 → 终止（回款落地）</text>
+    <text x="830" y="864" text-anchor="middle">未拉意向池：跨月清点 → 回主池 → 新月重新覆盖（call_count清零）</text>
+    <text x="830" y="890" text-anchor="middle" fill="#94a3b8">A类争议：工单化反馈物业，7天跟进提醒，缴费线不停 ｜ E类：本月不安排人工（外呼机器人正常通知），跨月复查 ｜ 承诺：豁免窗口内排最前</text>
+  </g>
+
+  <text x="830" y="960" text-anchor="middle" font-size="12" fill="#475569" font-family="PingFang SC, Microsoft YaHei">数治理方 · 留存机制 ｜ 配套：规格文档六章·边界规则 · 意向池规则_定稿.md</text>
+</svg>
+</body>
+</html>

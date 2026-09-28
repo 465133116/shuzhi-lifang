@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>框架+权重结构 · 动态流程展示（V3.2）</title>
+<style>
+  body{margin:0;background:#0b1120;display:flex;justify-content:center;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+  .wrap{width:1560px;padding:24px 0 40px}
+  h1{text-align:center;color:#fff;font-size:25px;margin:0 0 4px}
+  .sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:14px}
+  svg{display:block;background:#0b1120;border:1px solid #1e293b;border-radius:14px}
+  .stagebar{display:flex;justify-content:center;gap:10px;margin-top:16px}
+  .stage{flex:1;max-width:250px;background:#0f1a2b;border:1px solid #1e293b;border-radius:10px;padding:10px 12px;font-size:12px;color:#94a3b8;line-height:1.5;transition:all .4s}
+  .stage.active{border-color:#8b5cf6;color:#e2e8f0;background:#1a1228;box-shadow:0 0 18px rgba(139,92,246,.25)}
+  .stage b{display:block;font-size:13px;color:#fff;margin-bottom:2px}
+  .legend{display:flex;justify-content:center;gap:18px;margin-top:12px;font-size:11.5px;color:#94a3b8}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+  @keyframes flow{to{stroke-dashoffset:-40}}
+  .dash{stroke-dasharray:8 6;animation:flow 1.2s linear infinite}
+  .pulse{animation:pulse 2s ease-in-out infinite}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>框架 + 权重 · 动态结构展示（V3.2 定稿）</h1>
+  <div class="sub">一笔债权从主池到客服手中的完整旅程 ｜ 循环播放</div>
+
+  <svg id="main" width="1560" height="640" viewBox="0 0 1560 640" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#475569"/>
+      </marker>
+      <marker id="arrP" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="#8b5cf6"/>
+      </marker>
+    </defs>
+
+    <!-- ================= 主池 ================= -->
+    <g>
+      <rect x="40" y="240" width="180" height="160" rx="12" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+      <text x="130" y="290" text-anchor="middle" font-size="17" font-weight="700" fill="#60a5fa">主池（周池）</text>
+      <text x="130" y="316" text-anchor="middle" font-size="11" fill="#94a3b8">全部未分配债权</text>
+      <text x="130" y="338" text-anchor="middle" font-size="11" fill="#94a3b8">周一指定项目集生成</text>
+      <text x="130" y="360" text-anchor="middle" font-size="11" fill="#cbd5e1">call_count 跨周保留</text>
+      <text x="130" y="382" text-anchor="middle" font-size="10" fill="#64748b">池重建不丢覆盖进度</text>
+    </g>
+
+    <!-- ================= 标签分检 ================= -->
+    <g>
+      <rect x="330" y="240" width="190" height="160" rx="12" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+      <text x="425" y="282" text-anchor="middle" font-size="15" font-weight="700" fill="#a78bfa">标签分检</text>
+      <text x="425" y="306" text-anchor="middle" font-size="10.5" fill="#cbd5e1">F→历史遗留池</text>
+      <text x="425" y="324" text-anchor="middle" font-size="10.5" fill="#cbd5e1">E→搁置池</text>
+      <text x="425" y="342" text-anchor="middle" font-size="10.5" fill="#cbd5e1">A→正常(争议分开)</text>
+      <text x="425" y="360" text-anchor="middle" font-size="10.5" fill="#cbd5e1">B/C/D/无→正常</text>
+      <text x="425" y="382" text-anchor="middle" font-size="10" fill="#64748b">优先级 F&gt;E&gt;A&gt;B&gt;D&gt;C</text>
+    </g>
+
+    <!-- F/E 出口 -->
+    <g>
+      <rect x="330" y="90" width="190" height="70" rx="12" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="425" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#a78bfa">F → 历史遗留池</text>
+      <text x="425" y="140" text-anchor="middle" font-size="10" fill="#94a3b8">不催收 · 客服反馈物业</text>
+      <rect x="580" y="90" width="190" height="70" rx="12" fill="#0f1a2b" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <text x="675" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#f87171">E → 搁置池</text>
+      <text x="675" y="140" text-anchor="middle" font-size="10" fill="#94a3b8">本月不人工 · 外呼机器人通知</text>
+    </g>
+
+    <!-- ================= 四档分层 ================= -->
+    <g>
+      <rect x="600" y="200" width="180" height="200" rx="12" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+      <text x="690" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#34d399">金额四档</text>
+      <text x="690" y="252" text-anchor="middle" font-size="11" fill="#fbbf24">档1 超大额 62/人</text>
+      <text x="690" y="276" text-anchor="middle" font-size="11" fill="#60a5fa">档2 大额 83/人</text>
+      <text x="690" y="300" text-anchor="middle" font-size="11" fill="#60a5fa">档3 中额 73/人</text>
+      <text x="690" y="324" text-anchor="middle" font-size="11" fill="#94a3b8">档4 小额 42/人</text>
+      <text x="690" y="356" text-anchor="middle" font-size="10.5" fill="#34d399">档级补位：新户不足缺额下传</text>
+      <text x="690" y="378" text-anchor="middle" font-size="10" fill="#64748b">切点月初重标定 · 月内固定</text>
+    </g>
+
+    <!-- ================= 五键排序 ================= -->
+    <g>
+      <rect x="880" y="200" width="200" height="200" rx="12" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+      <text x="980" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">五键排序（档内）</text>
+      <g font-size="10.5" fill="#cbd5e1">
+        <text x="900" y="256">0 豁免 <tspan fill="#a78bfa">承诺前3天·失信&lt;3</tspan></text>
+        <text x="900" y="278">1 call_count <tspan fill="#34d399">0&gt;1&gt;2 保覆盖</tspan></text>
+        <text x="900" y="300">2 score <tspan fill="#fbbf24">六因子 比价值</tspan></text>
+        <text x="900" y="322">3 金额 <tspan fill="#60a5fa">同分大额优先</tspan></text>
+        <text x="900" y="344">4 debt_id <tspan fill="#94a3b8">确定性兜底</tspan></text>
+      </g>
+      <text x="980" y="376" text-anchor="middle" font-size="10" fill="#64748b">score = 0.3AI+0.2标签+0.1感受</text>
+      <text x="980" y="392" text-anchor="middle" font-size="10" fill="#64748b">+0.15新鲜+0.2探索+0.05等待</text>
+    </g>
+
+    <!-- ================= 客服五人 ================= -->
+    <g>
+      <rect x="1180" y="180" width="180" height="240" rx="12" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+      <text x="1270" y="210" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">蛇形轮流 → 个人池</text>
+      <g font-size="12" fill="#cbd5e1">
+        <text x="1200" y="240">A 档1+档2+档3+档4</text>
+        <text x="1200" y="266">B 各档配额合计</text>
+        <text x="1200" y="292">C 300户/人/周</text>
+        <text x="1200" y="318">D 均衡偏差&lt;10%</text>
+        <text x="1200" y="344">E 列表冻结拨打</text>
+      </g>
+      <text x="1270" y="380" text-anchor="middle" font-size="10.5" fill="#94a3b8">周三回收重分</text>
+      <text x="1270" y="398" text-anchor="middle" font-size="10.5" fill="#94a3b8">意向池/豁免户不回收</text>
+    </g>
+
+    <!-- 底部机制条 -->
+    <g>
+      <rect x="40" y="500" width="1320" height="120" rx="12" fill="#0f1a2b" stroke="#64748b" stroke-width="1.5"/>
+      <text x="700" y="528" text-anchor="middle" font-size="13" font-weight="700" fill="#94a3b8">配套机制（框架层的二元开关）</text>
+      <text x="700" y="554" text-anchor="middle" font-size="11.5" fill="#cbd5e1">承诺豁免两类型（明确时间才记 promise_due）｜ 意向池≤50·满额提醒自选剔除 ｜ 正向跟单月窗口·上限100</text>
+      <text x="700" y="578" text-anchor="middle" font-size="11.5" fill="#cbd5e1">同业主绑定 ｜ 参数月度锁定 ｜ 合规三红线（外呼频次/时段/录音） ｜ 极端池降级 ｜ 每月1日五合一清点</text>
+      <text x="700" y="602" text-anchor="middle" font-size="11" fill="#64748b">回款口径：全额=终止（物业报数）· 部分还款=意向池三态 ｜ 状态守恒：各池+终止=总数</text>
+    </g>
+
+    <!-- ================= 静态路径 ================= -->
+    <g fill="none" stroke="#334155" stroke-width="2">
+      <line x1="220" y1="310" x2="330" y2="310" marker-end="url(#arr)"/>
+      <line x1="520" y1="290" x2="600" y2="250" marker-end="url(#arr)"/>
+      <line x1="520" y1="330" x2="600" y2="340" marker-end="url(#arr)"/>
+      <line x1="780" y1="270" x2="880" y2="290" marker-end="url(#arr)"/>
+      <line x1="1080" y1="300" x2="1180" y2="300" marker-end="url(#arr)"/>
+    </g>
+    <!-- F/E 出口路径 -->
+    <g fill="none" stroke-width="1.5">
+      <path d="M 425 240 L 425 160" stroke="#8b5cf6" stroke-dasharray="6 4"/>
+      <path d="M 425 125 L 580 125" stroke="#8b5cf6" stroke-dasharray="6 4"/>
+      <path d="M 475 240 L 675 160" stroke="#ef4444" stroke-dasharray="6 4"/>
+    </g>
+    <!-- 回流虚线（客服→主池） -->
+    <g fill="none" stroke="#475569" stroke-width="1.5">
+      <path class="dash" d="M 1240 420 L 1240 470 L 130 470 L 130 400" marker-end="url(#arr)"/>
+    </g>
+
+    <!-- ================= 动态小球 ================= -->
+    <!-- 球1 绿色 B类：主池→分检→档1→排序→客服A -->
+    <circle r="9" fill="#34d399" class="pulse">
+      <animateMotion dur="13s" repeatCount="indefinite" keyPoints="0;0.14;0.24;0.30;0.38;0.48;1" keyTimes="0;0.14;0.24;0.30;0.38;0.48;1"
+        path="M 220 300 L 330 300 L 600 245 L 880 285 L 1180 250 L 1240 250"/>
+    </circle>
+    <!-- 球2 紫色 F类：主池→分检→顶出口（历史遗留池） -->
+    <circle r="9" fill="#a78bfa">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="1.2s" keyPoints="0;0.5;1" keyTimes="0;0.5;1"
+        path="M 220 330 L 380 310 L 425 200 L 425 130 L 560 125"/>
+    </circle>
+    <!-- 球3 红色 E类：主池→分检→顶出口（搁置池） -->
+    <circle r="9" fill="#f87171">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="2.6s" keyPoints="0;0.5;1" keyTimes="0;0.5;1"
+        path="M 220 320 L 400 315 L 475 240 L 675 160 L 750 125"/>
+    </circle>
+    <!-- 球4 黄色 A类：主池→分检→档2→排序→客服B -->
+    <circle r="9" fill="#fbbf24">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="3.9s" keyPoints="0;0.18;0.30;0.40;0.52;1" keyTimes="0;0.18;0.30;0.40;0.52;1"
+        path="M 220 310 L 350 310 L 600 330 L 880 300 L 1180 270 L 1240 270"/>
+    </circle>
+    <!-- 球5 橙色 D类：主池→分检→档3→排序→客服C -->
+    <circle r="9" fill="#fb923c">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="5.5s" keyPoints="0;0.18;0.30;0.40;0.52;1" keyTimes="0;0.18;0.30;0.40;0.52;1"
+        path="M 220 290 L 370 290 L 600 355 L 880 315 L 1180 290 L 1240 290"/>
+    </circle>
+    <!-- 球6 青色 无标签：主池→分检→档4→排序→客服D -->
+    <circle r="9" fill="#38bdf8">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="7.2s" keyPoints="0;0.18;0.30;0.40;0.52;1" keyTimes="0;0.18;0.30;0.40;0.52;1"
+        path="M 220 340 L 390 340 L 600 380 L 880 335 L 1180 310 L 1240 310"/>
+    </circle>
+    <!-- 球7 灰色 回流：客服E→底部虚线→主池 -->
+    <circle r="9" fill="#94a3b8">
+      <animateMotion dur="13s" repeatCount="indefinite" begin="8.8s" keyPoints="0;0.4;1" keyTimes="0;0.4;1"
+        path="M 1240 340 L 1240 470 L 130 470 L 130 405"/>
+    </circle>
+  </svg>
+
+  <!-- 阶段说明（随动画切换） -->
+  <div class="stagebar">
+    <div class="stage" id="s1"><b>① 主池出发</b>周债权进入分配流程；call_count 跨周保留，覆盖进度不丢</div>
+    <div class="stage" id="s2"><b>② 标签分检</b>F/E 硬性出池（权重做不到的事）；A 类缴费与争议分开</div>
+    <div class="stage" id="s3"><b>③ 金额四档</b>配额 62/83/73/42 锁定大额火力；档级补位保证 5 周全覆盖</div>
+    <div class="stage" id="s4"><b>④ 五键排序</b>豁免守承诺 → call_count 保覆盖 → score 比价值 → 金额/ID 保确定</div>
+    <div class="stage" id="s5"><b>⑤ 蛇形入池</b>300 户/人；未接通沿虚线回流主池，下轮让位给没打过的户</div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#34d399"></span>B 现实困难</span>
+    <span><span class="dot" style="background:#a78bfa"></span>F 历史遗留 → 出池</span>
+    <span><span class="dot" style="background:#f87171"></span>E 对抗失信 → 出池</span>
+    <span><span class="dot" style="background:#fbbf24"></span>A 合理争议</span>
+    <span><span class="dot" style="background:#fb923c"></span>D 惯性失约</span>
+    <span><span class="dot" style="background:#38bdf8"></span>无标签（未触达）</span>
+    <span><span class="dot" style="background:#94a3b8"></span>回流（未接通）</span>
+  </div>
+</div>
+
+<script>
+  // 阶段高亮与小球节奏同步（13s 循环）
+  var stages = [
+    { el: document.getElementById('s1'), t: 0 },
+    { el: document.getElementById('s2'), t: 1200 },
+    { el: document.getElementById('s3'), t: 3600 },
+    { el: document.getElementById('s4'), t: 6000 },
+    { el: document.getElementById('s5'), t: 8400 },
+  ];
+  function tick() {
+    var now = new Date().getTime() % 13000;
+    stages.forEach(function (s) {
+      var diff = now - s.t;
+      var active = diff >= 0 && diff < 2600;
+      s.el.className = active ? 'stage active' : 'stage';
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+</script>
+</body>
+</html>

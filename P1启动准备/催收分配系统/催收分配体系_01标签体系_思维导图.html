@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>标签体系 · 详细思维导图（V3.2）</title>
+<style>body{margin:0;background:#0b1120;display:flex;justify-content:center}svg{display:block}</style>
+</head>
+<body>
+<svg width="1660" height="1200" viewBox="0 0 1660 1200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1660" height="1200" fill="#0b1120"/>
+  <rect x="20" y="20" width="1620" height="1160" rx="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- 根 -->
+  <rect x="580" y="30" width="500" height="72" rx="12" fill="#8b5cf6"/>
+  <text x="830" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#fff" font-family="PingFang SC, Microsoft YaHei">🏷️ 标签体系 · 详细说明（V3.2）</text>
+  <text x="830" y="86" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.85)" font-family="PingFang SC, Microsoft YaHei">六类单级标签 + 无标签 ｜ 标签决定去向 ｜ AI 全自动判定</text>
+
+  <!-- 连线 -->
+  <g stroke="#334155" stroke-width="1.5" fill="none">
+    <path d="M 830 102 L 830 122 L 415 122 L 415 148"/>
+    <path d="M 830 102 L 830 122 L 830 148"/>
+    <path d="M 830 102 L 830 122 L 1245 122 L 1245 148"/>
+  </g>
+
+  <!-- ============ F 历史遗留型 ============ -->
+  <rect x="50" y="148" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="50" y="148" width="510" height="38" rx="10" fill="#2d1b4e"/>
+  <text x="70" y="173" font-size="16" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">F · 历史遗留型</text>
+  <text x="505" y="173" text-anchor="end" font-size="12" fill="#8b5cf6" font-family="PingFang SC, Microsoft YaHei">标签分：不参与</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="206">定义：前期物业/产权变更/开发遗留/资料缺失；号码失联亦归此类</text>
+    <text x="70" y="228" fill="#94a3b8">判定：lb关键词（号码无效/已搬家/出租/产权变更/开发遗留/资料缺失）</text>
+    <text x="70" y="248" fill="#94a3b8">　　　或号码状态API（空号/停机）｜ 外呼通道照常判定</text>
+    <text x="70" y="276" fill="#fbbf24">去向：历史遗留池（不占配额·催收列表不显示）</text>
+    <text x="70" y="296" fill="#fbbf24">策略：不催收。客服自行反馈到物业微信群，由物业核实处理</text>
+    <text x="70" y="322" fill="#34d399">变化：人工审核解除（唯一人工标签环节）→ 重新分类回主池</text>
+    <text x="70" y="348" fill="#34d399">　　　回款 → 终止；任何通道发现失联 → 维持F</text>
+  </g>
+
+  <!-- ============ E 对抗失信型 ============ -->
+  <rect x="575" y="148" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#ef4444" stroke-width="2"/>
+  <rect x="575" y="148" width="510" height="38" rx="10" fill="#3b1212"/>
+  <text x="595" y="173" font-size="16" font-weight="700" fill="#f87171" font-family="PingFang SC, Microsoft YaHei">E · 对抗失信型</text>
+  <text x="1030" y="173" text-anchor="end" font-size="12" fill="#ef4444" font-family="PingFang SC, Microsoft YaHei">标签分：20（仅回归参考）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="206">定义：将拒缴作为施压手段，长期无理扩大争议，破坏公共秩序</text>
+    <text x="595" y="228" fill="#94a3b8">判定：2周内拒接≥3次（号码有效）或 nt对抗词（报警/滚/休想/扩大争议）</text>
+    <text x="595" y="248" fill="#94a3b8">　　　拒接不分通道（客服/外呼都计）；内部三场景：纯拒接/拒接+对抗/接通+对抗</text>
+    <text x="595" y="276" fill="#fbbf24">去向：搁置池（本月不安排人工）</text>
+    <text x="595" y="296" fill="#fbbf24">策略：不刺激，短平快收尾。本月不安排人工；外呼机器人按正常催收流程继续通知。跨月回主池</text>
+    <text x="595" y="322" fill="#34d399">变化：跨月自动回主池按C标签分重排；接通态度软化→降C/A</text>
+    <text x="595" y="348" fill="#34d399">　　　回款 → 终止；判定即时生效（行为类）</text>
+  </g>
+
+  <!-- ============ A 合理争议型 ============ -->
+  <rect x="1100" y="148" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="1100" y="148" width="510" height="38" rx="10" fill="#3b2e0a"/>
+  <text x="1120" y="173" font-size="16" font-weight="700" fill="#fbbf24" font-family="PingFang SC, Microsoft YaHei">A · 合理争议型</text>
+  <text x="1555" y="173" text-anchor="end" font-size="12" fill="#f59e0b" font-family="PingFang SC, Microsoft YaHei">标签分：40（降速不放弃）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="206">定义：对服务质量、收费边界、历史问题存在可核验争议</text>
+    <text x="1120" y="228" fill="#94a3b8">判定：nt服务不满词（漏水/没修/太慢/收费不合理）且可核验（有具体事件）</text>
+    <text x="1120" y="248" fill="#94a3b8">　　　工单通道预留（对接数治理方后启用）；外呼→仅线索不判定</text>
+    <text x="1120" y="276" fill="#fbbf24">去向：正常通道（占配额·继续催收）</text>
+    <text x="1120" y="296" fill="#fbbf24">策略：缴费与争议分开——记录争议反馈物业微信群 + 继续催缴</text>
+    <text x="1120" y="322" fill="#34d399">变化：争议解决（物业反馈/业主确认）→ 标签重评，分数自然恢复</text>
+    <text x="1120" y="348" fill="#34d399">　　　回款 → 终止；反馈工单化：7天无回应弹提醒</text>
+  </g>
+
+  <!-- ============ B 现实困难型 ============ -->
+  <rect x="50" y="420" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+  <rect x="50" y="420" width="510" height="38" rx="10" fill="#0a2e1f"/>
+  <text x="70" y="445" font-size="16" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">B · 现实困难型</text>
+  <text x="505" y="445" text-anchor="end" font-size="12" fill="#10b981" font-family="PingFang SC, Microsoft YaHei">标签分：100（六类最高）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="478">定义：存在短期支付困难、突发家庭变故、阶段性现金流问题</text>
+    <text x="70" y="500" fill="#94a3b8">判定：nt困难词（失业/生病/没钱/低保/交不起/手头紧/变故）</text>
+    <text x="70" y="520" fill="#94a3b8">　　　长期困难亦归此类；外呼→仅线索，客服回拨确认后判定</text>
+    <text x="70" y="548" fill="#fbbf24">去向：正常通道（占配额·高优先级）</text>
+    <text x="70" y="568" fill="#fbbf24">策略：不施压，了解困难，引导分期方案</text>
+    <text x="70" y="594" fill="#34d399">变化：连续2次通话无困难词 → 转C；出现其他信号 → 重分类</text>
+    <text x="70" y="620" fill="#34d399">　　　转回需1次强困难词（滞回防抖）；标签延迟到下次轮换生效</text>
+  </g>
+
+  <!-- ============ D 惯性失约型 ============ -->
+  <rect x="575" y="420" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#f97316" stroke-width="2"/>
+  <rect x="575" y="420" width="510" height="38" rx="10" fill="#3b2208"/>
+  <text x="595" y="445" font-size="16" font-weight="700" fill="#fb923c" font-family="PingFang SC, Microsoft YaHei">D · 惯性失约型</text>
+  <text x="1030" y="445" text-anchor="end" font-size="12" fill="#f97316" font-family="PingFang SC, Microsoft YaHei">标签分：72</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="478">定义：长期拖欠，已形成失约惯性，对提醒、解释、协商敏感度低</text>
+    <text x="595" y="500" fill="#94a3b8">判定：rs无争议 + nt承诺词（好的/我交/这两天）+ 历史未兑现≥2次</text>
+    <text x="595" y="520" fill="#94a3b8">　　　首次承诺不判D（需历史）；外呼中的承诺不算数</text>
+    <text x="595" y="548" fill="#fbbf24">去向：正常通道（占配额）</text>
+    <text x="595" y="568" fill="#fbbf24">策略：承诺机制（记录时间·到期提醒）；按正常催收阶段流程走（不另安排）</text>
+    <text x="595" y="594" fill="#34d399">变化：28天无新承诺阶梯衰减→C（无小程序行为数据·系统未对接）</text>
+    <text x="595" y="620" fill="#34d399">　　　promise_count为数据字段，不做子级分级</text>
+  </g>
+
+  <!-- ============ C 观望拖延型 ============ -->
+  <rect x="1100" y="420" width="510" height="240" rx="10" fill="#0f1a2b" stroke="#64748b" stroke-width="2"/>
+  <rect x="1100" y="420" width="510" height="38" rx="10" fill="#1e293b"/>
+  <text x="1120" y="445" font-size="16" font-weight="700" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">C · 观望拖延型</text>
+  <text x="1555" y="445" text-anchor="end" font-size="12" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">标签分：60（基准）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="478">定义：并无明确抗辩理由，但受他人影响，长期拖延，试图搭便车</text>
+    <text x="1120" y="500" fill="#94a3b8">判定：五类均不命中 → 兜底归C；nt从众词（别人没交/大家都）强化</text>
+    <text x="1120" y="520" fill="#94a3b8">　　　首次通话无明确信号→C（"再看看"即观望信号）</text>
+    <text x="1120" y="548" fill="#fbbf24">去向：正常通道（占配额·主战场）</text>
+    <text x="1120" y="568" fill="#fbbf24">策略：制度压力——数据对照+守约共识教育</text>
+    <text x="1120" y="594" fill="#34d399">变化：任一明确信号 → 重分类；C是过渡态</text>
+    <text x="1120" y="620" fill="#34d399">　　　标签延迟到下次轮换生效（防抖动）</text>
+  </g>
+
+  <!-- ============ 无标签 ============ -->
+  <rect x="50" y="692" width="510" height="120" rx="10" fill="#0f1a2b" stroke="#334155" stroke-width="2"/>
+  <rect x="50" y="692" width="510" height="38" rx="10" fill="#1e293b"/>
+  <text x="70" y="717" font-size="16" font-weight="700" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">无标签（未触达）</text>
+  <text x="505" y="717" text-anchor="end" font-size="12" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">标签分：60 + 探索分100</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="750">首次触达前零数据，label=NULL（不是C）。首次触达重点了解原因/困难/争议</text>
+    <text x="70" y="772" fill="#94a3b8">探索分（本月未接通0次=100）保证首轮覆盖；AI/感受分缺省50中性</text>
+    <text x="70" y="796" fill="#34d399">首次通话后按判定规则产生标签</text>
+  </g>
+
+  <!-- ============ 判定通道与优先级 ============ -->
+  <rect x="575" y="692" width="510" height="120" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="575" y="692" width="510" height="38" rx="10" fill="#12233d"/>
+  <text x="595" y="717" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">判定通道（双通道规则）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="750">人工通话：内容类全判定（A/B/C/D）——可追问可核验</text>
+    <text x="595" y="770" fill="#94a3b8">外呼接通：行为类通判（E拒接/F失联）；内容类转 pending_signal 线索</text>
+    <text x="595" y="790" fill="#94a3b8">→ 进客服回拨队列 → 结合线索正式判定；外呼不给AI评分</text>
+    <text x="595" y="810" fill="#34d399">未接通/拒接1-2次：不产生标签（AI不猜），仅累计拒接次数</text>
+  </g>
+
+  <!-- ============ 优先级 ============ -->
+  <rect x="1100" y="692" width="510" height="120" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="1100" y="692" width="510" height="38" rx="10" fill="#12233d"/>
+  <text x="1120" y="717" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">多信号冲突判定优先级</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="750" fill="#fbbf24">F &gt; E &gt; A &gt; B &gt; D &gt; C（一次判定取最高命中）</text>
+    <text x="1120" y="770" fill="#94a3b8">F优先：号码都没了，对抗无从谈起；E优先：先冷却再谈其他</text>
+    <text x="1120" y="790" fill="#94a3b8">A优先：先解决服务争议，再谈困难；低优先级信号写入对话记录</text>
+    <text x="1120" y="810" fill="#34d399">判定时机：通话结束事件（主要）｜lb写入｜定时任务（跨月复查/衰减）</text>
+  </g>
+
+  <!-- 底部铁律 -->
+  <rect x="50" y="850" width="1560" height="130" rx="12" fill="#0f1a2b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="830" y="880" text-anchor="middle" font-size="15" font-weight="700" fill="#f87171" font-family="PingFang SC, Microsoft YaHei">判定铁律</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="12" fill="#cbd5e1">
+    <text x="830" y="910" text-anchor="middle">① 标签由 AI 全自动判定，客服零标注（感受分独立存储，不参与标签）</text>
+    <text x="830" y="932" text-anchor="middle">② 首次触达前 = 无标签 NULL，不是 C ｜ ③ 拒接/未接不产生标签，拒接累计3次才判E</text>
+    <text x="830" y="954" text-anchor="middle">④ 内容类标签变化延迟到下次轮换生效（防震荡）；行为类（E/F）即时生效</text>
+    <text x="830" y="976" text-anchor="middle">⑤ 标签变化触发 score 重算；同业主多债权标签独立判定</text>
+  </g>
+
+  <text x="830" y="1030" text-anchor="middle" font-size="12" fill="#475569" font-family="PingFang SC, Microsoft YaHei">数治理方 · 标签体系 V10 ｜ 配套：标签产生与变化.xlsx · 标签开发文档.xlsx</text>
+</svg>
+</body>
+</html>

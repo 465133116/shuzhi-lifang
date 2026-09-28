@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>五池分流 · 详细思维导图（V3.2）</title>
+<style>body{margin:0;background:#0b1120;display:flex;justify-content:center}svg{display:block}</style>
+</head>
+<body>
+<svg width="1660" height="1180" viewBox="0 0 1660 1180" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1660" height="1180" fill="#0b1120"/>
+  <rect x="20" y="20" width="1620" height="1140" rx="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- 根 -->
+  <rect x="580" y="30" width="500" height="72" rx="12" fill="#3b82f6"/>
+  <text x="830" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#fff" font-family="PingFang SC, Microsoft YaHei">🗂️ 五池分流 · 详细说明（V3.2）</text>
+  <text x="830" y="86" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.85)" font-family="PingFang SC, Microsoft YaHei">主池 · 个人池 · 意向池 · 历史遗留池 · 搁置池 ｜ 加门槛池与终止</text>
+
+  <g stroke="#334155" stroke-width="1.5" fill="none">
+    <path d="M 830 102 L 830 122 L 280 122 L 280 148"/>
+    <path d="M 830 102 L 830 122 L 830 148"/>
+    <path d="M 830 102 L 830 122 L 1380 122 L 1380 148"/>
+  </g>
+
+  <!-- ============ 主池 ============ -->
+  <rect x="50" y="148" width="510" height="290" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="50" y="148" width="510" height="38" rx="10" fill="#12233d"/>
+  <text x="70" y="173" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">主池（周池）</text>
+  <text x="505" y="173" text-anchor="end" font-size="11" fill="#3b82f6" font-family="PingFang SC, Microsoft YaHei">status: pool / retry</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="206" fill="#fbbf24">成员条件：周一管理员指定项目集 → 项目内全部未分配债权</text>
+    <text x="70" y="226" fill="#94a3b8">　　（含回流户 retry；A/B/C/D/无标签 + 已触达未接通）</text>
+    <text x="70" y="252" fill="#fbbf24">排序：金额四档 → 档内五键（豁免, call_count, score, 金额, ID）</text>
+    <text x="70" y="272" fill="#fbbf24">生命周期：每周重建，但 call_count 记在债权上跨周保留</text>
+    <text x="70" y="292" fill="#94a3b8">　　→ 池重建不丢覆盖进度，池底不饿死</text>
+    <text x="70" y="318" fill="#34d399">档级补位：每档取豁免+新户，不足缺额下传（B版·5周100%覆盖）</text>
+    <text x="70" y="338" fill="#34d399">池不足配额 → 按同键取全库回流户补足</text>
+    <text x="70" y="364" fill="#94a3b8">极端降级：池&lt;500户不分档全按五键；池&gt;15000户告警</text>
+    <text x="70" y="390" fill="#34d399">切点：月初重标定一次，月内固定；每月1日 call_count/探索清零</text>
+  </g>
+
+  <!-- ============ 个人池 ============ -->
+  <rect x="575" y="148" width="510" height="290" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="575" y="148" width="510" height="38" rx="10" fill="#12233d"/>
+  <text x="595" y="173" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">个人池</text>
+  <text x="1030" y="173" text-anchor="end" font-size="11" fill="#3b82f6" font-family="PingFang SC, Microsoft YaHei">status: assigned</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="206" fill="#fbbf24">成员条件：轮换分配选中，current_agent=本人</text>
+    <text x="595" y="226" fill="#fbbf24">容量：300户/人/周 = 正向X + 新数据40 + 总池(260-X)</text>
+    <text x="595" y="252" fill="#94a3b8">界面顺序：档1 → 档2 → 档3 → 档4，档内按五键</text>
+    <text x="595" y="272" fill="#94a3b8">档1约1.9周打透后配额下传——档1段越来越短属正常</text>
+    <text x="595" y="298" fill="#34d399">拨打期间列表冻结（打开时快照，会话内不重排）</text>
+    <text x="595" y="318" fill="#34d399">通话事件 → score 增量重算 → 下次打开生效</text>
+    <text x="595" y="344" fill="#fbbf24">周三轮换：个人池全回收重分（意向池不动）</text>
+    <text x="595" y="364" fill="#fbbf24">承诺豁免户：周三不回收（跟人走，保证承诺时点）</text>
+    <text x="595" y="390" fill="#94a3b8">客服动作：拨号 / 选感受分（必选） / 拉意向池</text>
+  </g>
+
+  <!-- ============ 意向池 ============ -->
+  <rect x="1100" y="148" width="510" height="290" rx="10" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="1100" y="148" width="510" height="38" rx="10" fill="#2d1b4e"/>
+  <text x="1120" y="173" font-size="16" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">意向池（唯一留人通道）</text>
+  <text x="1555" y="173" text-anchor="end" font-size="11" fill="#8b5cf6" font-family="PingFang SC, Microsoft YaHei">status: intent</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="206" fill="#fbbf24">成员条件：客服挂断后手动拉入，≤50户/人</text>
+    <text x="1120" y="226" fill="#fbbf24">三态计数：催收中 / 暂停 / 部分还款（还1分也算）</text>
+    <text x="1120" y="252" fill="#94a3b8">排序：金额降序；周三不回收·跟人走</text>
+    <text x="1120" y="272" fill="#94a3b8">全局锁定：其他客服看不到也不能分走</text>
+    <text x="1120" y="298" fill="#34d399">回款（物业报数）→ 自动移出终止</text>
+    <text x="1120" y="318" fill="#34d399">满额提醒：系统提示已满 → 客服自行选择剔除一户回主池（系统不自动剔除）</text>
+    <text x="1120" y="344" fill="#34d399">踢出/移出 → 回主池；结案终止 → 管理员操作</text>
+    <text x="1120" y="364" fill="#34d399">投诉 → 仅物业/管理员可暂停（计数暂停态）</text>
+    <text x="1120" y="390" fill="#94a3b8">离职回收后重新分派；排序按金额</text>
+  </g>
+
+  <!-- ============ 历史遗留池 ============ -->
+  <rect x="50" y="468" width="510" height="200" rx="10" fill="#0f1a2b" stroke="#8b5cf6" stroke-width="2"/>
+  <rect x="50" y="468" width="510" height="38" rx="10" fill="#2d1b4e"/>
+  <text x="70" y="493" font-size="16" font-weight="700" fill="#a78bfa" font-family="PingFang SC, Microsoft YaHei">历史遗留池（F类）</text>
+  <text x="505" y="493" text-anchor="end" font-size="11" fill="#8b5cf6" font-family="PingFang SC, Microsoft YaHei">status: legacy</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="526" fill="#fbbf24">成员：F类（历史遗留+号码失联），不占催收配额</text>
+    <text x="70" y="546" fill="#94a3b8">排序：建档时间；不参与轮换</text>
+    <text x="70" y="572" fill="#34d399">动作：客服发现后自行反馈到物业微信群，由物业核实处理</text>
+    <text x="70" y="592" fill="#34d399">回归：人工审核解除（号码恢复/新房主/资料补齐）→ 重新分类回主池</text>
+    <text x="70" y="618" fill="#94a3b8">回款 → 终止（物业报数确认）</text>
+  </g>
+
+  <!-- ============ 搁置池 ============ -->
+  <rect x="575" y="468" width="510" height="200" rx="10" fill="#0f1a2b" stroke="#ef4444" stroke-width="2"/>
+  <rect x="575" y="468" width="510" height="38" rx="10" fill="#3b1212"/>
+  <text x="595" y="493" font-size="16" font-weight="700" fill="#f87171" font-family="PingFang SC, Microsoft YaHei">搁置池（E类）</text>
+  <text x="1030" y="493" text-anchor="end" font-size="11" fill="#ef4444" font-family="PingFang SC, Microsoft YaHei">status: shelf</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="526" fill="#fbbf24">成员：E类对抗，不占人工配额；本月不安排人工</text>
+    <text x="595" y="546" fill="#94a3b8">排序：shelf_month（搁置月份）；不参与轮换</text>
+    <text x="595" y="572" fill="#34d399">回归：跨月自动回主池，按C标签分(60)参与排序重评（搁置期间外呼机器人按正常流程通知）</text>
+    <text x="595" y="592" fill="#34d399">接通态度软化 → 降C/A；每月1日跨月复查</text>
+    <text x="595" y="618" fill="#94a3b8">回款 → 终止；重新接通后按新标签重评</text>
+  </g>
+
+  <!-- ============ 门槛池 ============ -->
+  <rect x="1100" y="468" width="510" height="200" rx="10" fill="#0f1a2b" stroke="#64748b" stroke-width="2"/>
+  <rect x="1100" y="468" width="510" height="38" rx="10" fill="#1e293b"/>
+  <text x="1120" y="493" font-size="16" font-weight="700" fill="#94a3b8" font-family="PingFang SC, Microsoft YaHei">门槛池（&lt;500元）</text>
+  <text x="1555" y="493" text-anchor="end" font-size="11" fill="#64748b" font-family="PingFang SC, Microsoft YaHei">amount &lt; 500</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="1120" y="526" fill="#fbbf24">成员：金额&lt;500元的债权（真实数据366笔，占总金额0.4%）</text>
+    <text x="1120" y="546" fill="#94a3b8">不进正常四档；单独存放</text>
+    <text x="1120" y="572" fill="#34d399">补位：档4也打完后，按金额从大到小补位</text>
+    <text x="1120" y="592" fill="#34d399">性质：排队到最后，不是放弃（平均每笔¥362）</text>
+    <text x="1120" y="618" fill="#94a3b8">依据：催收火力优先给大中额（99.6%金额）</text>
+  </g>
+
+  <!-- ============ 终止 ============ -->
+  <rect x="575" y="698" width="510" height="110" rx="10" fill="#0f1a2b" stroke="#10b981" stroke-width="2"/>
+  <rect x="575" y="698" width="510" height="38" rx="10" fill="#0a2e1f"/>
+  <text x="595" y="723" font-size="16" font-weight="700" fill="#34d399" font-family="PingFang SC, Microsoft YaHei">终止（回款 done）</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="595" y="756">回款口径：全额=终止（物业报数为准）；部分还款=意向池三态，不算终止</text>
+    <text x="595" y="776" fill="#94a3b8">物业报数 → 系统当天自动终止 → 客服拨打前校验今日报数清单</text>
+    <text x="595" y="796" fill="#34d399">所有池的出口都是 done；状态守恒：各池户数+终止=总户数</text>
+  </g>
+
+  <!-- ============ 流转全景 ============ -->
+  <rect x="50" y="840" width="1560" height="130" rx="12" fill="#0f1a2b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="830" y="870" text-anchor="middle" font-size="15" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">池间流转全景</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="12" fill="#cbd5e1">
+    <text x="830" y="900" text-anchor="middle">主池 →（轮换分配）→ 个人池 →（未接通）→ 回流主池（call_count+1 让位）</text>
+    <text x="830" y="922" text-anchor="middle">个人池 →（客服拉入）→ 意向池 ｜ 主池 →（判F）→ 历史遗留池 ｜ 主池 →（判E）→ 搁置池</text>
+    <text x="830" y="944" text-anchor="middle">搁置池 →（跨月）→ 主池 ｜ 历史遗留池 →（人工解除）→ 主池 ｜ 门槛池 →（档4打完）→ 补位</text>
+    <text x="830" y="966" text-anchor="middle">所有池 →（物业报数回款）→ 终止 ｜ 状态迁移仅三个入口：分配引擎/标签引擎/客服手动</text>
+  </g>
+
+  <text x="830" y="1020" text-anchor="middle" font-size="12" fill="#475569" font-family="PingFang SC, Microsoft YaHei">数治理方 · 五池分流 ｜ 配套：规格文档三/五章 · 开发文档 09池管理</text>
+</svg>
+</body>
+</html>

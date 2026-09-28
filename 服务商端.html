@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · 服务商端</title>
+<style>
+:root {
+  --bg: #0b1120; --card: #0f172a; --card2: #131d33;
+  --border: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
+  --cyan: #06b6d4; --cyan-glow: rgba(6,182,212,0.12);
+  --cyan-bd: rgba(6,182,212,0.25);
+  --red: #ef4444; --green: #10b981; --amber: #f59e0b;
+  --blue: #3b82f6; --purple: #8b5cf6; --orange: #f97316;
+  --r: 10px; --sidebar-w: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:linear-gradient(180deg,var(--card2) 0%,var(--bg) 100%);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.side-logo{padding:18px 20px;font-weight:700;font-size:0.95rem;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.side-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 0 8px var(--orange)}
+.side-nav{flex:1;padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.84rem;color:var(--muted);cursor:pointer;transition:.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(249,115,22,0.05);color:var(--text)}
+.nav-item.active{background:rgba(249,115,22,0.1);color:var(--orange);border-left-color:var(--orange);font-weight:600}
+.nav-item .badge{margin-left:auto;font-size:0.66rem;padding:2px 8px;border-radius:10px;background:rgba(249,115,22,0.15);color:var(--orange)}
+.side-ft{padding:12px 20px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--muted)}
+.main{flex:1;padding:24px;overflow-y:auto;max-height:100vh}
+
+/* ═══ Common ═══ */
+.page-hd{margin-bottom:24px}
+.page-hd h1{font-size:1.4rem;font-weight:700}
+.page-hd .desc{font-size:0.8rem;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.stat-card .n{font-size:1.6rem;font-weight:800;color:var(--orange)}
+.stat-card .l{font-size:0.7rem;color:var(--muted);margin-top:4px}
+
+/* ═══ Table ═══ */
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem;white-space:nowrap}
+tr:hover td{background:rgba(249,115,22,0.02)}
+
+/* ═══ Tags ═══ */
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}
+.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}
+.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-orange{background:rgba(249,115,22,0.12);color:var(--orange)}
+.tag-muted{background:rgba(100,116,139,0.12);color:var(--muted)}
+
+/* ═══ Buttons ═══ */
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;transition:.15s;font-family:inherit}
+.btn:hover{opacity:.85}
+.btn-p{background:var(--orange);color:#fff;font-weight:600}
+.btn-c{background:var(--cyan);color:#000;font-weight:600}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-g{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-sm{padding:4px 10px;font-size:0.68rem}
+.btn-blk{display:block;width:100%}
+
+/* ═══ Forms ═══ */
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;font-family:inherit;background:var(--card2);color:var(--text);margin-bottom:4px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
+label{display:block;font-size:0.73rem;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+textarea{resize:vertical;min-height:70px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ═══ Alert ═══ */
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-s{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:var(--green)}
+.alert-r{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+
+/* ═══ Progress ═══ */
+.progress-steps{display:flex;align-items:center;gap:0;margin:20px 0}
+.ps-node{text-align:center;flex:1;position:relative}
+.ps-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-weight:700;font-size:0.8rem;border:2px solid var(--border);background:var(--card)}
+.ps-circle.done{background:var(--green);border-color:var(--green);color:#fff}
+.ps-circle.on{background:var(--orange);border-color:var(--orange);color:#fff}
+.ps-circle.wait{background:var(--card);border-color:var(--border);color:var(--muted)}
+.ps-label{font-size:0.7rem;color:var(--muted)}
+.ps-label.on{color:var(--orange);font-weight:600}
+.ps-line{flex:1;height:2px;background:var(--border);min-width:20px;margin-top:-24px;position:relative;z-index:0}
+.ps-line.done{background:var(--green)}
+
+/* ═══ Tier Cards ═══ */
+.tier-card{border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:12px}
+.tier-card.t1{border-color:rgba(249,115,22,0.3);background:rgba(249,115,22,0.03)}
+.tier-card.t2{border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.02)}
+.tier-badge{display:inline-block;padding:3px 12px;border-radius:12px;font-size:0.68rem;font-weight:700;margin-bottom:8px}
+.tier-badge.t1{background:rgba(249,115,22,0.15);color:var(--orange)}
+.tier-badge.t2{background:rgba(6,182,212,0.15);color:var(--cyan)}
+
+/* ═══ Modal ═══ */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:1rem;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ═══ Flow ═══ */
+.flow-row{display:flex;align-items:center;gap:12px;padding:16px 0;flex-wrap:wrap;justify-content:center}
+.flow-block{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;text-align:center;min-width:120px}
+.flow-block.highlight{border-color:var(--orange);background:rgba(249,115,22,0.05)}
+.flow-arrow{color:var(--muted);font-size:1.2rem;font-weight:700}
+.flow-block .fbt{font-weight:700;font-size:0.82rem}
+.flow-block .fbs{font-size:0.68rem;color:var(--muted);margin-top:4px}
+
+@media(max-width:800px){.sidebar{display:none}.stats-row{grid-template-columns:1fr 1fr}.frow,.frow3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="side-logo"><div class="dot"></div>服务商端</div>
+  <div class="side-nav" id="nav"></div>
+  <div class="side-ft">sgzf_sv_ · 两级供应链</div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main" id="main"></div>
+</div>
+
+<script>
+// ═══════════ DATA ENGINE ═══════════
+var PREFIX='sgzf_sv_';
+var D={
+  // 服务商自身信息
+  profile:{id:'SV001',name:'绿城园林工程有限公司',contact:'周工 13900005555',addr:'城东区绿洲路9号',lic:'YL2024001',cat:'绿化养护',status:'已入驻',credit:88,regDate:'2026-03-15'},
+  // T1：平台供应链入驻状态
+  t1:{applied:true,approved:true,approveDate:'2026-03-20',status:'已通过'},
+  // T2：已加入的小区
+  t2:[
+    {cid:'c1',name:'阳光花园',status:'已加入',joinDate:'2026-04-01',orders:6,rating:4.6},
+    {cid:'c2',name:'翠苑新村',status:'已加入',joinDate:'2026-05-10',orders:2,rating:4.0},
+    {cid:'c3',name:'锦绣家园',status:'待审核',joinDate:'2026-07-20',orders:0,rating:0}
+  ],
+  // 可用小区列表（可申请的）
+  availableCommunities:[
+    {id:'c3',name:'锦绣家园',addr:'城南区锦绣大道22号',户数:600,物业:'王经理',status:'申请中'},
+    {id:'c4',name:'碧水湾',addr:'城北区碧水路1号',户数:800,物业:'刘经理',status:'可申请'},
+    {id:'c5',name:'金色家园',addr:'城西区金色路88号',户数:450,物业:'陈经理',status:'可申请'}
+  ],
+  // 询价/订单
+  inquiries:[
+    {id:'INQ001',community:'阳光花园',item:'小区绿化修剪',date:'2026-07-22',deadline:'2026-07-25',status:'待报价'},
+    {id:'INQ002',community:'翠苑新村',item:'树木病虫害防治',date:'2026-07-18',deadline:'2026-07-21',status:'已报价',quote:8500}
+  ],
+  orders:[
+    {id:'ORD001',community:'阳光花园',item:'春季绿化养护',amount:12000,date:'2026-04-05',status:'已完成',rating:5},
+    {id:'ORD002',community:'阳光花园',item:'草坪补种',amount:3500,date:'2026-06-10',status:'已完成',rating:4},
+    {id:'ORD003',community:'翠苑新村',item:'绿篱修剪',amount:2800,date:'2026-06-20',status:'履约中',rating:0}
+  ]
+};
+
+function save(){localStorage.setItem(PREFIX+'data',JSON.stringify(D))}
+function load(){
+  try{var d=localStorage.getItem(PREFIX+'data');if(d)D=JSON.parse(d)}
+  catch(e){}
+  if(!D.profile) location.reload();
+}
+load();
+
+// ═══════════ NAV ═══════════
+var tabs=[
+  {id:'home',label:'工作台',icon:'🏠'},
+  {id:'t1',label:'平台入驻',icon:'🏢'},
+  {id:'t2',label:'小区供应链',icon:'🏘️'},
+  {id:'inquiry',label:'询价通知',icon:'📩'},
+  {id:'orders',label:'我的订单',icon:'📦'},
+  {id:'area',label:'服务范围',icon:'📍'},
+  {id:'capacity',label:'产能档期',icon:'📅'},
+  {id:'template',label:'报价模板',icon:'📝'},
+  {id:'progress',label:'履约上报',icon:'📊'},
+  {id:'dashboard',label:'绩效仪表板',icon:'📈'},
+  {id:'profile',label:'企业档案',icon:'📋'}
+];
+var cur='home';
+
+function rn(){
+  var h='';
+  tabs.forEach(function(t){
+    var cls=t.id===cur?' active':'';
+    var bd='';
+    if(t.id==='inquiry'){
+      var pc=D.inquiries.filter(function(i){return i.status==='待报价'}).length;
+      if(pc) bd='<span class="badge">'+pc+'</span>';
+    }
+    h+='<div class="nav-item'+cls+'" onclick="sw(\''+t.id+'\')">'+t.icon+' '+t.label+bd+'</div>';
+  });
+  document.getElementById('nav').innerHTML=h;
+}
+
+function sw(id){cur=id;rn();render(id)}
+
+// ═══════════ RENDER ═══════════
+function render(t){
+  if(t==='home') rhome();
+  else if(t==='t1') rt1();
+  else if(t==='t2') rt2();
+  else if(t==='inquiry') rinq();
+  else if(t==='orders') rord();
+  else if(t==='area') rarea();
+  else if(t==='capacity') rcap();
+  else if(t==='template') rtpl();
+  else if(t==='progress') rprog();
+  else if(t==='dashboard') rdash();
+  else if(t==='profile') rprof();
+}
+
+// ─── HOME ───
+function rhome(){
+  var t1st=D.t1.approved?'<span class="tag tag-green">T1·已入驻</span>':'<span class="tag tag-amber">T1·待审核</span>';
+  var t2c=D.t2.filter(function(c){return c.status==='已加入'}).length;
+  var pendInq=D.inquiries.filter(function(i){return i.status==='待报价'}).length;
+
+  var h='<div class="page-hd"><h1>🏠 工作台</h1><div class="desc">'+D.profile.name+' | 信用分 '+D.profile.credit+' | '+t1st+'</div></div>';
+
+  h+='<div class="stats-row">';
+  h+='<div class="stat-card"><div class="n">'+t2c+'</div><div class="l">已加入小区</div></div>';
+  h+='<div class="stat-card"><div class="n">'+D.orders.length+'</div><div class="l">历史订单</div></div>';
+  h+='<div class="stat-card"><div class="n" style="color:'+(pendInq?'var(--amber)':'var(--text))+'">'+pendInq+'</div><div class="l">待报价询价</div></div>';
+  h+='<div class="stat-card"><div class="n">'+D.profile.credit+'</div><div class="l">信用分</div></div>';
+  h+='</div>';
+
+  // 两级供应链状态
+  h+='<div class="card"><h3 style="margin-bottom:16px">🏗️ 供应链层级状态</h3>';
+  h+='<div class="flow-row">';
+  h+='<div class="flow-block highlight"><div class="fbt">服务商</div><div class="fbs">'+D.profile.name+'</div></div>';
+  h+='<div class="flow-arrow">→</div>';
+  h+='<div class="flow-block '+(D.t1.approved?'':'highlight')+'"><div class="fbt">T1 平台供应链</div><div class="fbs">'+(D.t1.approved?'✅ 已通过':'⏳ 审核中')+'</div></div>';
+  h+='<div class="flow-arrow">→</div>';
+  h+='<div class="flow-block"><div class="fbt">T2 小区供应链</div><div class="fbs">已加入 '+t2c+' 个小区</div></div>';
+  h+='</div>';
+  h+='</div>';
+
+  // 最近询价
+  if(D.inquiries.length){
+    h+='<div class="card"><div class="card-hd"><h3>📩 最近询价</h3></div>';
+    D.inquiries.slice(0,3).forEach(function(i){
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">';
+      h+='<div><strong>'+i.item+'</strong><br><span style="font-size:0.72rem;color:var(--muted)">'+i.community+' · 截止 '+i.deadline+'</span></div>';
+      h+='<span class="tag '+(i.status==='待报价'?'tag-amber':'tag-green')+'">'+i.status+'</span></div>';
+    });
+    h+='</div>';
+  }
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── T1 平台入驻 ───
+function rt1(){
+  var h='<div class="page-hd"><h1>🏢 平台供应链入驻</h1><div class="desc">T1级：加入数治理方平台供应商池——这是进入任何小区供应链的前提</div></div>';
+
+  if(D.t1.approved){
+    // 已入驻
+    h+='<div class="card" style="text-align:center;padding:30px">';
+    h+='<div style="font-size:3rem;margin-bottom:12px">✅</div>';
+    h+='<h3 style="margin-bottom:8px;color:var(--green)">已通过平台供应链审核</h3>';
+    h+='<p style="font-size:0.82rem;color:var(--muted)">入驻日期：'+D.t1.approveDate+' | 信用分：'+D.profile.credit+'</p>';
+    h+='<p style="font-size:0.78rem;color:var(--muted);margin-top:12px">你现在可以申请加入具体小区的供应链（T2）</p>';
+    h+='<button class="btn btn-p" onclick="sw(\'t2\')" style="margin-top:12px">去申请小区 →</button>';
+    h+='</div>';
+  } else {
+    // 未入驻：展示申请流程
+    h+='<div class="card"><h3 style="margin-bottom:16px">入驻进度</h3>';
+    h+='<div class="progress-steps">';
+    h+='<div class="ps-node"><div class="ps-circle done">1</div><div class="ps-label on">提交资料</div></div>';
+    h+='<div class="ps-line done"></div>';
+    h+='<div class="ps-node"><div class="ps-circle on">2</div><div class="ps-label on">API自动审核</div></div>';
+    h+='<div class="ps-line"></div>';
+    h+='<div class="ps-node"><div class="ps-circle wait">3</div><div class="ps-label">平台人工复核</div></div>';
+    h+='<div class="ps-line"></div>';
+    h+='<div class="ps-node"><div class="ps-circle wait">4</div><div class="ps-label">入驻成功</div></div>';
+    h+='</div>';
+    h+='<div class="alert alert-i">当前阶段：API自动审核中——系统正在校验工商信息、司法风险、行业资质、经营状态</div>';
+
+    // 入驻表单
+    h+='<h3 style="margin:20px 0 12px">📝 入驻申请资料</h3>';
+    h+='<div class="frow"><div><label>企业名称 *</label><input value="'+D.profile.name+'"></div><div><label>统一社会信用代码 *</label><input placeholder="18位"></div></div>';
+    h+='<div class="frow"><div><label>联系人 *</label><input value="'+D.profile.contact+'"></div><div><label>联系电话</label><input></div></div>';
+    h+='<div><label>企业地址</label><input value="'+D.profile.addr+'"></div>';
+    h+='<div class="frow3"><div><label>主营品类 *</label><select><option>绿化养护</option><option>电梯维保</option><option>消防检测</option><option>管道工程</option><option>安防弱电</option><option>清洁保洁</option><option>垃圾清运</option><option>防水工程</option></select></div><div><label>注册资本（万元）</label><input type="number" placeholder="0"></div><div><label>成立年限</label><input type="number" placeholder="0"></div></div>';
+    h+='<div class="frow"><div><label>行业资质编号</label><input value="'+D.profile.lic+'"></div><div><label>资质有效期</label><input type="date"></div></div>';
+    h+='<div><label>过往案例</label><textarea placeholder="描述过往服务的小区或项目经历（可选，但有助于审核通过）"></textarea></div>';
+    h+='<div class="frow"><div><label>营业执照</label><input type="file" style="padding:7px"></div><div><label>资质证书</label><input type="file" style="padding:7px"></div></div>';
+    h+='<div class="alert alert-w">⚠️ 提交后将经过：天眼查工商校验 → 司法风险扫描 → 资质核验 → 平台人工复核。预计1-3个工作日。</div>';
+    h+='<button class="btn btn-p btn-blk" style="padding:12px;font-size:0.95rem">提交入驻申请</button>';
+    h+='</div>';
+  }
+
+  // 入驻须知
+  h+='<div class="card" style="margin-top:16px"><h3 style="margin-bottom:12px">📜 入驻须知</h3>';
+  h+='<div style="font-size:0.8rem;color:var(--muted);line-height:2">';
+  h+='<p>1. 平台供应链（T1）是进入任何小区供应链（T2）的<strong style="color:var(--orange)">前提条件</strong></p>';
+  h+='<p>2. 入驻审核包含：工商状态校验、司法风险扫描、行业资质核验、口碑评价分析</p>';
+  h+='<p>3. 通过T1后，你可以在"小区供应链"页面申请加入具体小区</p>';
+  h+='<p>4. 各小区独立管理自己的T2供应商池，加入一个小区不代表自动加入其他小区</p>';
+  h+='<p>5. 信用分由外部数据（工商/司法/资质）和内部履约（验收评分/时效/复购）综合计算</p>';
+  h+='<p>6. 信用分低于60或出现失信记录将被自动冻结，从所有小区供应链移除</p>';
+  h+='</div></div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── T2 小区供应链 ───
+function rt2(){
+  var h='<div class="page-hd"><h1>🏘️ 小区供应链</h1><div class="desc">T2级：申请加入具体小区的供应商池——必须先通过T1平台审核</div></div>';
+
+  if(!D.t1.approved){
+    h+='<div class="card" style="text-align:center;padding:40px">';
+    h+='<div style="font-size:3rem;margin-bottom:12px">🔒</div>';
+    h+='<h3 style="margin-bottom:8px;color:var(--amber)">请先完成平台供应链（T1）入驻</h3>';
+    h+='<p style="font-size:0.82rem;color:var(--muted)">只有通过T1审核的服务商，才有资格申请加入小区供应链</p>';
+    h+='<button class="btn btn-p" onclick="sw(\'t1\')" style="margin-top:16px">去完成T1入驻 →</button>';
+    h+='</div>';
+    document.getElementById('main').innerHTML=h;return;
+  }
+
+  // 已加入的小区
+  h+='<div class="card"><div class="card-hd"><h3>✅ 已加入的小区</h3></div>';
+  var joined=D.t2.filter(function(c){return c.status==='已加入'});
+  if(!joined.length) h+='<p style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px">暂未加入任何小区</p>';
+  else {
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+    joined.forEach(function(c){
+      h+='<div class="tier-card t2"><div class="tier-badge t2">T2·小区供应商</div>';
+      h+='<div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">'+c.name+'</div>';
+      h+='<div style="font-size:0.72rem;color:var(--muted)">加入日期：'+c.joinDate+' | 完成订单：'+c.orders+'单 | 评分：'+c.rating+'</div></div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // 待审核/可申请的小区
+  h+='<div class="card"><div class="card-hd"><h3>📋 可申请的小区</h3></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+  D.availableCommunities.forEach(function(c){
+    var st=c.status==='申请中'?'<span class="tag tag-amber">申请中</span>':'<span class="tag tag-cyan">可申请</span>';
+    var btn=c.status==='申请中'?'<button class="btn btn-o btn-sm" disabled>等待审核</button>':'<button class="btn btn-c btn-sm" onclick="applyCommunity(\''+c.id+'\')">申请加入</button>';
+    h+='<div class="tier-card"><div style="display:flex;justify-content:space-between;align-items:start">';
+    h+='<div><div style="font-weight:700;font-size:0.88rem">'+c.name+'</div><div style="font-size:0.7rem;color:var(--muted)">'+c.addr+' | '+c.户数+'户 | 物业：'+c.物业+'</div></div>';
+    h+=st+'</div><div style="margin-top:8px">'+btn+'</div></div>';
+  });
+  h+='</div></div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+function applyCommunity(cid){
+  var c=D.availableCommunities.find(function(x){return x.id===cid});if(!c)return;
+  if(!D.t1.approved){alert('请先完成平台供应链（T1）入驻');return;}
+  c.status='申请中';
+  D.t2.push({cid:cid,name:c.name,status:'待审核',joinDate:new Date().toISOString().slice(0,10),orders:0,rating:0});
+  save();rt2();
+  alert('已向 '+c.name+' 提交加入申请，等待业委会审核');
+}
+
+// ─── INQUIRIES ───
+function rinq(){
+  var h='<div class="page-hd"><h1>📩 询价通知</h1><div class="desc">来自已加入小区的采购询价</div></div>';
+
+  if(!D.inquiries.length){
+    h+='<div class="card" style="text-align:center;padding:40px"><p style="font-size:2rem;margin-bottom:8px">📭</p><p style="color:var(--muted)">暂无询价通知</p></div>';
+    document.getElementById('main').innerHTML=h;return;
+  }
+
+  D.inquiries.forEach(function(i){
+    var stTag=i.status==='待报价'?'tag-amber':'tag-green';
+    var act=i.status==='待报价'?'<button class="btn btn-p btn-sm" onclick="quoteInquiry(\''+i.id+'\')">报价</button>':'<span class="tag tag-green">已报价 ¥'+i.quote.toLocaleString()+'</span>';
+    h+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:start">';
+    h+='<div><h3>'+i.item+'</h3><div style="font-size:0.78rem;color:var(--muted);margin-top:4px">'+i.community+' | 发来日期：'+i.date+' | 截止：'+i.deadline+'</div></div>';
+    h+='<div style="text-align:right"><span class="tag '+stTag+'">'+i.status+'</span><div style="margin-top:8px">'+act+'</div></div>';
+    h+='</div></div>';
+  });
+
+  document.getElementById('main').innerHTML=h;
+}
+
+function quoteInquiry(id){
+  var amt=prompt('请输入报价金额（元）：');
+  if(!amt||isNaN(parseInt(amt)))return;
+  var i=D.inquiries.find(function(x){return x.id===id});if(!i)return;
+  i.status='已报价';i.quote=parseInt(amt);save();rinq();
+}
+
+// ─── ORDERS ───
+function rord(){
+  var h='<div class="page-hd"><h1>📦 我的订单</h1><div class="desc">'+D.orders.length+' 单</div></div>';
+  h+='<div class="card" style="padding:0;overflow:hidden"><table>';
+  h+='<tr><th>编号</th><th>小区</th><th>项目</th><th>金额</th><th>日期</th><th>状态</th><th>评分</th></tr>';
+  D.orders.forEach(function(o){
+    var st=o.status==='已完成'?'tag-green':o.status==='履约中'?'tag-cyan':'tag-muted';
+    var rt=o.rating?'★'.repeat(o.rating):'—';
+    h+='<tr><td>'+o.id+'</td><td>'+o.community+'</td><td>'+o.item+'</td><td>¥'+o.amount.toLocaleString()+'</td><td>'+o.date+'</td><td><span class="tag '+st+'">'+o.status+'</span></td><td>'+rt+'</td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── 服务范围 ───
+function rarea(){
+  var h='<div class="page-hd"><h1>📍 服务范围设置</h1><div class="desc">设置你愿意服务的地理范围和品类——AI匹配时参考此设置</div></div>';
+  h+='<div class="card"><h3 style="margin-bottom:16px">地理范围</h3>';
+  h+='<div class="frow"><div><label>服务中心地址</label><input value="城东区绿洲路9号"></div><div><label>最大服务半径</label><select><option>5km · 近场圈</option><option>15km · 城区圈</option><option selected>25km · 全城圈</option></select></div></div>';
+  h+='<div><label>优先服务区域</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
+  h+='<span class="tag tag-green">城东区 ✓</span><span class="tag tag-green">城北区 ✓</span><span class="tag tag-amber">城西区（加收路费）</span><span class="tag tag-red">城南区 ✗</span>';
+  h+='</div></div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:16px">服务品类</h3>';
+  h+='<table><tr><th>品类</th><th>是否提供</th><th>最低起订金额</th><th>备注</th></tr>';
+  h+='<tr><td>绿化养护</td><td><span class="tag tag-green">主营</span></td><td>¥1,500</td><td>含修剪、补种、施肥</td></tr>';
+  h+='<tr><td>树木修剪</td><td><span class="tag tag-green">主营</span></td><td>¥2,000</td><td>需现场评估</td></tr>';
+  h+='<tr><td>病虫害防治</td><td><span class="tag tag-green">提供</span></td><td>¥800</td><td>季节性服务</td></tr>';
+  h+='<tr><td>草坪铺设</td><td><span class="tag tag-amber">有条件</span></td><td>¥3,000</td><td>需提前15天预订</td></tr>';
+  h+='<tr><td>园林设计</td><td><span class="tag tag-red">不提供</span></td><td>—</td><td>—</td></tr>';
+  h+='</table></div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── 产能档期 ───
+function rcap(){
+  var h='<div class="page-hd"><h1>📅 产能档期管理</h1><div class="desc">设置你的接单能力和可用档期——避免超负荷接单</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:16px">当前产能状态</h3>';
+  h+='<div class="stats-row">';
+  h+='<div class="stat-card"><div class="n" style="color:var(--green)">3</div><div class="l">本周可接新单</div></div>';
+  h+='<div class="stat-card"><div class="n" style="color:var(--cyan)">2</div><div class="l">进行中订单</div></div>';
+  h+='<div class="stat-card"><div class="n">5</div><div class="l">最大并行订单</div></div>';
+  h+='<div class="stat-card"><div class="n" style="color:var(--amber)">60%</div><div class="l">产能利用率</div></div>';
+  h+='</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:16px">近两周档期</h3>';
+  h+='<table><tr><th>日期</th><th>上午</th><th>下午</th><th>已安排</th></tr>';
+  var today=new Date();
+  for(var i=0;i<10;i++){
+    var d=new Date(today);d.setDate(d.getDate()+i);
+    var ds=d.toISOString().slice(0,10);
+    var wd=['日','一','二','三','四','五','六'][d.getDay()];
+    var am=i<3?'<span class="tag tag-red">已满</span>':'<span class="tag tag-green">可接</span>';
+    var pm=i<2?'<span class="tag tag-red">已满</span>':i<4?'<span class="tag tag-amber">仅1单</span>':'<span class="tag tag-green">可接</span>';
+    h+='<tr><td>'+ds+' 周'+wd+'</td><td>'+am+'</td><td>'+pm+'</td><td>'+(i<3?'ORD001/2/3':'—')+'</td></tr>';
+  }
+  h+='</table></div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── 报价模板 ───
+function rtpl(){
+  var h='<div class="page-hd"><h1>📝 报价模板</h1><div class="desc">预设报价模板，收到询价时快速响应</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">常用模板</h3>';
+  var tmpls=[
+    {name:'绿化修剪·标准',cat:'绿化养护',unit:'按面积',price:'¥3.5/㎡',labor:2,material:'含清运',period:'1-2天',note:'高度<3m'},
+    {name:'草坪补种·标准',cat:'绿化养护',unit:'按面积',price:'¥8/㎡',labor:3,material:'草皮+营养土',period:'2-3天',note:'含平整土地'},
+    {name:'病虫害防治',cat:'绿化养护',unit:'按棵/按面积',price:'¥15/棵',labor:1,material:'药剂',period:'0.5天',note:'需提前通知业主'},
+    {name:'树木修剪·高空',cat:'绿化养护',unit:'按棵',price:'¥200/棵',labor:2,material:'含清运',period:'1天',note:'需升降设备'}
+  ];
+  tmpls.forEach(function(t,i){
+    h+='<div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:8px">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><strong>模板'+(i+1)+'：'+t.name+'</strong><span class="tag tag-cyan">'+t.cat+'</span></div>';
+    h+='<div class="frow3" style="font-size:0.76rem;color:var(--muted)">';
+    h+='<div>计价：'+t.price+'</div><div>人工：'+t.labor+'人</div><div>工期：'+t.period+'</div>';
+    h+='<div>材料：'+t.material+'</div><div>备注：'+t.note+'</div><div></div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  h+='<button class="btn btn-p" style="margin-top:8px">➕ 新建报价模板</button>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── 履约上报 ───
+function rprog(){
+  var activeOrders=D.orders.filter(function(o){return o.status==='履约中'});
+  var h='<div class="page-hd"><h1>📊 履约进度上报</h1><div class="desc">向物业和业委会实时同步施工进度</div></div>';
+
+  if(!activeOrders.length){
+    h+='<div class="card" style="text-align:center;padding:40px"><p style="font-size:2rem;margin-bottom:8px">✅</p><p style="color:var(--muted)">暂无进行中的订单</p></div>';
+  } else {
+    activeOrders.forEach(function(o){
+      h+='<div class="card"><h3 style="margin-bottom:12px">'+o.item+' <span class="tag tag-cyan">'+o.community+'</span></h3>';
+      h+='<div class="frow" style="font-size:0.78rem;margin-bottom:12px"><div><strong>订单号：</strong>'+o.id+'</div><div><strong>金额：</strong>¥'+o.amount.toLocaleString()+'</div></div>';
+
+      // Progress stages
+      h+='<div style="margin:16px 0"><strong style="font-size:0.8rem">施工进度</strong></div>';
+      var stages=['接单确认','人员到场','施工中','自检完成','待验收'];
+      var curStage=Math.floor(Math.random()*3)+1;
+      h+='<div class="progress-steps">';
+      stages.forEach(function(s,i){
+        var cls=i<curStage?'done':i===curStage?'on':'wait';
+        h+='<div class="ps-node"><div class="ps-circle '+cls+'">'+(i+1)+'</div><div class="ps-label'+(i===curStage?' on':'')+'">'+s+'</div></div>';
+        if(i<stages.length-1) h+='<div class="ps-line'+(i<curStage?' done':'')+'"></div>';
+      });
+      h+='</div>';
+
+      h+='<div style="background:var(--card2);padding:12px;border-radius:8px;margin:12px 0;font-size:0.78rem">';
+      h+='<div style="color:var(--muted)">最近更新：7月26日 14:30 — 已完成草坪翻土，明日开始铺设草皮</div></div>';
+      h+='<div><label>上报进度</label><textarea placeholder="描述当前进度..."></textarea></div>';
+      h+='<button class="btn btn-p btn-sm" style="margin-top:8px">📤 上报进度</button></div>';
+    });
+  }
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── 绩效仪表板 ───
+function rdash(){
+  var h='<div class="page-hd"><h1>📈 绩效仪表板</h1><div class="desc">你的服务表现在平台和小区眼中的数据画像</div></div>';
+
+  h+='<div class="stats-row">';
+  h+='<div class="stat-card"><div class="n" style="color:var(--green)">88</div><div class="l">信用分</div></div>';
+  h+='<div class="stat-card"><div class="n">94%</div><div class="l">按时完工率</div></div>';
+  h+='<div class="stat-card"><div class="n">4.6</div><div class="l">平均评分</div></div>';
+  h+='<div class="stat-card"><div class="n">2</div><div class="l">被邀请小区数</div></div>';
+  h+='</div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:16px">信用分趋势（近6个月）</h3>';
+  h+='<div style="display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 8px">';
+  var trend=[82,84,85,83,87,88];
+  trend.forEach(function(v,i){
+    h+='<div style="flex:1;text-align:center"><div style="background:var(--orange);height:'+(v/100*100)+'px;border-radius:4px 4px 0 0;display:flex;align-items:flex-start;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff;padding-top:4px">'+v+'</div><div style="font-size:0.6rem;color:var(--muted);margin-top:4px">'+(i+1)+'月</div></div>';
+  });
+  h+='</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">各小区评价对比</h3>';
+  h+='<table><tr><th>小区</th><th>完成订单</th><th>评分</th><th>复购</th><th>均价</th></tr>';
+  h+='<tr><td>阳光花园</td><td>6单</td><td>★4.6</td><td>是</td><td>¥5,200</td></tr>';
+  h+='<tr><td>翠苑新村</td><td>2单</td><td>★4.0</td><td>—</td><td>¥2,800</td></tr>';
+  h+='</table></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">同行对比（绿化养护品类）</h3>';
+  h+='<div style="font-size:0.78rem;color:var(--muted);line-height:2">';
+  h+='<p>· 信用分：88分 — 超过品类均值（76分）+12分</p>';
+  h+='<p>· 按时完工率：94% — 超过品类均值（82%）+12%</p>';
+  h+='<p>· 平均报价偏离度：+8% — 略高于市场均价</p>';
+  h+='<p>· 复购率：67% — 品类均值45%，显著优于同行</p>';
+  h+='</div></div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ─── PROFILE ───
+function rprof(){
+  var p=D.profile;
+  var h='<div class="page-hd"><h1>📋 企业档案</h1><div class="desc">信用分：'+p.credit+' | 状态：'+p.status+'</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:16px">基本信息</h3>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.82rem">';
+  h+='<div><strong>企业名称：</strong>'+p.name+'</div><div><strong>编号：</strong>'+p.id+'</div>';
+  h+='<div><strong>联系人：</strong>'+p.contact+'</div><div><strong>地址：</strong>'+p.addr+'</div>';
+  h+='<div><strong>主营品类：</strong>'+p.cat+'</div><div><strong>资质编号：</strong>'+p.lic+'</div>';
+  h+='<div><strong>入驻日期：</strong>'+p.regDate+'</div><div><strong>信用分：</strong>'+p.credit+'</div>';
+  h+='</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">供应链层级</h3>';
+  h+='<div class="tier-card t1"><div class="tier-badge t1">T1·平台供应链</div>';
+  h+='<div style="font-size:0.82rem">状态：<span class="tag tag-green">'+D.t1.status+'</span> | 通过日期：'+D.t1.approveDate+'</div></div>';
+  h+='<div class="tier-card t2"><div class="tier-badge t2">T2·小区供应链</div>';
+  h+='<div style="font-size:0.82rem">已加入 '+D.t2.filter(function(c){return c.status==='已加入'}).length+' 个小区</div>';
+  D.t2.forEach(function(c){
+    h+='<div style="font-size:0.78rem;margin-top:4px;color:var(--muted)">· '+c.name+'（'+c.status+'）</div>';
+  });
+  h+='</div>';
+
+  document.getElementById('main').innerHTML=h;
+}
+
+// ═══════════ INIT ═══════════
+rn();render('home');
+</script>
+</body>
+</html>

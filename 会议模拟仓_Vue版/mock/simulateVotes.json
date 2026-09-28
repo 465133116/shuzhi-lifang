@@ -1,0 +1,24 @@
+[
+  {
+    "id": 101,
+    "title": "是否同意动用维修资金修缮3号楼外墙？",
+    "status": "active",
+    "options": [
+      { "id": "A", "text": "同意", "count": 45 },
+      { "id": "B", "text": "反对", "count": 12 },
+      { "id": "C", "text": "弃权", "count": 3 }
+    ],
+    "rule": "双过半"
+  },
+  {
+    "id": 102,
+    "title": "是否同意选聘新的物业服务企业？",
+    "status": "pending",
+    "options": [
+      { "id": "A", "text": "同意", "count": 0 },
+      { "id": "B", "text": "反对", "count": 0 },
+      { "id": "C", "text": "弃权", "count": 0 }
+    ],
+    "rule": "双三分之二"
+  }
+]

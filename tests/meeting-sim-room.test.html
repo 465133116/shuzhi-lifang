@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>会议模拟室 · 单元/性能探针</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; max-width: 720px; }
+    pre { background: #f4f4f5; padding: 12px; overflow: auto; font-size: 12px; }
+    .ok { color: #16a34a; }
+    .fail { color: #dc2626; }
+    iframe { width: 100%; height: 480px; border: 1px solid #ddd; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>会议模拟室测试</h1>
+  <p>将本页与 <code>业主端.html</code> 置于同一目录（<code>生态/tests/</code> 下通过 <code>../业主端.html</code> 加载）。若浏览器阻止本地 iframe，请改用 HTTP 静态服务或直接在业主端控制台运行下方「纯断言」代码。</p>
+  <iframe id="owner" src="../业主端.html"></iframe>
+  <h2>输出</h2>
+<pre id="out"></pre>
+
+<script>
+(function () {
+  var out = document.getElementById('out');
+  function log(msg, ok) {
+    var line = document.createElement('div');
+    line.textContent = (ok ? '✓ ' : '✗ ') + msg;
+    line.className = ok ? 'ok' : 'fail';
+    out.appendChild(line);
+  }
+
+  var iframe = document.getElementById('owner');
+  iframe.addEventListener('load', function () {
+    try {
+      var w = iframe.contentWindow;
+      var MS = w.MeetingSimRoom;
+      if (!MS) {
+        log('iframe 内未找到 MeetingSimRoom（同源或脚本未执行）', false);
+        return;
+      }
+      log('MeetingSimRoom 已挂载', true);
+
+      var t0 = performance.now();
+      MS.open(w.document.getElementById('btn-open-meeting-sim'));
+      var t1 = performance.now();
+      log('首次 open → ' + Math.round(t1 - t0) + 'ms（需 ≤800ms，供人工对照）', (t1 - t0) <= 800);
+
+      var tabPost = w.document.getElementById('meeting-sim-tab-post');
+      var times = [];
+      for (var i = 0; i < 5; i++) {
+        var a = performance.now();
+        MS.setPhase('post', tabPost);
+        var b = performance.now();
+        times.push(b - a);
+        MS.setPhase('pre', w.document.getElementById('meeting-sim-tab-pre'));
+      }
+      var max = Math.max.apply(null, times);
+      log('5 次切换 max(同步计时) ≈ ' + Math.round(max) + 'ms（真实展示含 100ms 异步延迟，见 Performance 面板）', true);
+
+      MS.close();
+      log('iframe 内基础用例完成', true);
+    } catch (e) {
+      log('iframe 测试异常: ' + e.message, false);
+    }
+  });
+})();
+</script>
+
+<h2>用例列表（覆盖）</h2>
+<ul>
+  <li><strong>状态切换</strong>：<code>setPhase('pre'|'during'|'post')</code> 后 <code>getPhase()</code> 一致；预览 HTML 含对应阶段关键词。</li>
+  <li><strong>弹窗交互</strong>：<code>open</code> 后 modal 可调；<code>close</code> 隐藏；<code>Esc</code> 关闭需手动在业主端验证。</li>
+  <li><strong>响应式断点</strong>：DevTools 切换 360 / 768 / 1024 宽度，检查双按钮折行与 panel max-width（文档见 ui-checklist）。</li>
+</ul>
+<p>在已打开的 <strong>业主端.html</strong> 控制台可粘贴：</p>
+<pre>(function(){var MS=window.MeetingSimRoom,el=document.getElementById('meeting-sim-modal'),t=document.getElementById('meeting-sim-tab-during');if(!MS)throw new Error('no API');console.assert(MS.PHASES.join(',')==='pre,during,post','PHASES');MS.open(document.getElementById('btn-open-meeting-sim'));console.assert(el.style.display==='flex','open');MS.setPhase('during',t);console.assert(MS.getPhase()==='during','phase');console.assert(MS.buildHTML('during').indexOf('线上会议室')!==-1,'html');MS.close();console.log('MeetingSim console assertions ok');})();</pre>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\__init__.py", line 11, in <module>
+    from docx.api import Document
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\api.py", line 12, in <module>
+    from docx.package import Package
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\package.py", line 9, in <module>
+    from docx.opc.package import OpcPackage
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\opc\package.py", line 9, in <module>
+    from docx.opc.part import PartFactory
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\opc\part.py", line 9, in <module>
+    from docx.opc.oxml import serialize_part_xml
+  File "C:\Users\计算机\AppData\Local\hermes\hermes-agent\venv\Lib\site-packages\docx\opc\oxml.py", line 14, in <module>
+    from lxml import etree
+ModuleNotFoundError: No module named 'lxml'

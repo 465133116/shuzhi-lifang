@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>周池分配流程 · 详细思维导图（V3.2）</title>
+<style>body{margin:0;background:#0b1120;display:flex;justify-content:center}svg{display:block}</style>
+</head>
+<body>
+<svg width="1660" height="1300" viewBox="0 0 1660 1300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1660" height="1300" fill="#0b1120"/>
+  <rect x="20" y="20" width="1620" height="1260" rx="16" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <rect x="530" y="30" width="600" height="72" rx="12" fill="#f59e0b"/>
+  <text x="830" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#fff" font-family="PingFang SC, Microsoft YaHei">🔄 周池分配流程 · 详细说明（V3.2）</text>
+  <text x="830" y="86" text-anchor="middle" font-size="12" fill="rgba(255,255,255,.85)" font-family="PingFang SC, Microsoft YaHei">每周一指定项目 → 周池重建 → 步骤0-8 ｜ 进度跨周记忆</text>
+
+  <!-- 流程链（左侧步骤，右侧详解） -->
+  <g stroke="#334155" stroke-width="1.5" fill="none">
+    <path d="M 830 102 L 830 128"/>
+  </g>
+
+  <!-- 步骤卡片链 -->
+  <g font-family="PingFang SC, Microsoft YaHei">
+    <!-- 步骤0 -->
+    <rect x="50" y="140" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="166" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤0 周池生成</text>
+    <text x="170" y="188" text-anchor="middle" font-size="10" fill="#94a3b8">周一管理员指定项目集</text>
+    <line x1="170" y1="204" x2="170" y2="222" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤1 -->
+    <rect x="50" y="222" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="248" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤1 标签预处理</text>
+    <text x="170" y="270" text-anchor="middle" font-size="10" fill="#94a3b8">F/E出列 A正常通道</text>
+    <line x1="170" y1="286" x2="170" y2="304" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤2 -->
+    <rect x="50" y="304" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="330" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤2 正向跟单确认</text>
+    <text x="170" y="352" text-anchor="middle" font-size="10" fill="#94a3b8">AI≥61+感受≥4 定向原人</text>
+    <line x1="170" y1="368" x2="170" y2="386" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤3 -->
+    <rect x="50" y="386" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="412" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤3 配额计算</text>
+    <text x="170" y="434" text-anchor="middle" font-size="10" fill="#94a3b8">正向X+新40+总池(260-X)</text>
+    <line x1="170" y1="450" x2="170" y2="468" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤4 -->
+    <rect x="50" y="468" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="494" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤4 新数据分配</text>
+    <text x="170" y="516" text-anchor="middle" font-size="10" fill="#94a3b8">金额蛇形5份×40</text>
+    <line x1="170" y1="532" x2="170" y2="550" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤5 -->
+    <rect x="50" y="550" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#fbbf24" stroke-width="3"/>
+    <text x="170" y="576" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤5 总池分配 ★核心</text>
+    <text x="170" y="598" text-anchor="middle" font-size="10" fill="#94a3b8">档级补位+五键排序+蛇形</text>
+    <line x1="170" y1="614" x2="170" y2="632" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤6 -->
+    <rect x="50" y="632" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="658" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤6 均衡校验</text>
+    <text x="170" y="680" text-anchor="middle" font-size="10" fill="#94a3b8">5人偏差>10%交换微调</text>
+    <line x1="170" y1="696" x2="170" y2="714" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤7 -->
+    <rect x="50" y="714" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="740" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤7 落库</text>
+    <text x="170" y="762" text-anchor="middle" font-size="10" fill="#94a3b8">assigned·记录自动累计</text>
+    <line x1="170" y1="778" x2="170" y2="796" stroke="#334155" stroke-width="2"/>
+    <!-- 步骤8 -->
+    <rect x="50" y="796" width="240" height="64" rx="10" fill="#0f1a2b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="170" y="822" text-anchor="middle" font-size="14" font-weight="700" fill="#fbbf24">步骤8 周三轮换</text>
+    <text x="170" y="844" text-anchor="middle" font-size="10" fill="#94a3b8">回收重分(意向池不动)</text>
+  </g>
+
+  <!-- 右侧详解区 -->
+  <g font-family="PingFang SC, Microsoft YaHei">
+    <rect x="330" y="140" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="164" font-size="11" fill="#cbd5e1">输入：管理员操作（项目集多选/全选/一键沿用上周）</text>
+    <text x="346" y="184" font-size="11" fill="#94a3b8">输出：周池成员 = 项目集内 status∈(pool,retry) 债权；call_count 继承</text>
+    <text x="346" y="202" font-size="10" fill="#64748b">铁律：周池重建不丢覆盖进度（call_count 记在债权上）</text>
+
+    <rect x="330" y="222" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="246" font-size="11" fill="#cbd5e1">F→历史遗留池（不占配额·客服自行反馈物业）｜ E→搁置池（本月）</text>
+    <text x="346" y="266" font-size="11" fill="#cbd5e1">A→正常通道（缴费与争议分开）；B/C/D/无标签→正常排队</text>
+    <text x="346" y="284" font-size="10" fill="#64748b">E/F 判定即时生效；内容类标签变化延迟到下次轮换</text>
+
+    <rect x="330" y="304" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="328" font-size="11" fill="#cbd5e1">本月接通 + AI≥61 + 感受分≥4 → 定向原人（占第1优先级）</text>
+    <text x="346" y="348" font-size="11" fill="#94a3b8">上限100/人/周，超出按score取前100顺延；承诺豁免户优先安排</text>
+    <text x="346" y="366" font-size="10" fill="#64748b">X 挤压总池：X=25/人 → 覆盖5.5周（回款为主的合理代价）</text>
+
+    <rect x="330" y="386" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="410" font-size="11" fill="#cbd5e1">每人：正向X + 新数据40 + 总池(300−40−X)</text>
+    <text x="346" y="430" font-size="11" fill="#94a3b8">总池按四档 62/83/73/42（X=0时）；档切点月初固定</text>
+    <text x="346" y="448" font-size="10" fill="#64748b">参数月度锁定：权重等调整仅每月1日生效</text>
+
+    <rect x="330" y="468" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="492" font-size="11" fill="#cbd5e1">最新上传批次 ≥500 按金额取前200 → 金额蛇形5份×40</text>
+    <text x="346" y="512" font-size="11" fill="#94a3b8">超量部分入主池按分档+五键排队；紧急叠加=300之外手动加</text>
+    <text x="346" y="530" font-size="10" fill="#64748b">新数据档内不叠加新鲜度分（配额已是优先）</text>
+
+    <rect x="330" y="550" width="610" height="90" rx="8" fill="#0f1a2b" stroke="#fbbf24" stroke-width="2"/>
+    <text x="346" y="574" font-size="11" fill="#fbbf24">① 档级补位（B版）：每档取豁免+call=0新户，不足缺额下传</text>
+    <text x="346" y="594" font-size="11" fill="#fbbf24">② 五键排序：(豁免, call_count, score, 金额DESC, debt_id)</text>
+    <text x="346" y="614" font-size="11" fill="#fbbf24">③ 蛇形轮流：第1笔→A，2→B…5→E，6→A循环</text>
+    <text x="346" y="634" font-size="10" fill="#64748b">池不足配额→按同键取全库回流户补足（先覆盖新池再补打）</text>
+
+    <rect x="330" y="632" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="656" font-size="11" fill="#cbd5e1">5人总额偏差>10% → 档内交换微调（真实数据实测4.03-4.37%）</text>
+    <text x="346" y="676" font-size="11" fill="#94a3b8">同业主多债权绑定：整组给同一客服（一次通话催多笔）</text>
+    <text x="346" y="694" font-size="10" fill="#64748b">事务性操作：全流程一事务，失败整体回滚</text>
+
+    <rect x="330" y="714" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="738" font-size="11" fill="#cbd5e1">选中户 status=assigned + current_agent=本人</text>
+    <text x="346" y="758" font-size="11" fill="#94a3b8">通话记录自动累计（call_count 无需手动维护）</text>
+    <text x="346" y="776" font-size="10" fill="#64748b">客服界面：档序+五键序，打开时快照冻结</text>
+
+    <rect x="330" y="796" width="610" height="64" rx="8" fill="#0f1a2b" stroke="#334155" stroke-width="1"/>
+    <text x="346" y="820" font-size="11" fill="#cbd5e1">个人池全回收（意向池不动·承诺豁免户不回收）→ 重复2-7</text>
+    <text x="346" y="840" font-size="11" fill="#94a3b8">豁免户跟人走：保证承诺时点不因换人丢失</text>
+    <text x="346" y="858" font-size="10" fill="#64748b">AI评分异步30秒+轮换前10分钟锁定评分快照</text>
+  </g>
+
+  <!-- 底部：节奏与极端 -->
+  <rect x="50" y="900" width="750" height="150" rx="10" fill="#0f1a2b" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="50" y="900" width="750" height="38" rx="10" fill="#12233d"/>
+  <text x="70" y="925" font-size="16" font-weight="700" fill="#60a5fa" font-family="PingFang SC, Microsoft YaHei">节奏日历</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="70" y="958">周一 8:30：指定项目集 → 周池生成 → 步骤0-7（分配300/人）</text>
+    <text x="70" y="980">周二-周四：拨打期（列表冻结；通话事件触发score增量重算）</text>
+    <text x="70" y="1002">周三 12:00：回收重分（意向池/豁免户不动）</text>
+    <text x="70" y="1024">每月 1 日：call_count/探索分清零 + 分档切点重标定 + 权重参数复核 + 正向跨月清点 + E类跨月复查 + 豁免到期检查</text>
+  </g>
+
+  <rect x="830" y="900" width="780" height="150" rx="10" fill="#0f1a2b" stroke="#ef4444" stroke-width="2"/>
+  <rect x="830" y="900" width="780" height="38" rx="10" fill="#3b1212"/>
+  <text x="850" y="925" font-size="16" font-weight="700" fill="#f87171" font-family="PingFang SC, Microsoft YaHei">边界与异常</text>
+  <g font-family="PingFang SC, Microsoft YaHei" font-size="11" fill="#cbd5e1">
+    <text x="850" y="958">池&lt;500户：不分档，全按五键排序分配</text>
+    <text x="850" y="980">池&gt;15000户：告警 + 覆盖周期自动延长（管理者确认）</text>
+    <text x="850" y="1002">新数据&gt;200/周：超量入主池排队；&lt;200/周：配额回填总池</text>
+    <text x="850" y="1024">轮换中途失败：全事务回滚重试3次；标签引擎宕机：用缓存+告警</text>
+  </g>
+
+  <text x="830" y="1100" text-anchor="middle" font-size="12" fill="#475569" font-family="PingFang SC, Microsoft YaHei">数治理方 · 周池分配流程 ｜ 配套：规格文档第五章 · 开发文档08分配主流程</text>
+</svg>
+</body>
+</html>

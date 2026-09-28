@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金色水岸 · 四端协同治理平台</title>
+<style>
+  :root {
+    --bg:#0b1120; --card:rgba(255,255,255,0.03); --border:rgba(255,255,255,0.07);
+    --gold:#fbbf24; --gold-dim:rgba(251,191,36,0.12);
+    --owner:#3b82f6; --wy:#06b6d4; --ywh:#8b5cf6; --sq:#10b981;
+    --text:#e2e8f0; --dim:#94a3b8; --faint:#64748b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.75}
+
+  /* ═══ Hero ═══ */
+  .hero{background:linear-gradient(160deg,#0f172a 0%,#1a2338 45%,#0b1120 100%);padding:72px 24px 56px;text-align:center;border-bottom:1px solid rgba(251,191,36,0.15);position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-60%;left:-40%;width:180%;height:200%;background:radial-gradient(ellipse at 35% 40%,rgba(59,130,246,0.07) 0%,transparent 50%),radial-gradient(ellipse at 70% 60%,rgba(251,191,36,0.06) 0%,transparent 50%),radial-gradient(ellipse at 55% 80%,rgba(139,92,246,0.05) 0%,transparent 50%);pointer-events:none}
+  .hero h1{font-size:38px;font-weight:700;letter-spacing:4px;position:relative}
+  .hero h1 .hl{color:var(--gold)}
+  .hero .sub{font-size:16px;color:var(--dim);margin-top:14px;max-width:720px;margin-left:auto;margin-right:auto;position:relative}
+  .hero .sub b{color:var(--gold);font-weight:600}
+  .hero .tags{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap;position:relative}
+  .hero .tags span{font-size:11px;padding:5px 16px;border-radius:20px;letter-spacing:1px}
+  .t-owner{border:1px solid rgba(59,130,246,0.35);color:#60a5fa;background:rgba(59,130,246,0.08)}
+  .t-wy{border:1px solid rgba(6,182,212,0.35);color:#22d3ee;background:rgba(6,182,212,0.08)}
+  .t-ywh{border:1px solid rgba(139,92,246,0.35);color:#a78bfa;background:rgba(139,92,246,0.08)}
+  .t-sq{border:1px solid rgba(16,185,129,0.35);color:#34d399;background:rgba(16,185,129,0.08)}
+  .hero .meta{display:flex;gap:18px;justify-content:center;margin-top:18px;font-size:12px;color:var(--faint);flex-wrap:wrap;position:relative}
+
+  /* ═══ Section ═══ */
+  .sec{max-width:1020px;margin:0 auto;padding:52px 24px}
+  .sec+.sec{border-top:1px solid rgba(255,255,255,0.04)}
+  .sec h2{font-size:22px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+  .sec .sn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:rgba(251,191,36,0.15);color:var(--gold);font-size:13px;font-weight:700;flex-shrink:0}
+  .sec .ss{font-size:13px;color:var(--faint);margin-bottom:24px}
+
+  /* ═══ 治理全景 ═══ */
+  .pano{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+  .pcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden}
+  .pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .pcard.pc-owner::before{background:var(--owner)}
+  .pcard.pc-wy::before{background:var(--wy)}
+  .pcard.pc-ywh::before{background:var(--ywh)}
+  .pcard.pc-sq::before{background:var(--sq)}
+  .pcard .pi{font-size:26px;margin-bottom:8px}
+  .pcard h4{font-size:15px;margin-bottom:3px}
+  .pcard .pr{font-size:10px;letter-spacing:1px;margin-bottom:8px}
+  .pcard p{font-size:12px;color:var(--dim);line-height:1.7}
+  .pr-owner{color:#60a5fa}.pr-wy{color:#22d3ee}.pr-ywh{color:#a78bfa}.pr-sq{color:#34d399}
+
+  /* ═══ 监督链 ═══ */
+  .chain{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-top:18px}
+  .chain h5{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:12px}
+  .chain .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+  .chain .fn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 16px;font-size:12px;text-align:center}
+  .chain .fn small{display:block;font-size:10px;color:var(--faint)}
+  .chain .ar{color:var(--faint);font-size:14px}
+  .chain .note{margin-top:12px;font-size:11px;color:var(--faint);text-align:center}
+
+  /* ═══ 政策底座 ═══ */
+  .pol{background:linear-gradient(135deg,rgba(251,191,36,0.06),rgba(59,130,246,0.05));border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:22px;margin-bottom:18px}
+  .pol h4{font-size:14px;color:var(--gold);margin-bottom:8px}
+  .pol p{font-size:13px;color:var(--dim)}
+  .pol p b{color:var(--text)}
+  .pfeat{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .pfeat .pf{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .pfeat .pf .pi{font-size:18px;margin-bottom:4px}
+  .pfeat .pf h5{font-size:13px;margin-bottom:3px}
+  .pfeat .pf p{font-size:11px;color:var(--dim)}
+  .quote{margin-top:18px;text-align:center;font-size:13px;color:var(--faint);border-top:1px dashed rgba(255,255,255,0.08);padding-top:16px}
+
+  /* ═══ 端口块 ═══ */
+  .port{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:22px;background:var(--card)}
+  .ph{display:flex;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02)}
+  .ph .pi{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+  .pi-owner{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
+  .pi-wy{background:linear-gradient(135deg,#0e7490,#06b6d4)}
+  .pi-ywh{background:linear-gradient(135deg,#6d28d9,#8b5cf6)}
+  .pi-sq{background:linear-gradient(135deg,#047857,#10b981)}
+  .ph h3{font-size:17px;flex:1}
+  .ph .pw{font-size:11px;color:var(--faint)}
+  .pb{padding:0 24px 24px}
+  .gain{background:var(--gold-dim);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:14px 18px;margin:14px 0 18px;display:flex;align-items:flex-start;gap:12px}
+  .gain .di{font-size:20px;flex-shrink:0;margin-top:1px}
+  .gain .dt{font-size:13px;line-height:1.7}
+  .gain .dt b{color:var(--gold)}
+  .iface{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:14px 18px;margin-bottom:16px}
+  .iface h5{font-size:10px;color:#60a5fa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+  .iface p{font-size:12px;color:var(--dim);line-height:1.8}
+  .iface p b{color:var(--text)}
+  .mod h4{font-size:13px;font-weight:600;margin-bottom:6px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .stbl{width:100%;border-collapse:collapse;font-size:12px}
+  .stbl th{text-align:left;padding:8px 12px;font-size:10px;font-weight:600;color:#60a5fa;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+  .stbl td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top}
+  .stbl tr:hover td{background:rgba(255,255,255,0.015)}
+  .stbl .st{font-weight:600;white-space:nowrap;width:110px}
+  .stbl .sd{color:var(--dim);font-size:11px}
+
+  /* ═══ 机制 ═══ */
+  .mech{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .mc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden}
+  .mc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)}
+  .mc .mi{font-size:24px;margin-bottom:8px}
+  .mc h4{font-size:15px;margin-bottom:8px}
+  .mc p{font-size:12px;color:var(--dim);line-height:1.8}
+  .mc p b{color:var(--text)}
+  .flow7{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;padding:18px 0;margin-top:20px}
+  .flow7 .fn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 14px;font-size:11px;text-align:center;min-width:76px}
+  .flow7 .fn .fi{font-size:17px;display:block;margin-bottom:2px}
+  .flow7 .ar{color:var(--faint);font-size:14px}
+
+  /* ═══ 数据与记录 ═══ */
+  .pledge{background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(59,130,246,0.05));border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:20px;margin-bottom:16px}
+  .pledge h4{font-size:14px;color:#34d399;margin-bottom:8px}
+  .pledge p{font-size:13px;color:var(--dim);line-height:1.9}
+  .pledge p b{color:var(--text)}
+  .df{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px}
+  .df .dc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+  .df .dc h5{font-size:12px;margin-bottom:4px}
+  .df .dc p{font-size:11px;color:var(--dim)}
+
+  /* ═══ FAQ ═══ */
+  .qa{margin-bottom:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .qa .qq{padding:13px 18px;font-size:13px;font-weight:600;cursor:default}
+  .qa .qq::before{content:'Q ';color:var(--gold);font-size:11px;letter-spacing:1px}
+  .qa .qa2{padding:0 18px 14px 34px;font-size:12px;color:var(--dim);line-height:1.8}
+  .qa .qa2::before{content:'A ';color:#60a5fa;font-size:11px;letter-spacing:1px;margin-left:-20px}
+
+  /* ═══ Footer ═══ */
+  .ft{text-align:center;padding:32px;font-size:11px;color:var(--faint);border-top:1px solid rgba(255,255,255,0.04);line-height:2}
+
+  @media(max-width:700px){.hero h1{font-size:28px;letter-spacing:2px}.chain .flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- ═══ Hero ═══ -->
+<div class="hero">
+  <h1>金色水岸 · <span class="hl">四端协同治理平台</span></h1>
+  <div class="sub">数治理方为金色水岸打造的社区治理方案——<b>业主小程序 · 物业端 · 业委会端 · 社区端</b>各司其职、数据互通，让每一件诉求有入口、有进度、有结果、有记录。</div>
+  <div class="tags">
+    <span class="t-owner">📱 业主小程序</span>
+    <span class="t-wy">🏢 物业端</span>
+    <span class="t-ywh">🏛 业委会端</span>
+    <span class="t-sq">🏘 社区端</span>
+  </div>
+  <div class="meta">
+    <span>杭州个信数治信用管理有限公司</span><span>|</span>
+    <span>鄞州区"如我在居·共享家"行动</span><span>|</span>
+    <span>mingjian.sh.cn</span>
+  </div>
+</div>
+
+<!-- ═══ 一、为什么是四端 ═══ -->
+<div class="sec">
+  <h2><span class="sn">一</span> 为什么是四端</h2>
+  <p class="ss">传统小区里的问题往往卡在三个地方：报修靠打电话、投诉没下文、物业干没干没人说得清。四端方案给四个角色各自配一个专属工具，责任到人、过程留痕、结果可见。</p>
+
+  <div class="pano">
+    <div class="pcard pc-owner">
+      <div class="pi">📱</div>
+      <h4>业主端</h4>
+      <div class="pr pr-owner">微信小程序 · 服务需求发起者</div>
+      <p>手机上的服务窗口：一键报修、进度查询、验收评价、议事投票。业主的每一件诉求都有工单记录，处理到哪一步、结果怎么样，全程看得见。</p>
+    </div>
+    <div class="pcard pc-wy">
+      <div class="pi">🏢</div>
+      <h4>物业端</h4>
+      <div class="pr pr-wy">PC 后台 · 服务执行者</div>
+      <p>履约的工具：工单分派、处理提交、超时预警。系统自动计时、自动留痕——干得好不好由数据说话，而不是靠印象。</p>
+    </div>
+    <div class="pcard pc-ywh">
+      <div class="pi">🏛</div>
+      <h4>业委会端</h4>
+      <div class="pr pr-ywh">PC 后台 · 监督与决策者</div>
+      <p>监管的仪表盘：物业闭环率、响应时效、差评率一目了然；维修金审批、线上会议、财务公示都在平台留痕。</p>
+    </div>
+    <div class="pcard pc-sq">
+      <div class="pi">🏘</div>
+      <h4>社区端</h4>
+      <div class="pr pr-sq">PC 工作台 · 兜底与协同者</div>
+      <p>矛盾的终点站：网格员、三级矛盾调处、社区吹哨·部门报到。小区自己解不开的结，在这里逐级化解。</p>
+    </div>
+  </div>
+
+  <div class="chain">
+    <h5>四端之间的治理关系</h5>
+    <div class="flow">
+      <div class="fn">业主<small>服务购买 · 甲方</small></div>
+      <div class="ar">→</div>
+      <div class="fn">物业<small>服务执行 · 乙方</small></div>
+      <div class="ar">←</div>
+      <div class="fn">业委会<small>代表业主监督</small></div>
+      <div class="ar">←</div>
+      <div class="fn">社区<small>监督 + 矛盾仲裁</small></div>
+      <div class="ar">←</div>
+      <div class="fn">街道<small>上级行政主管</small></div>
+    </div>
+    <div class="note">核心原则：监督者不查自己——投诉物业由业委会介入，投诉业委会由社区端处理，每级处理最多 3 次，超限自动升级。</div>
+  </div>
+</div>
+
+<!-- ═══ 二、政策底座 ═══ -->
+<div class="sec">
+  <h2><span class="sn">二</span> 政策底座</h2>
+  <p class="ss">四端方案不是凭空设计，它对应鄞州区"如我在居·共享家"行动（鄞社发〔2026〕6号）的治理要求。</p>
+
+  <div class="pol">
+    <h4>📜 鄞社发〔2026〕6号 · "如我在居·共享家"</h4>
+    <p>健全共建共治共享的社会治理制度，推进<b>基层治理体系和治理能力现代化</b>。四端平台把政策要求的治理动作一一落到工具上——矛盾有人调、难事能吹哨、参与有回报，走的是新时代"枫桥经验"的路子：<b>矛盾不上交，就地化解</b>。</p>
+  </div>
+
+  <div class="pfeat">
+    <div class="pf"><div class="pi">🤝</div><h5>三级矛盾调处</h5><p>网格员（一级）→ 社区（二级）→ 吹哨部门报到（三级），逐级介入、逐级化解。</p></div>
+    <div class="pf"><div class="pi">🧭</div><h5>网格员工作台</h5><p>网格员是第一调处主体，辖内事务一屏掌握，调解失败一键升级。</p></div>
+    <div class="pf"><div class="pi">📣</div><h5>社区吹哨 · 部门报到</h5><p>超出社区权限的事项一键"吹哨"，职能部门接哨处置、结果回传。</p></div>
+    <div class="pf"><div class="pi">⭐</div><h5>居民积分</h5><p>参与议事、志愿服务、监督建言得积分，积分商城可兑换——<b>参与激励，不评级、不挂钩缴费</b>。</p></div>
+    <div class="pf"><div class="pi">💡</div><h5>微心愿 · 党员报到</h5><p>业主发布微心愿，社区审核发布，党员/志愿者认领完成——好事实事有人接。</p></div>
+    <div class="pf"><div class="pi">🕊</div><h5>居业物三方协商</h5><p>居委会、业委会、物业三方在平台上协商议事，共识留痕、结果可查。</p></div>
+  </div>
+
+  <div class="quote">—— 让治理发生在离业主最近的地方 ——</div>
+</div>
+
+<!-- ═══ 三、四端详解 ═══ -->
+<div class="sec">
+  <h2><span class="sn">三</span> 四端各自带来什么</h2>
+  <p class="ss">每个端口对应一类使用者，独立界面、独立职责，数据通过平台通道互通。</p>
+
+  <!-- 业主端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-owner">📱</div><div><h3>业主端</h3><div class="pw">微信小程序 · 不用装 App · 业主的"服务窗口"</div></div></div>
+    <div class="pb">
+      <div class="iface">
+        <h5>界面样貌</h5>
+        <p>手机竖屏小程序，底部四 Tab：<b>首页</b>（AI 智能管家 + 高频服务入口）· <b>群聊</b>（邻里交流与自治协作广场）· <b>议事</b>（线上会议厅、议题讨论与投票）· <b>我的</b>（工单、积分、通知）。核心交互：一键报修（拍照 + 语音）、工单进度时间轴、验收星级评价。</p>
+      </div>
+      <div class="gain">
+        <div class="di">🔑</div>
+        <div class="dt"><b>给业主带来什么：</b>诉求有入口——报修、投诉、建议、调解申请一个地方提交；进度看得见——每一步处理带时间戳，不用反复打电话问；结果能评价——验收打分，不满意可以追加反馈，最多 3 次后自动升级，不会"石沉大海"。每一次沟通都留记录，每一次结果都查得到。</div>
+      </div>
+      <div class="mod">
+        <h4>核心能力</h4>
+        <table class="stbl">
+          <tr><th style="width:110px">能力</th><th>说明</th></tr>
+          <tr><td class="st">一键报修</td><td class="sd">拍照/语音描述故障 → AI 智能管家识别 → 自动分派给物业对应班组，家中报修与公区报修分开流转</td></tr>
+          <tr><td class="st">工单中心</td><td class="sd">全部工单列表 + 处理进度（提交→分派→处理→验收，每节点带时间）+ 处理意见与现场照片</td></tr>
+          <tr><td class="st">投诉 · 建议</td><td class="sd">AI 识别责任主体自动分派：报修→物业、物业服务投诉→物业、业委会投诉→业委会（社区端同步可查）、公共事务→社区</td></tr>
+          <tr><td class="st">矛盾调解申请</td><td class="sd">对邻里纠纷/物业矛盾一键申请调解 → 进入三级调处网络（网格员→社区→部门）</td></tr>
+          <tr><td class="st">线上会议厅</td><td class="sd">业主大会/表决事项线上发布、投票、结果公示；议题先在自治协作广场聊透，再进议事厅表决</td></tr>
+          <tr><td class="st">积分与微心愿</td><td class="sd">参与议事/志愿/监督得积分可兑换；发布微心愿，党员/志愿者认领</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 物业端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-wy">🏢</div><div><h3>物业端</h3><div class="pw">PC 后台 · 物业的"履约工具"</div></div></div>
+    <div class="pb">
+      <div class="iface">
+        <h5>界面样貌</h5>
+        <p>宽屏 PC 后台，左侧导航 + 右侧工作区：<b>工作台</b>（待处理事项总览）· <b>工单管理</b>（分派到班组的工单队列、处理提交、结果上报）· <b>费用台账</b> · <b>维修金申报</b> · <b>公告发布</b> · <b>数据看板</b>（闭环率、响应时效、评价分布）。</p>
+      </div>
+      <div class="gain">
+        <div class="di">🔑</div>
+        <div class="dt"><b>给物业带来什么：</b>流程清楚——工单系统分派即计时，处理时限有记录，超时自动预警；干得好坏数据说话——闭环率、响应时效、业主评价系统自动统计，业委会看到的是平台数据，不是口头汇报；维修金申报有章法——小额免审直通、大额走业委会审批，材料留痕、事后可查（金额阈值依合同约定）。</div>
+      </div>
+      <div class="mod">
+        <h4>核心能力</h4>
+        <table class="stbl">
+          <tr><th style="width:110px">能力</th><th>说明</th></tr>
+          <tr><td class="st">工单分派处理</td><td class="sd">系统按工单类型自动分派到对应班组，分派即计时；处理完成后提交结果 + 现场照片，推送业主验收</td></tr>
+          <tr><td class="st">超时预警</td><td class="sd">超时限未完成自动标红，同步推送业委会端与社区端，倒逼按时履约</td></tr>
+          <tr><td class="st">费用台账</td><td class="sd">费用标准依合同约定，平台如实呈现，不评价、不施压</td></tr>
+          <tr><td class="st">维修金申报</td><td class="sd">双轨：≤授权阈值（依合同约定）免审直通、采购后补凭证；＞阈值走业委会审批，全过程留痕</td></tr>
+          <tr><td class="st">公告发布</td><td class="sd">停水停电、电梯维保、消杀通知一键发布，同步业主端与平台通知</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 业委会端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-ywh">🏛</div><div><h3>业委会端</h3><div class="pw">PC 后台 · 业委会的"监督与决策平台"</div></div></div>
+    <div class="pb">
+      <div class="iface">
+        <h5>界面样貌</h5>
+        <p>PC 后台，五大板块：<b>履职仪表盘</b>（物业履约数据总览）· <b>物业监管</b>（工单闭环率、响应时效、差评率、超时清单）· <b>维修金审批</b> · <b>会议与投票</b>（线上会议厅、业主大会表决）· <b>财务公开</b>（收支公示、合同管理）。</p>
+      </div>
+      <div class="gain">
+        <div class="di">🔑</div>
+        <div class="dt"><b>给业委会带来什么：</b>监督有数据——物业履约表现平台自动统计，不用等物业口头汇报，超时工单自动预警到端；决策有留痕——维修金审批、会议表决、财务公示全程留痕，每一分钱都经得起查；议事有平台——业主大会线上化，议题讨论、投票、结果公示一条线，履职效率从"靠跑腿"变成"靠平台"。</div>
+      </div>
+      <div class="mod">
+        <h4>核心能力</h4>
+        <table class="stbl">
+          <tr><th style="width:110px">能力</th><th>说明</th></tr>
+          <tr><td class="st">物业监管看板</td><td class="sd">工单闭环率、平均响应时长、差评率、超时工单数实时可查；超时自动标红预警</td></tr>
+          <tr><td class="st">维修金审批</td><td class="sd">物业申报 → 业委会审批（审的是方案合理性、金额是否在授权内）→ 事后凭证核验，闭环留痕</td></tr>
+          <tr><td class="st">会议与投票</td><td class="sd">业委会会议、业主大会线上发布议题与表决，结果公示；居业物三方协商在线进行</td></tr>
+          <tr><td class="st">财务公开</td><td class="sd">公共收益收支、维修金使用公示，业主可在小程序端查看</td></tr>
+          <tr><td class="st">合同管理</td><td class="sd">物业服务合同备案、到期提醒、履约表现与合同承诺对照</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 社区端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-sq">🏘</div><div><h3>社区端</h3><div class="pw">PC 工作台 · 社区的"兜底与协同枢纽"</div></div></div>
+    <div class="pb">
+      <div class="iface">
+        <h5>界面样貌</h5>
+        <p>PC 工作台：<b>治理驾驶舱</b>（辖区小区态势总览、协同共治指数）· <b>共治监督广场</b>（物业表现排名、超时工单预警、业委会工作查看）· <b>网格员工作台</b> · <b>矛盾调处</b>（三级调处流程管理）· <b>社情民意</b>（诉求汇聚与舆情研判）。</p>
+      </div>
+      <div class="gain">
+        <div class="di">🔑</div>
+        <div class="dt"><b>给社区带来什么：</b>矛盾有人调——网格员一级调处、社区二级调处、吹哨部门三级处置，纠纷不再升级成上访；难事能吹哨——超权限事项一键发起"社区吹哨·部门报到"，职能部门接哨处置、结果回传；态势看得见——辖区各小区治理情况一屏聚合，协同共治指数直观呈现。</div>
+      </div>
+      <div class="mod">
+        <h4>核心能力</h4>
+        <table class="stbl">
+          <tr><th style="width:110px">能力</th><th>说明</th></tr>
+          <tr><td class="st">网格员工作台</td><td class="sd">网格事务一屏掌握，调解任务分派到人，一级调处失败一键升级二级</td></tr>
+          <tr><td class="st">三级矛盾调处</td><td class="sd">网格员 → 社区 → 职能部门逐级介入；业主端调解申请直达调处流程</td></tr>
+          <tr><td class="st">社区吹哨·部门报到</td><td class="sd">超出社区权限的事项发起吹哨，职能部门接哨处置、结果回传、全程可查</td></tr>
+          <tr><td class="st">共治监督广场</td><td class="sd">辖区物业履约表现排名、超时工单预警介入、业委会工作查看（只读监督，异常预警）</td></tr>
+          <tr><td class="st">协同共治指数</td><td class="sd">多维度自动汇聚的治理健康度指标，横向可比、纵向可追</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 四、关键机制 ═══ -->
+<div class="sec">
+  <h2><span class="sn">四</span> 三个关键机制</h2>
+  <p class="ss">四端能协同运转，靠的是三条贯穿始终的机制——这是金色水岸治理体验的根本保障。</p>
+
+  <div class="mech">
+    <div class="mc">
+      <div class="mi">🔁</div>
+      <h4>机制一：诉求全闭环</h4>
+      <p>业主提交 → <b>AI 识别分派</b> → 物业处理提交 → 业主验收评价。<b>不满意可追加反馈，每级最多 3 次，超限自动升级</b>：物业 → 业委会 → 社区 → 街道。每一级升级都带着完整记录走，不用重新说一遍。</p>
+    </div>
+    <div class="mc">
+      <div class="mi">🎯</div>
+      <h4>机制二：投诉按责分派</h4>
+      <p>谁的问题到谁的端：报修→物业；物业服务投诉→物业，不满意→业委会介入；<b>业委会投诉→业委会端处理 + 社区端同步可查</b>（监督者不查自己）；公共事务→社区。咨询先由 AI 即时回答，答不了的转物业人工回复。</p>
+    </div>
+    <div class="mc">
+      <div class="mi">🪜</div>
+      <h4>机制三：矛盾三级调处</h4>
+      <p><b>网格员（一级）→ 社区（二级）→ 吹哨部门（三级）</b>。邻里纠纷、物业矛盾先在网格内调解，调解不成逐级上移，职能部门接哨报到——矛盾就地化解，不上交、不积压。</p>
+    </div>
+  </div>
+
+  <div class="flow7">
+    <div class="fn"><span class="fi">📥</span>业主提交</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🧠</span>AI 识别分派</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🔧</span>责任方处理</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">📷</span>结果提交</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">✅</span>业主验收评价</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">📋</span>留痕归档</div>
+  </div>
+</div>
+
+<!-- ═══ 五、数据与记录 ═══ -->
+<div class="sec">
+  <h2><span class="sn">五</span> 数据与记录</h2>
+  <p class="ss">四端之间的数据怎么流转、怎么保护——这是业主和业委会最该放心的部分。</p>
+
+  <div class="pledge">
+    <h4>🛡 三条基本承诺</h4>
+    <p>
+      ① <b>每一次服务都有证据</b>——工单、照片、时间戳、处理意见全程留痕；<br>
+      ② <b>每一次履约都有记录</b>——物业履约表现由平台数据自动统计，业委会监督、社区兜底都基于同一份记录；<br>
+      ③ <b>平台只做行为事实留痕</b>——不对任何个人做评价性画像、不建立个人评分档案；居民积分只是参与激励，不评级、不挂钩缴费。个人信息仅用于服务流转，不外传、不商用。
+    </p>
+  </div>
+
+  <div class="df">
+    <div class="dc"><h5>📱 业主端 → 各端</h5><p>诉求、评价、表决结果流向对应责任端</p></div>
+    <div class="dc"><h5>🏢 物业端 → 各端</h5><p>处理进度、结果、公告实时同步业主与监督端</p></div>
+    <div class="dc"><h5>🏛 业委会端 → 各端</h5><p>监督记录、审批结果、公示信息对业主可见</p></div>
+    <div class="dc"><h5>🏘 社区端 → 各端</h5><p>调处结果、吹哨处置、政策要求回传相关端口</p></div>
+  </div>
+</div>
+
+<!-- ═══ 六、常见问题 ═══ -->
+<div class="sec">
+  <h2><span class="sn">六</span> 常见问题</h2>
+  <p class="ss">业主和业委会最常问的六个问题。</p>
+
+  <div class="qa"><div class="qq">业主要装 App 吗？</div><div class="qa2">不用。微信小程序即点即用，报修、查进度、议事投票都在微信里完成。</div></div>
+  <div class="qa"><div class="qq">对处理结果不满意怎么办？</div><div class="qa2">在工单里追加反馈，处理方每级最多 3 次机会；仍不满意自动升级到上一级（物业→业委会→社区→街道），全程带着记录走，不用重新说明。</div></div>
+  <div class="qa"><div class="qq">我的个人信息会不会被公开？</div><div class="qa2">个人信息仅用于服务流转（如物业上门需要联系房号）。小区内公示的是事务结果与公共数据，不公开个人信息；平台不建立个人评分档案。</div></div>
+  <div class="qa"><div class="qq">业委会能看到什么？</div><div class="qa2">物业履约数据（工单闭环率、响应时效、差评率、超时清单）由平台自动统计，实时可查——监督建立在数据上，不是口头汇报上。</div></div>
+  <div class="qa"><div class="qq">物业不配合怎么办？</div><div class="qa2">超时工单自动预警，业委会端与社区端同步可见；业委会督促后仍无改善，社区端可介入，必要时发起"社区吹哨·部门报到"。</div></div>
+  <div class="qa"><div class="qq">费用相关的事平台怎么处理？</div><div class="qa2">平台承载服务记录与工单流转，费用标准依物业服务合同约定，平台如实呈现台账，不评价、不施压。缴费渠道及争议按合同与既有渠道办理。</div></div>
+</div>
+
+<div class="ft">
+  金色水岸 · 四端协同治理平台<br>
+  数治理方 · 杭州个信数治信用管理有限公司 · mingjian.sh.cn<br>
+  用制度代替人情 · 用数据代替解释 · 让每一次服务都有证据、每一次履约都有记录
+</div>
+
+</body>
+</html>

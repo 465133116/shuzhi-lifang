@@ -1,0 +1,36 @@
+# Python 安装包（与项目无关）
+python-3.8.2.exe
+python-installer/
+
+# OCR 训练数据
+eng.traineddata
+
+# 搜索引擎缓存页
+baidu1.html
+bing1.html
+bing1_utf8.html
+
+# 其他项目截图（物业风控平台手册截图）
+screenshots/
+
+# AI 工具配置目录
+.agents/
+.claude/
+.codebuddy/
+.lingma/
+.trae/
+.hermes/
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 临时文件
+*.log
+*.tmp
+*~
+.DS_Store
+Thumbs.db
+
+# node
+node_modules/

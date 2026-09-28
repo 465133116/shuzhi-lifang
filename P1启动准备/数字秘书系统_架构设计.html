@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 数字秘书系统架构设计</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --card: #0f172a;
+    --card2: #111c34;
+    --border: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #3b82f6;
+    --purple: #8b5cf6;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --orange: #f97316;
+    --gray: #64748b;
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    line-height: 1.6;
+    padding: 2rem;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .header .sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .header .policy-ref {
+    margin-top: 1rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 20px;
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 2.5rem;
+  }
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title .num {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+    color: var(--text);
+  }
+
+  /* Policy Grid */
+  .policy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1rem;
+  }
+  .policy-item {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.2s;
+  }
+  .policy-item:hover { border-color: var(--accent); }
+  .policy-item .article {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .policy-item .art-num {
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .policy-item .art-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .policy-item .art-desc {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .policy-item .mapping {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+  }
+  .policy-item .module-tag {
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(139,92,246,0.15);
+    color: var(--purple);
+    border: 1px solid rgba(139,92,246,0.25);
+  }
+
+  /* Architecture Diagram */
+  .arch-layer {
+    margin-bottom: 1.2rem;
+  }
+  .arch-layer-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .arch-modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.8rem;
+  }
+  .arch-module {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .arch-module::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+  }
+  .arch-module.m-purple::before { background: var(--purple); }
+  .arch-module.m-green::before { background: var(--green); }
+  .arch-module.m-amber::before { background: var(--amber); }
+  .arch-module.m-orange::before { background: var(--orange); }
+  .arch-module.m-cyan::before { background: var(--cyan); }
+  .arch-module.m-red::before { background: var(--red); }
+  .arch-module.m-pink::before { background: var(--pink); }
+  .arch-module.m-blue::before { background: var(--accent); }
+  .arch-module.m-gray::before { background: var(--gray); }
+
+  .arch-module h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .arch-module .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .arch-module ul {
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .arch-module ul li::before {
+    content: '→ ';
+    color: var(--muted);
+  }
+
+  /* Customization Table */
+  .custom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  .custom-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .custom-card h4 {
+    font-size: 0.95rem;
+    color: var(--cyan);
+    margin-bottom: 0.6rem;
+  }
+  .custom-card .config-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .custom-card .config-tag {
+    font-size: 0.72rem;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(6,182,212,0.12);
+    color: var(--cyan);
+    border: 1px solid rgba(6,182,212,0.2);
+  }
+
+  /* Portal Flow */
+  .portal-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .portal-section {
+    flex: 1;
+    min-width: 280px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+  }
+  .portal-section h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .portal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(30,41,59,0.5);
+    font-size: 0.85rem;
+  }
+  .portal-item:last-child { border-bottom: none; }
+  .portal-item .icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .portal-item .detail { color: var(--muted); font-size: 0.78rem; margin-top: 0.15rem; }
+
+  /* Integration Map */
+  .integration-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(30,41,59,0.5);
+    font-size: 0.88rem;
+  }
+  .integration-row:last-child { border-bottom: none; }
+  .integration-row .sys-name {
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 120px;
+  }
+  .integration-row .arrow { color: var(--muted); }
+  .integration-row .desc { color: var(--muted); flex:1; }
+
+  /* Phase */
+  .phase-row {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    margin-bottom: 1rem;
+  }
+  .phase-card {
+    flex: 1;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    position: relative;
+  }
+  .phase-badge {
+    position: absolute;
+    top: -10px; right: 1rem;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .phase-badge.p1 { background: var(--green); }
+  .phase-badge.p2 { background: var(--accent); }
+  .phase-badge.p3 { background: var(--purple); }
+  .phase-card h4 { font-size: 0.95rem; margin: 0.5rem 0 0.6rem; }
+  .phase-card ul { font-size: 0.82rem; color: var(--muted); list-style: none; }
+  .phase-card ul li { padding: 0.2rem 0; }
+  .phase-card ul li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+
+  /* Data table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .data-table th {
+    background: var(--card2);
+    text-align: left;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    color: var(--accent);
+  }
+  .data-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table tr:hover td { background: rgba(59,130,246,0.04); }
+
+  /* Flow diagram */
+  .flow-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0;
+  }
+  .flow-box {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+  }
+
+  .highlight-box {
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+  }
+  .highlight-box h4 { color: var(--purple); margin-bottom: 0.5rem; }
+
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .policy-grid { grid-template-columns: 1fr; }
+    .arch-modules { grid-template-columns: 1fr; }
+    .custom-grid { grid-template-columns: 1fr; }
+    .portal-flow { flex-direction: column; }
+    .phase-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ========== HEADER ========== -->
+<div class="header">
+  <h1>数治理方 · 数字秘书系统</h1>
+  <div class="sub">基于「沪房物业〔2026〕36号」的业委会秘书功能数字化架构</div>
+  <div class="policy-ref">📜 政策依据：第6条「业主委员会可以配备秘书，协助其履行职责」</div>
+</div>
+
+<!-- ========== 法律定位：秘书不必是业主 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">⚖</span> 法律定位：秘书 ≠ 委员，不必是业主
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.5rem;">
+    <div style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.25); border-radius:10px; padding:1.2rem;">
+      <h4 style="color:var(--green); margin-bottom:0.5rem;">📗 业委会委员 → 必须是业主</h4>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">
+        36号文<b style="color:var(--green);">第4条</b>：业主委员会委员应当由……<b style="color:var(--text);">业主担任</b>。<br>
+        产生方式：业主大会<b style="color:var(--text);">选举</b>。<br>
+        权力来源：全体业主<b style="color:var(--text);">投票授权</b>。
+      </p>
+    </div>
+    <div style="background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.25); border-radius:10px; padding:1.2rem;">
+      <h4 style="color:var(--purple); margin-bottom:0.5rem;">📘 业委会秘书 → 不必是业主 ✅</h4>
+      <p style="font-size:0.85rem; color:var(--muted); line-height:1.7;">
+        36号文<b style="color:var(--purple);">第6条</b>：业主委员会可以<b style="color:var(--text);">配备</b>秘书（未要求"业主担任"）。<br>
+        产生方式：业委会<b style="color:var(--text);">聘请</b>（沪住建建议复〔2018〕23号）。<br>
+        经费来源：业主大会决定，从<b style="color:var(--text);">公共收益或业主分摊</b>列支。
+      </p>
+    </div>
+  </div>
+  <div style="background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.2); border-radius:10px; padding:1rem 1.2rem;">
+    <p style="font-size:0.85rem; color:var(--text); line-height:1.7;">
+      <b style="color:var(--accent);">🔑 这意味着什么？</b>
+      同一份36号文，第4条对委员用<b style="color:var(--green);">"业主担任"</b>，第6条对秘书只用<b style="color:var(--purple);">"配备"</b>——这不是疏忽，是<b style="color:var(--amber);">立法层面的有意区分</b>。
+      上海市住建委2018年正式答复（沪住建建议复〔2018〕23号）进一步确认：<b>"业主委员会可以根据工作需要聘请专职秘书"</b>。
+      因此：<b style="color:var(--accent);">秘书可以外聘、可以是专业人员、可以同时服务多个小区</b>——这是数治理方SaaS多小区商业模式的法定基础。
+    </p>
+  </div>
+</div>
+
+<!-- ========== SECTION 1: 政策→功能映射 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">01</span> 政策18条 → 秘书功能 → 系统模块映射
+  </div>
+  <div class="policy-grid">
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第1条</span><span class="art-name">业主大会/业委会定位</span>
+      </div>
+      <div class="art-desc">业委会是执行机构，接受党组织领导，接受业主监督</div>
+      <div class="mapping">
+        <span class="module-tag">组织架构配置</span>
+        <span class="module-tag">权限角色管理</span>
+        <span class="module-tag">党建对接模块</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第2条</span><span class="art-name">业主大会决策机制</span>
+      </div>
+      <div class="art-desc">定期/临时会议，决定选聘物业、维修资金、公共收益等重大事项</div>
+      <div class="mapping">
+        <span class="module-tag">会议管理模块</span>
+        <span class="module-tag">表决投票系统</span>
+        <span class="module-tag">议题征集</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第3条</span><span class="art-name">组建和换届改选</span>
+      </div>
+      <div class="art-desc">街镇组建筹备组/换届改选小组，组长由街镇人员担任</div>
+      <div class="mapping">
+        <span class="module-tag">选举辅助模块</span>
+        <span class="module-tag">筹备组工具</span>
+        <span class="module-tag">时间线管理</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第4条</span><span class="art-name">委员选举</span>
+      </div>
+      <div class="art-desc">候选人政治面貌/年龄/专业等分布考量，签署履职承诺书</div>
+      <div class="mapping">
+        <span class="module-tag">候选人储备库</span>
+        <span class="module-tag">资格审查</span>
+        <span class="module-tag">承诺书签署</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第5条</span><span class="art-name">候补委员制度</span>
+      </div>
+      <div class="art-desc">候补委员可列席（无表决权），按得票顺序递补</div>
+      <div class="mapping">
+        <span class="module-tag">委员状态管理</span>
+        <span class="module-tag">递补触发</span>
+        <span class="module-tag">任期追踪</span>
+      </div>
+    </div>
+
+    <div class="policy-item" style="border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.05);">
+      <div class="article">
+        <span class="art-num" style="background: var(--purple);">★ 第6条</span><span class="art-name">业委会职责 + 秘书配备</span>
+      </div>
+      <div class="art-desc">督促业主交费、监督物业履约、管理规约实施。<b style="color:var(--purple);">可配备秘书。</b></div>
+      <div class="mapping">
+        <span class="module-tag" style="background:rgba(139,92,246,0.25);">📌 秘书工作站（核心）</span>
+        <span class="module-tag">催缴辅助</span>
+        <span class="module-tag">物业监督</span>
+        <span class="module-tag">规约执行</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第7条</span><span class="art-name">工作制度</span>
+      </div>
+      <div class="art-desc">印章分开保管+使用登记，会议记录+合同协商记录+资料保管</div>
+      <div class="mapping">
+        <span class="module-tag">印章管理模块</span>
+        <span class="module-tag">档案管理模块</span>
+        <span class="module-tag">合同管理</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第8条</span><span class="art-name">信息公开制度</span>
+      </div>
+      <div class="art-desc">公布维修资金/公共收益收支审计、物业合同等，接受业主查询</div>
+      <div class="mapping">
+        <span class="module-tag">信息公开模块</span>
+        <span class="module-tag">财务公示</span>
+        <span class="module-tag">业主查询端</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第9条</span><span class="art-name">履职保障</span>
+      </div>
+      <div class="art-desc">委员津贴、列入居村两委后备力量、"两代表一委员"推荐</div>
+      <div class="mapping">
+        <span class="module-tag">津贴管理</span>
+        <span class="module-tag">履职档案</span>
+        <span class="module-tag">荣誉体系</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第10条</span><span class="art-name">物业选聘</span>
+      </div>
+      <div class="art-desc">拟订选聘方案，鼓励招投标，全市统一平台，物业费动态调整</div>
+      <div class="mapping">
+        <span class="module-tag">物业选聘工具</span>
+        <span class="module-tag">合同模板</span>
+        <span class="module-tag">招标管理</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第11条</span><span class="art-name">维修资金筹集使用</span>
+      </div>
+      <div class="art-desc">余额不足30%须再次筹集，可一次性或分期，审价约束</div>
+      <div class="mapping">
+        <span class="module-tag">维修资金管理</span>
+        <span class="module-tag">工程审价</span>
+        <span class="module-tag">分期筹集工具</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第12条</span><span class="art-name">公共收益管理</span>
+      </div>
+      <div class="art-desc">全额入监管账户，单独列账，扣除成本后归业主共有</div>
+      <div class="mapping">
+        <span class="module-tag">公共收益台账</span>
+        <span class="module-tag">成本核算</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第13条</span><span class="art-name">工作经费规则</span>
+      </div>
+      <div class="art-desc">办公/会议/津贴经费，业主分摊或公共收益列支</div>
+      <div class="mapping">
+        <span class="module-tag">经费预算管理</span>
+        <span class="module-tag">支出审批</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第14条</span><span class="art-name">财务管理</span>
+      </div>
+      <div class="art-desc">可委托代理记账，财务审计+工程审价，费用从公共收益列支</div>
+      <div class="mapping">
+        <span class="module-tag">财务辅助模块</span>
+        <span class="module-tag">审计对接</span>
+        <span class="module-tag">代理记账接口</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第15条</span><span class="art-name">街镇居村指导监督</span>
+      </div>
+      <div class="art-desc">参加街镇培训，会议邀请居村参加，动态监测+居民评议</div>
+      <div class="mapping">
+        <span class="module-tag">培训管理模块</span>
+        <span class="module-tag">监督报告</span>
+        <span class="module-tag">评议收集</span>
+      </div>
+    </div>
+
+    <div class="policy-item" style="border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.05);">
+      <div class="article">
+        <span class="art-num" style="background: var(--green);">★ 第16条</span><span class="art-name">多方联动沟通</span>
+      </div>
+      <div class="art-desc">每月业主接待日，居村两委+业委会+物业月度联席会议</div>
+      <div class="mapping">
+        <span class="module-tag" style="background:rgba(16,185,129,0.2);">📌 业主接待模块（客服核心）</span>
+        <span class="module-tag">联席会议工具</span>
+        <span class="module-tag">接待排班</span>
+      </div>
+    </div>
+
+    <div class="policy-item">
+      <div class="article">
+        <span class="art-num">第17条</span><span class="art-name">履职约束</span>
+      </div>
+      <div class="art-desc">不得做与物业无关决定，街镇可约谈发函，违法造成损害赔偿</div>
+      <div class="mapping">
+        <span class="module-tag">合规边界检测</span>
+        <span class="module-tag">约谈记录</span>
+        <span class="module-tag">风险预警</span>
+      </div>
+    </div>
+
+    <div class="policy-item" style="border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.05);">
+      <div class="article">
+        <span class="art-num" style="background: var(--amber);">★ 第18条</span><span class="art-name">物业治理委员会补位</span>
+      </div>
+      <div class="art-desc">业委会无法组建时街镇牵头组建，临时过渡+救济补位</div>
+      <div class="mapping">
+        <span class="module-tag" style="background:rgba(245,158,11,0.2);">📌 过渡期托管模式</span>
+        <span class="module-tag">双轨切换</span>
+        <span class="module-tag">补位工作台</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== SECTION 2: 系统架构 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">02</span> 数字秘书系统 · 四层架构
+  </div>
+
+  <!-- Layer 1: Foundation -->
+  <div class="arch-layer">
+    <div class="arch-layer-label">▸ 第1层：政策底座（不可定制—全市统一）</div>
+    <div class="arch-modules">
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>合规引擎</h4>
+        <ul>
+          <li>18条规则引擎</li>
+          <li>越权操作拦截</li>
+          <li>法定时间线提醒</li>
+          <li>街镇备案自动生成</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>标准流程库</h4>
+        <ul>
+          <li>组建换届SOP</li>
+          <li>维修资金使用SOP</li>
+          <li>公共收益管理SOP</li>
+          <li>物业选聘SOP</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>格式文书库</h4>
+        <ul>
+          <li>履职承诺书模板</li>
+          <li>业主大会通知模板</li>
+          <li>备案文书模板</li>
+          <li>公示公告模板</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>法规知识库</h4>
+        <ul>
+          <li>民法典·物权编</li>
+          <li>上海市住宅物业规定</li>
+          <li>沪房物业〔2026〕36号</li>
+          <li>街镇地方细则</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 2: Core Modules -->
+  <div class="arch-layer">
+    <div class="arch-layer-label">▸ 第2层：核心功能模块（可开关—按需启用）</div>
+    <div class="arch-modules">
+
+      <div class="arch-module m-purple">
+        <h4><span class="dot" style="background:var(--purple)"></span>🗳 会议管理</h4>
+        <ul>
+          <li>业主大会/业委会/联席三类会议</li>
+          <li>议题征集→通知→签到→表决→纪要全链路</li>
+          <li>表决票电子化+纸质双轨</li>
+          <li>会议档案自动归档，满法定年限</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-green">
+        <h4><span class="dot" style="background:var(--green)"></span>📋 业主接待（客服核心）</h4>
+        <ul>
+          <li>来电弹屏（业主分类+历史+工单）</li>
+          <li>投诉/建议/咨询三通道</li>
+          <li>接待日排班+签到</li>
+          <li>SLA计时+超时升级</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-amber">
+        <h4><span class="dot" style="background:var(--amber)"></span>🔧 工单协同</h4>
+        <ul>
+          <li>对接现有P1工单系统</li>
+          <li>秘书建单→物业接单→处理→回单→评价闭环</li>
+          <li>维修资金关联工单</li>
+          <li>超时自动预警→街镇</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-cyan">
+        <h4><span class="dot" style="background:var(--cyan)"></span>📢 信息公开</h4>
+        <ul>
+          <li>维修资金收支公示</li>
+          <li>公共收益收支公示</li>
+          <li>会议决定公告</li>
+          <li>业主查询端（按第8条）</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-blue">
+        <h4><span class="dot" style="background:var(--accent)"></span>📁 档案管理</h4>
+        <ul>
+          <li>会议记录/合同/印章记录/财务凭证</li>
+          <li>业主名册+联系方式</li>
+          <li>分类归档+检索</li>
+          <li>借阅登记</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-orange">
+        <h4><span class="dot" style="background:var(--orange)"></span>💰 催缴辅助</h4>
+        <ul>
+          <li>基于第6条法定职责</li>
+          <li>欠费名单+分类标签</li>
+          <li>短信/通话/上门记录</li>
+          <li>缴费率看板</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-pink">
+        <h4><span class="dot" style="background:var(--pink)"></span>🖊 印章管理</h4>
+        <ul>
+          <li>三章分开保管（物理）</li>
+          <li>使用申请→审批→登记→归档</li>
+          <li>用印记录可追溯</li>
+          <li>违规用印预警</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-red">
+        <h4><span class="dot" style="background:var(--red)"></span>🏗 选举辅助</h4>
+        <ul>
+          <li>候选人储备库</li>
+          <li>资格审查清单</li>
+          <li>投票计票</li>
+          <li>候补递补逻辑</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-cyan">
+        <h4><span class="dot" style="background:var(--cyan)"></span>📊 财务辅助</h4>
+        <ul>
+          <li>维修资金台账</li>
+          <li>公共收益台账</li>
+          <li>工作经费预算+支出</li>
+          <li>审计/审价对接</li>
+        </ul>
+      </div>
+
+      <div class="arch-module m-blue">
+        <h4><span class="dot" style="background:var(--accent)"></span>🎓 培训管理</h4>
+        <ul>
+          <li>街镇培训排期+报名</li>
+          <li>参训记录+证书</li>
+          <li>法规知识库查询</li>
+          <li>自学资料库</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Layer 3: Customization -->
+  <div class="arch-layer">
+    <div class="arch-layer-label">▸ 第3层：定制化配置层（每小区独立配置）</div>
+    <div class="arch-modules">
+      <div class="arch-module m-purple" style="border: 1px dashed rgba(139,92,246,0.5);">
+        <h4><span class="dot" style="background:var(--purple)"></span>⚙ 小区身份配置</h4>
+        <ul>
+          <li>小区名称/地址/规模</li>
+          <li>业委会架构（人数/任期/分工）</li>
+          <li>物业公司信息</li>
+          <li>街镇/居委归属</li>
+        </ul>
+      </div>
+      <div class="arch-module m-green" style="border: 1px dashed rgba(16,185,129,0.5);">
+        <h4><span class="dot" style="background:var(--green)"></span>⚙ 议事规则定制</h4>
+        <ul>
+          <li>业主大会议事规则参数</li>
+          <li>管理规约条款映射</li>
+          <li>表决比例阈值</li>
+          <li>授权金额上限</li>
+        </ul>
+      </div>
+      <div class="arch-module m-amber" style="border: 1px dashed rgba(245,158,11,0.5);">
+        <h4><span class="dot" style="background:var(--amber)"></span>⚙ 流程模板定制</h4>
+        <ul>
+          <li>工单类型+流程+时限</li>
+          <li>短信模板选择+编辑</li>
+          <li>会议模板</li>
+          <li>公示模板</li>
+        </ul>
+      </div>
+      <div class="arch-module m-cyan" style="border: 1px dashed rgba(6,182,212,0.5);">
+        <h4><span class="dot" style="background:var(--cyan)"></span>⚙ 权限角色定制</h4>
+        <ul>
+          <li>秘书/委员/主任/物业/街镇 角色权限</li>
+          <li>模块开关（12模块可选）</li>
+          <li>数据可见范围</li>
+          <li>操作审批链</li>
+        </ul>
+      </div>
+      <div class="arch-module m-pink" style="border: 1px dashed rgba(236,72,153,0.5);">
+        <h4><span class="dot" style="background:var(--pink)"></span>⚙ 品牌外观定制</h4>
+        <ul>
+          <li>小区Logo+名称</li>
+          <li>主题色</li>
+          <li>业主端域名</li>
+          <li>公众号/小程序绑定</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 4: Integration -->
+  <div class="arch-layer">
+    <div class="arch-layer-label">▸ 第4层：外部对接层（可选集成）</div>
+    <div class="arch-modules">
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>🔗 政府部门</h4>
+        <ul>
+          <li>街镇备案系统</li>
+          <li>居委协同平台</li>
+          <li>房管局监管平台</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>🔗 物业公司</h4>
+        <ul>
+          <li>物业工单系统</li>
+          <li>缴费系统</li>
+          <li>门禁/停车系统</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>🔗 金融服务</h4>
+        <ul>
+          <li>维修资金银行</li>
+          <li>公共收益监管账户</li>
+          <li>代理记账公司</li>
+        </ul>
+      </div>
+      <div class="arch-module m-gray">
+        <h4><span class="dot" style="background:var(--gray)"></span>🔗 通信渠道</h4>
+        <ul>
+          <li>短信通道</li>
+          <li>公众号/小程序</li>
+          <li>电话系统(CTI)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 3: 客服端口设计（核心） ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">03</span> 可定制客服端口 — 秘书工作台设计
+  </div>
+  <p style="color:var(--muted); margin-bottom:1rem;">
+    这是整个系统的<b style="color:var(--text);">人机交互核心</b>——秘书/客服人员每天面对的操作界面。对接数治理方现有的业主分类系统、工单系统、短信系统。
+  </p>
+
+  <div class="portal-flow">
+
+    <!-- LEFT: Incoming -->
+    <div class="portal-section" style="border-top: 3px solid var(--accent);">
+      <h4>📞 来电/来询入口</h4>
+      <div class="portal-item">
+        <span class="icon">📱</span>
+        <div>
+          <div>电话接入（CTI弹屏）</div>
+          <div class="detail">来电自动匹配业主 → 弹出分类标签 + 最近工单 + 通话历史</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">💬</span>
+        <div>
+          <div>小程序咨询</div>
+          <div class="detail">业主通过小程序发起的投诉/报修/咨询，实时推送至工作台</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">🏢</span>
+        <div>
+          <div>现场接待</div>
+          <div class="detail">业主接待日/日常来访登记，快速检索业主档案</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📋</span>
+        <div>
+          <div>工单回访提醒</div>
+          <div class="detail">SLA到期/工单闭环后自动推送回访任务</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Workbench -->
+    <div class="portal-section" style="border-top: 3px solid var(--purple); flex: 1.5;">
+      <h4>🖥 秘书工作台（一屏操作）</h4>
+      <div class="portal-item">
+        <span class="icon">👤</span>
+        <div>
+          <div><b>业主信息卡片</b></div>
+          <div class="detail">姓名/房号/联系方式 | 分类标签（F~C+信号强度）| 双轨数据溯源（📱/🎧）| 欠费状态</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📝</span>
+        <div>
+          <div><b>快速建单</b></div>
+          <div class="detail">投诉/报修/建议/咨询四类工单，一键创建 → 自动分配物业处理人</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📨</span>
+        <div>
+          <div><b>快捷发送</b></div>
+          <div class="detail">预置短信模板（11条），选择→预览→发送，自动记录发送日志</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📞</span>
+        <div>
+          <div><b>通话记录</b></div>
+          <div class="detail">通话结果标注（接通/拒接/空号/需回访），自动更新业主分类信号</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">🔍</span>
+        <div>
+          <div><b>信息查询</b></div>
+          <div class="detail">维修资金余额 | 缴费记录 | 历史工单 | 投诉记录 | 会议决议（按第8条）</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📊</span>
+        <div>
+          <div><b>数据看板</b></div>
+          <div class="detail">今日接待量/工单闭环率/缴费率/业主分类分布（实时刷新）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Internal -->
+    <div class="portal-section" style="border-top: 3px solid var(--green);">
+      <h4>🏛 业委会内务工具</h4>
+      <div class="portal-item">
+        <span class="icon">📅</span>
+        <div>
+          <div>会议管理</div>
+          <div class="detail">发起会议→议题征集→通知→签到→表决→纪要</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">🖊</span>
+        <div>
+          <div>印章使用</div>
+          <div class="detail">申请→审批→登记，三章分开管理</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📢</span>
+        <div>
+          <div>信息公示</div>
+          <div class="detail">财务公示/会议公告/合同公示，一键发布至业主端</div>
+        </div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📁</span>
+        <div>
+          <div>档案查阅</div>
+          <div class="detail">会议记录/合同/财务凭证分类检索</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Flow diagram -->
+  <div style="text-align:center; margin-top:1.5rem; padding:1rem; background:var(--card); border-radius:12px;">
+    <div style="font-size:0.85rem; color:var(--muted); margin-bottom:0.8rem;">客服端口 · 单次交互闭环</div>
+    <div class="flow-boxes">
+      <div class="flow-box" style="background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.3); color:var(--accent);">来电/来询</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:rgba(139,92,246,0.15); border-color:rgba(139,92,246,0.3); color:var(--purple);">身份识别+分类弹屏</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.3); color:var(--green);">秘书操作<br>(建单/短信/记录)</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.3); color:var(--amber);">工单流转→物业</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:rgba(6,182,212,0.15); border-color:rgba(6,182,212,0.3); color:var(--cyan);">闭环回访</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-box" style="background:rgba(100,116,139,0.15); border-color:rgba(100,116,139,0.3); color:var(--gray);">归档</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 4: 定制化框架 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">04</span> 多小区SaaS定制框架
+  </div>
+  <p style="color:var(--muted); margin-bottom:1rem;">
+    每个小区 = 一个独立租户，拥有独立的配置空间。秘书/客服端口的外观和行为均可按小区定制，但政策底座和合规引擎全市统一。
+  </p>
+
+  <div class="custom-grid">
+    <div class="custom-card">
+      <h4>🏘 小区基础配置</h4>
+      <div class="config-items">
+        <span class="config-tag">小区名称/地址</span>
+        <span class="config-tag">总户数/楼栋数</span>
+        <span class="config-tag">物业公司</span>
+        <span class="config-tag">业委会规模(5/7/9人)</span>
+        <span class="config-tag">委员分工(主任/副主任/委员)</span>
+        <span class="config-tag">任期起止日</span>
+        <span class="config-tag">街镇归属</span>
+        <span class="config-tag">居委对接人</span>
+      </div>
+    </div>
+
+    <div class="custom-card">
+      <h4>📜 议事规则参数化</h4>
+      <div class="config-items">
+        <span class="config-tag">表决比例(双2/3 vs 双3/4)</span>
+        <span class="config-tag">业主大会召开频次</span>
+        <span class="config-tag">授权维修资金上限</span>
+        <span class="config-tag">候补委员人数</span>
+        <span class="config-tag">印章保管人（3人）</span>
+        <span class="config-tag">接待日频次/时段</span>
+        <span class="config-tag">工作经费上限</span>
+        <span class="config-tag">委员津贴标准</span>
+      </div>
+    </div>
+
+    <div class="custom-card">
+      <h4>📋 工单流程定制</h4>
+      <div class="config-items">
+        <span class="config-tag">工单类型(报修/投诉/建议...)</span>
+        <span class="config-tag">每类SLA时限</span>
+        <span class="config-tag">处理人分配规则</span>
+        <span class="config-tag">超时升级链(→主管→经理→街镇)</span>
+        <span class="config-tag">是否关联维修资金</span>
+        <span class="config-tag">是否需要审价</span>
+        <span class="config-tag">闭环条件(业主确认/秘书确认)</span>
+      </div>
+    </div>
+
+    <div class="custom-card">
+      <h4>📨 短信模板定制</h4>
+      <div class="config-items">
+        <span class="config-tag">启用/禁用模板（11选N）</span>
+        <span class="config-tag">模板文案微调</span>
+        <span class="config-tag">发送时段限制</span>
+        <span class="config-tag">频次上限/业主</span>
+        <span class="config-tag">拒收名单管理</span>
+        <span class="config-tag">小区专属标签后缀</span>
+      </div>
+    </div>
+
+    <div class="custom-card">
+      <h4>🔐 权限角色定制</h4>
+      <div class="config-items">
+        <span class="config-tag">秘书：全模块+客服端口</span>
+        <span class="config-tag">主任：全模块+审批</span>
+        <span class="config-tag">委员：指定模块+只读</span>
+        <span class="config-tag">物业：工单+信息查询</span>
+        <span class="config-tag">居委：监督查看+会议列席</span>
+        <span class="config-tag">街镇：备案接收+监督查看</span>
+        <span class="config-tag">业主：个人查询+小程序端</span>
+      </div>
+    </div>
+
+    <div class="custom-card">
+      <h4>🎨 品牌定制</h4>
+      <div class="config-items">
+        <span class="config-tag">工作台Logo+名称</span>
+        <span class="config-tag">主题色(预设6套)</span>
+        <span class="config-tag">业主端独立入口（域名/小程序）</span>
+        <span class="config-tag">公示信息落款</span>
+        <span class="config-tag">短信签名</span>
+        <span class="config-tag">工单编号前缀</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 5: 与现有系统对接 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">05</span> 与现有数治理方组件对接
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>现有组件</th>
+          <th>对接方式</th>
+          <th>秘书系统中的角色</th>
+          <th>数据流方向</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>业主分类系统</b>（双轨V8.0）</td>
+          <td>API调用 / 共享localStorage</td>
+          <td>来电弹屏时实时获取分类标签+信号强度</td>
+          <td>分类系统 → 秘书工作台（读）<br>秘书操作 → 分类系统（写：通话结果更新信号）</td>
+        </tr>
+        <tr>
+          <td><b>P1工单系统</b></td>
+          <td>共享数据层（sgzf_前缀）</td>
+          <td>秘书建单/查单/闭环，物业接单/处理/回单</td>
+          <td>双向：秘书建单 → 工单池 → 物业处理 → 回单 → 秘书确认闭环</td>
+        </tr>
+        <tr>
+          <td><b>短信系统</b>（11条模板）</td>
+          <td>函数调用 / 事件触发</td>
+          <td>秘书手动发送 + 系统自动触发（工单确认/超时）</td>
+          <td>秘书工作台 → 短信通道（发）<br>发送日志 ← 短信通道（收）</td>
+        </tr>
+        <tr>
+          <td><b>ecosystem-bridge.js</b></td>
+          <td>BroadcastChannel扩展</td>
+          <td>跨端口消息总线：秘书端↔业主端↔物业端↔居委端</td>
+          <td>全向：工单通知/会议通知/公示推送</td>
+        </tr>
+        <tr>
+          <td><b>五端HTML原型</b>（v3.12）</td>
+          <td>新增"秘书端"为第六端</td>
+          <td>在管模式六端全开，P1模式仅秘书端+物业端</td>
+          <td>新增端口，复用现有架构</td>
+        </tr>
+        <tr>
+          <td><b>双轨催缴平台</b></td>
+          <td>嵌入秘书工作台</td>
+          <td>催缴功能作为秘书工作台"催缴辅助"标签页</td>
+          <td>催缴记录 → 业主分类信号更新</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ========== SECTION 6: 部署模式 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">06</span> 三种部署模式（对齐政策三种场景）
+  </div>
+
+  <div class="portal-flow">
+    <div class="portal-section" style="border-top: 3px solid var(--green);">
+      <h4>🟢 在管模式（业委会正常）</h4>
+      <p style="font-size:0.82rem; color:var(--muted);">业委会+秘书完整运作。十二模块全开。</p>
+      <div class="portal-item">
+        <span class="icon">👥</span><div>秘书角色：全职/兼职业委会秘书</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📋</span><div>端口：业主端+物业端+秘书端+居委端+街镇端</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">✅</span><div>政策对接：第1~17条全覆盖</div>
+      </div>
+    </div>
+
+    <div class="portal-section" style="border-top: 3px solid var(--amber);">
+      <h4>🟡 双轨模式（业委会换届交接期）</h4>
+      <p style="font-size:0.82rem; color:var(--muted);">旧业委会将退未退，新业委会未产生。第18条物业治理委员会补位。</p>
+      <div class="portal-item">
+        <span class="icon">👤</span><div>秘书角色：街道派驻/物业治理委员会指定</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">🔒</span><div>印章/财务模块冻结，工单/接待/公示模块正常运行</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">🔄</span><div>政策对接：第18条补位机制 + 第4~5条换届辅助</div>
+      </div>
+    </div>
+
+    <div class="portal-section" style="border-top: 3px solid var(--accent);">
+      <h4>🔵 P1物业入口模式（业委会缺位）</h4>
+      <p style="font-size:0.82rem; color:var(--muted);">当前阶段。无业委会，物业直连。功能精简。</p>
+      <div class="portal-item">
+        <span class="icon">👤</span><div>秘书角色：物业客服/管家兼任</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📋</span><div>仅开工单+短信+接待+催缴四个模块</div>
+      </div>
+      <div class="portal-item">
+        <span class="icon">📌</span><div>政策对接：第6条（催缴）+ 第16条（接待）</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SECTION 7: 实施路径 ========== -->
+<div class="section">
+  <div class="section-title">
+    <span class="num">07</span> 实施路径 · 三阶段演进
+  </div>
+
+  <div class="phase-row">
+    <div class="phase-card">
+      <div class="phase-badge p1">P1 · 当前</div>
+      <h4>秘书工作台 MVP</h4>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.6rem;">在现有P1工单系统上叠加客服操作层</p>
+      <ul>
+        <li>来电弹屏（业主查询+标签展示）</li>
+        <li>快速建单（4类工单）</li>
+        <li>短信发送（11条模板选择发送）</li>
+        <li>通话记录标注</li>
+        <li>业主分类信号更新</li>
+        <li>工单看板</li>
+        <li><b style="color:var(--accent);">新增"秘书端"HTML端口</b></li>
+      </ul>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-badge p2">P2 · 扩展</div>
+      <h4>业委会协作平台</h4>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.6rem;">增加业委会内部管理模块</p>
+      <ul>
+        <li>会议管理（议题→表决→纪要）</li>
+        <li>档案管理（分类检索+借阅）</li>
+        <li>印章管理（申请→审批→登记）</li>
+        <li>信息公开（业主查询端）</li>
+        <li>多角色权限体系</li>
+        <li>SaaS多小区租户隔离</li>
+        <li><b style="color:var(--accent);">小区定制配置后台</b></li>
+      </ul>
+    </div>
+
+    <div class="phase-card">
+      <div class="phase-badge p3">P3 · 完整</div>
+      <h4>数字秘书全功能</h4>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:0.6rem;">覆盖政策18条的全模块上线</p>
+      <ul>
+        <li>选举辅助（候选人库+投票）</li>
+        <li>财务辅助（台账+审计对接）</li>
+        <li>维修资金管理模块</li>
+        <li>公共收益管理模块</li>
+        <li>物业选聘工具</li>
+        <li>培训管理系统</li>
+        <li><b style="color:var(--accent);">街镇监管驾驶舱</b></li>
+        <li><b style="color:var(--accent);">代理记账/银行API对接</b></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ========== FOOTER: 核心洞见 ========== -->
+<div class="highlight-box">
+  <h4>💡 核心战略洞见</h4>
+  <p style="font-size:0.9rem; color:var(--text); line-height:1.8;">
+    <b>1. 政策为"秘书"正名。</b>第6条明确业委会可以配备秘书，这意味着数治理方不再需要把自己定位为"催缴工具"或"工单系统"——
+    可以名正言顺地定位为<b style="color:var(--purple);">"业委会秘书数字化工作台"</b>，政策本身就给了这个角色合法的存在空间。<br><br>
+    <b>2. 秘书=平台的人机界面。</b>12个功能模块中，<b style="color:var(--green);">业主接待</b>（第16条）和<b style="color:var(--purple);">催缴辅助</b>（第6条）是最直接的"客服端口"场景——
+    秘书不是冷冰冰的AI，是<b>有政策背书的操作者</b>，平台只是他/她的工具。<br><br>
+    <b>3. 三种模式=三种秘书。</b>在管模式是正式业委会秘书、双轨模式是街道物业治理委员会指定人员、P1模式是物业客服兼任。
+    同一个平台、同一套工具，<b>不同的权限、不同的模块开关、不同的合规边界</b>——这就是"可定制"的本质。<br><br>
+    <b>4. SaaS多小区架构天然成立。</b>每个小区的议事规则、管理规约、业委会架构都不同（第2、7、13条均允许差异），
+    这正是多租户SaaS的完美场景。政策底座统一、小区配置独立——<b style="color:var(--accent);">一个平台，百个小区，各自定制。</b><br><br>
+    <b>5. 秘书外聘=SaaS商业模式的法律基石。</b>36号文第4条要求委员"业主担任"，第6条对秘书只写"配备"——
+    立法层面的有意区分，加上沪住建建议复〔2018〕23号明确"可以聘请专职秘书"，意味着<b style="color:var(--purple);">秘书不必是业主、可以外聘、可以职业化</b>。
+    这为"宁波个信聘请专业秘书→服务多个小区→使用数治理方平台"的商业闭环提供了法定依据。
+    秘书的薪酬从小区公共收益列支（第13条），平台工具费计入办公经费——<b style="color:var(--green);">商业模式完整，资金链路合规。</b>
+  </p>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · 客服端 P1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;padding:16px}
+.topbar{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:12px 18px;border-radius:10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.topbar .agent{font-size:17px;font-weight:700}
+.topbar .role-badge{font-size:10px;opacity:.7;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:4px}
+.topbar .stats{display:flex;gap:16px;font-size:11px}
+.topbar .stats div{text-align:center}
+.topbar .stats span{opacity:.7;display:block}
+.topbar .stats strong{font-size:15px}
+.subbar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.subbar .back{color:#2563eb;cursor:pointer;font-size:13px}
+.subbar .title{font-size:15px;font-weight:700}
+.filter-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.fbtn{padding:5px 12px;border-radius:6px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:600;background:#fff;color:#64748b}
+.fbtn.on{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.fbtn .n{font-size:16px;display:block;line-height:1.2}
+.cls-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.cbtn{padding:5px 12px;border-radius:6px;border:2px solid transparent;cursor:pointer;font-size:11px;font-weight:600}
+.cbtn.on{border-width:2px;border-style:solid}
+.cA{background:#fef3c7;color:#92400e;border-color:#f59e0b}.cA.on{background:#fde68a}
+.cB{background:#d1fae5;color:#065f46;border-color:#10b981}.cB.on{background:#a7f3d0}
+.cC{background:#f1f5f9;color:#64748b;border-color:#94a3b8}.cC.on{background:#e2e8f0}
+.cD{background:#ffedd5;color:#9a3412;border-color:#f97316}.cD.on{background:#fed7aa}
+.cE{background:#fee2e2;color:#991b1b;border-color:#ef4444}.cE.on{background:#fecaca}
+.cF{background:#ede9fe;color:#5b21b6;border-color:#8b5cf6}.cF.on{background:#ddd6fe}
+.main-area{display:flex;gap:14px}
+.owner-list{flex:1}
+.card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .15s}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card-top{display:flex;justify-content:space-between;align-items:start;margin-bottom:6px}
+.card-name{font-weight:700;font-size:14px}
+.card-info{font-size:11px;color:#64748b}
+.card-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
+.badge-role-o{background:#dbeafe;color:#1e40af}.badge-role-f{background:#fef3c7;color:#92400e}
+.badge-role-t{background:#ede9fe;color:#5b21b6}.badge-role-u{background:#f1f5f9;color:#94a3b8}
+.badge-ok{background:#d1fae5;color:#065f46}.badge-new{background:#fee2e2;color:#991b1b}
+.card-priority{font-size:20px;font-weight:800;text-align:center;min-width:36px}
+.card-body{margin-bottom:6px}
+.cls-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:4px}
+.cls-aux{font-size:10px;color:#94a3b8;margin:0 2px;padding:1px 5px;border:1px dashed #cbd5e1;border-radius:3px}
+.card-action-row{font-size:11px;color:#64748b;margin-bottom:6px}
+.card-action-row .act{color:#2563eb;font-weight:600}
+.card-tags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:4px}
+.tag{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px}
+.tag-g{background:#d1fae5;color:#065f46}.tag-gr{background:#f1f5f9;color:#94a3b8}
+.tag-y{background:#fef3c7;color:#92400e}.tag-r{background:#fee2e2;color:#991b1b}
+.card-btns{display:flex;gap:5px;margin-top:6px}
+.btn{padding:4px 10px;border-radius:5px;border:none;cursor:pointer;font-size:11px;font-weight:600}
+.btn-pri{background:#2563eb;color:#fff}.btn-pri:hover{background:#1d4ed8}
+.btn-sec{background:#f1f5f9;color:#475569}.btn-sec:hover{background:#e2e8f0}
+.btn-warn{background:#fef3c7;color:#92400e}
+.sidebar{width:250px;flex-shrink:0}
+.side-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid #e2e8f0}
+.side-card h3{font-size:12px;margin-bottom:8px;color:#475569}
+.draft-grid{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.draft-tag{padding:2px 7px;border-radius:4px;font-size:9px;cursor:pointer;border:1px solid #e2e8f0;background:#f8fafc}
+.draft-tag:hover{background:#2563eb;color:#fff;border-color:#2563eb}
+.agent-feedback{margin-top:8px}
+.agent-feedback select,.agent-feedback input{width:100%;padding:4px 6px;border:1px solid #e2e8f0;border-radius:4px;font-size:10px;margin-bottom:4px}
+.follow-item{padding:6px 8px;border-radius:5px;font-size:10px;margin-bottom:4px;cursor:pointer}
+.follow-item.warn{background:#fffbeb;border:1px solid #fde68a}
+.follow-item.ok{background:#f0fdf4;border:1px solid #bbf7d0}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;width:580px;max-height:85vh;overflow-y:auto;padding:20px}
+.modal h3{font-size:15px;margin-bottom:14px;display:flex;justify-content:space-between}
+.modal-close{cursor:pointer;font-size:18px;color:#94a3b8}
+.modal-section{margin-bottom:16px}
+.modal-section h4{font-size:12px;color:#475569;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0}
+.signal-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.signal-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:5px;font-size:11px;background:#f8fafc}
+.signal-item.on{font-weight:600}
+.signal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.timeline-item{padding:5px 0;font-size:10px;border-bottom:1px solid #f1f5f9}
+.timeline-item .time{color:#94a3b8;margin-right:6px}
+.verify-panel{background:#f8fafc;border-radius:8px;padding:10px;margin-top:12px}
+.verify-panel label{display:block;margin:4px 0;font-size:11px;cursor:pointer}
+.empty{text-align:center;color:#94a3b8;padding:24px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div>
+    <div class="agent">客服小安 <span class="role-badge">引流·确认需求·草稿·回访</span></div>
+    <div style="font-size:10px;opacity:.7">CS001 · 在线 · 不介入工单处理</div>
+  </div>
+  <div class="stats">
+    <div><span>今日外呼</span><strong>8</strong></div>
+    <div><span>接通率</span><strong>62%</strong></div>
+    <div><span>待回访</span><strong>3</strong></div>
+    <div><span>本周</span><strong>12</strong></div>
+  </div>
+</div>
+<div class="subbar">
+  <span class="back" onclick="goBack()">← 返回总览</span>
+  <span class="title">阳光花园</span>
+  <span style="font-size:11px;color:#64748b">城东区阳光路88号 · 张经理 · 1200户</span>
+</div>
+<div class="filter-row" id="sf">
+  <button class="fbtn on" data-f="all"><span class="n">6</span>全部</button>
+  <button class="fbtn" data-f="new"><span class="n">1</span>未拨打</button>
+  <button class="fbtn" data-f="ok"><span class="n">5</span>已拨打</button>
+  <button class="fbtn" data-f="review"><span class="n">2</span>待回访</button>
+</div>
+<div class="cls-row" id="cf">
+  <button class="cbtn cA on" data-c="all">全部</button>
+  <button class="cbtn cA" data-c="A">A·争议 2</button>
+  <button class="cbtn cB" data-c="B">B·困难 1</button>
+  <button class="cbtn cC" data-c="C">C·观望 1</button>
+  <button class="cbtn cD" data-c="D">D·惯性 1</button>
+  <button class="cbtn cE" data-c="E">E·对抗 1</button>
+  <button class="cbtn cF" data-c="F">F·特殊 0</button>
+</div>
+<div class="main-area">
+<div class="owner-list" id="list"></div>
+<div class="sidebar">
+  <div class="side-card">
+    <h3>快捷草稿（通话中一键打标签）</h3>
+    <div style="font-size:9px;color:#94a3b8;margin-bottom:4px">投诉</div>
+    <div class="draft-grid">
+      <span class="draft-tag">服务态度</span><span class="draft-tag">处理不及时</span>
+      <span class="draft-tag">收费不合理</span><span class="draft-tag">公区管理</span>
+      <span class="draft-tag">安全隐患</span>
+    </div>
+    <div style="font-size:9px;color:#94a3b8;margin:6px 0 4px">建议</div>
+    <div class="draft-grid">
+      <span class="draft-tag">安全管理</span><span class="draft-tag">设施改善</span>
+      <span class="draft-tag">社区活动</span>
+    </div>
+    <div style="font-size:9px;color:#94a3b8;margin:6px 0 4px">报修</div>
+    <div class="draft-grid">
+      <span class="draft-tag">水管漏水</span><span class="draft-tag">电梯故障</span>
+      <span class="draft-tag">门禁门锁</span><span class="draft-tag">墙面渗水</span>
+      <span class="draft-tag">公区设施</span><span class="draft-tag">楼道照明</span>
+    </div>
+  </div>
+  <div class="side-card">
+    <h3>管家反馈</h3>
+    <div class="agent-feedback">
+      <select><option>异常事件</option><option>业主动态</option><option>风险预警</option></select>
+      <input placeholder="一句话描述...">
+      <input placeholder="来源：X管家">
+      <button class="btn btn-pri" style="width:100%;margin-top:4px">录入</button>
+    </div>
+  </div>
+  <div class="side-card">
+    <h3>待回访工单</h3>
+    <div class="follow-item warn">#1006 待验收<br><small>水管漏水 · 3-1502 张建国</small></div>
+    <div class="follow-item warn">#1008 待验收<br><small>门禁故障 · 3-1502 张建国</small></div>
+    <div class="follow-item ok">#1001 已完成 ★5<br><small>水管漏水 · 3-1502 张建国</small></div>
+  </div>
+</div>
+</div>
+<div class="modal-overlay" id="modal"><div class="modal" id="mc"></div></div>
+<script>
+var D=[
+{id:1,n:"张建国",r:"3-1502",p:"13800001111",g:"先生",role:"业主",dp:"直接",inf:"个体",
+ cs:"ok",cr:"已接通·已建草稿",lb:"退休老人好沟通",li:true,
+ cls:"A",sub:"报修型",aux:["B"],priority:85,urgent:"紧急·2单未闭环",
+ orders:3,calls:3,drafts:1,le:"06-25 水管漏水",
+ sg:{A:{on:true,r:"2个未闭环：#1006 #1008"},B:{on:true,r:"通话表达困难(06-26)"},C:{on:false},D:{on:false},E:{on:false},F:{on:false}},
+ wo:[{id:1006,tp:"baoxiu",ca:"水管漏水",st:"pending",ct:"06-25",sr:"owner"},{id:1008,tp:"baoxiu",ca:"门禁故障",st:"processing",ct:"06-24",sr:"draft"},{id:1001,tp:"baoxiu",ca:"水管漏水",st:"done",ct:"06-20",rt:5,sr:"owner"}],
+ lg:[{t:"06-26",ag:"客服小安",tp:"外呼",rs:"已接通",nt:"反映手头紧"},{t:"06-25",ag:"客服小安",tp:"建草稿",rs:"已推送",nt:"水管漏水"},{t:"06-20",ag:"客服小安",tp:"外呼",rs:"已接通",nt:"表示会缴费"}]},
+{id:2,n:"李芳",r:"5-801",p:"13800002222",g:"女士",role:"业主",dp:"直接",inf:"个体",
+ cs:"ok",cr:"已接通",lb:"单亲困难",li:true,
+ cls:"E",sub:"",aux:[],priority:70,urgent:"",
+ orders:2,calls:5,drafts:0,le:"06-26 拒接",
+ sg:{A:{on:false},B:{on:false},C:{on:false},D:{on:false},E:{on:true,r:"拒接3次+攻击性投诉"},F:{on:false}},
+ wo:[{id:1002,tp:"tousu",ca:"物业不作为",st:"done",ct:"06-22",rt:2,sr:"owner"}],
+ lg:[{t:"06-26",ag:"客服小安",tp:"外呼",rs:"拒接"},{t:"06-24",ag:"客服小安",tp:"外呼",rs:"拒接"},{t:"06-22",ag:"客服小安",tp:"外呼",rs:"拒接"}]},
+{id:3,n:"王强",r:"2-603",p:"13800003333",g:"先生",role:"未知",dp:"未知",inf:"个体",
+ cs:"new",cr:"",lb:"脾气大",li:false,
+ cls:"C",sub:"未触达",aux:[],priority:10,urgent:"",
+ orders:0,calls:0,drafts:0,le:"-",
+ sg:{A:{on:false},B:{on:false},C:{on:true,r:"无任何信号"},D:{on:false},E:{on:false},F:{on:false}},
+ wo:[],lg:[]},
+{id:4,n:"刘洋",r:"7-201",p:"13800004444",g:"先生",role:"业主",dp:"直接",inf:"个体",
+ cs:"ok",cr:"已接通·无争议",lb:"",li:false,
+ cls:"D",sub:"",aux:[],priority:45,urgent:"",
+ orders:0,calls:4,drafts:0,le:"06-26 承诺下月交",
+ sg:{A:{on:false},B:{on:false},C:{on:false},D:{on:true,r:"无争议承诺3次+未登录"},E:{on:false},F:{on:false}},
+ wo:[],lg:[{t:"06-26",ag:"客服小安",tp:"外呼",rs:"无争议",nt:"说下个月交"},{t:"06-18",ag:"客服小安",tp:"外呼",rs:"无争议",nt:"承诺月底"},{t:"06-10",ag:"客服小安",tp:"外呼",rs:"无争议",nt:"表示会处理"}]},
+{id:5,n:"陈静",r:"4-902",p:"13800005555",g:"女士",role:"家属",dp:"间接",inf:"个体",
+ cs:"ok",cr:"已接通",lb:"",li:true,
+ cls:"B",sub:"B2·反复",aux:[],priority:55,urgent:"",
+ orders:0,calls:2,drafts:1,le:"06-26 表达困难",
+ sg:{A:{on:false},B:{on:true,r:"2次困难表达"},C:{on:false},D:{on:false},E:{on:false},F:{on:false}},
+ wo:[{id:1009,tp:"baoxiu",ca:"墙面渗水",st:"waitReview",ct:"06-24",sr:"draft"}],
+ lg:[{t:"06-26",ag:"客服小安",tp:"外呼",rs:"已接通",nt:"说最近失业"},{t:"06-24",ag:"客服小安",tp:"建草稿",rs:"已推送",nt:"墙面渗水"}]},
+{id:6,n:"赵刚",r:"1-501",p:"13800006666",g:"先生",role:"租客",dp:"无",inf:"个体",
+ cs:"ok",cr:"拒接",lb:"已搬家出租",li:false,
+ cls:"F",sub:"",aux:[],priority:5,urgent:"",
+ orders:0,calls:3,drafts:0,le:"06-15 拒接",
+ sg:{A:{on:false},B:{on:false},C:{on:false},D:{on:false},E:{on:false},F:{on:true,r:"lb标记已搬家出租+租客"}},
+ wo:[],lg:[{t:"06-25",ag:"客服小安",tp:"外呼",rs:"拒接"},{t:"06-20",ag:"客服小安",tp:"外呼",rs:"拒接"}]}
+];
+var cl={A:"合理争议",B:"现实困难",C:"观望拖延",D:"惯性失约",E:"对抗失信",F:"历史复杂"};
+var cc={A:"#f59e0b",B:"#10b981",C:"#94a3b8",D:"#f97316",E:"#ef4444",F:"#8b5cf6"};
+var rl={业主:"房主",家属:"家属",租客:"租客",未知:"待确认"};
+var dp={直接:"可决策",间接:"需转达",无:"不涉及",未知:"待确认"};
+var rb={业主:"badge-role-o",家属:"badge-role-f",租客:"badge-role-t",未知:"badge-role-u"};
+var sf="all",cf="all";
+function ga(o){
+  if(o.role==="租客")return"不催费，关注居住体验";
+  if(o.role==="未知")return"先确认身份再分类";
+  if(o.cls==="F")return"暂不处理，等待信息更新";
+  var rw=o.wo.filter(function(w){return w.st==="waitReview"});
+  if(rw.length>0)return"联系业主通知验收、引导打分";
+  var ow=o.wo.filter(function(w){return w.st==="pending"||w.st==="processing"});
+  if(ow.length>0)return"等待物业处理，待验收时回访";
+  return"无待处理事项";
+}
+function r(){
+  var f=D;
+  if(sf==="new")f=f.filter(function(o){return o.cs==="new"});
+  if(sf==="ok")f=f.filter(function(o){return o.cs==="ok"});
+  if(sf==="review")f=f.filter(function(o){return o.wo.some(function(w){return w.st==="waitReview"})});
+  if(cf!=="all")f=f.filter(function(o){return o.cls===cf});
+  f.sort(function(a,b){return b.priority-a.priority});
+  if(!f.length){document.getElementById("list").innerHTML='<div class="empty">没有匹配的业主</div>';return}
+  var h="";
+  f.forEach(function(o){
+    var sc=o.cs==="ok"?"badge-ok":"badge-new";
+    var st=o.cs==="ok"?"已拨打":"未拨打";
+    var ah=o.aux.map(function(a){return'<span class="cls-aux">+'+cl[a]+'</span>'}).join("");
+    var rh='<span class="card-badge '+rb[o.role]+'">'+rl[o.role]+'</span>';
+    var th=[o.li?'<span class="tag tag-g">已登录</span>':'<span class="tag tag-gr">未登录</span>',o.drafts>0?'<span class="tag tag-y">待确认</span>':'',o.cr.indexOf("争议")>=0?'<span class="tag tag-r">有争议</span>':''].filter(Boolean).join("");
+    var sh=o.sub?" · "+o.sub:"";
+    h+='<div class="card" onclick="om('+o.id+')"><div class="card-top"><div style="display:flex;align-items:center;gap:8px"><span class="card-priority" style="color:'+cc[o.cls]+'">'+o.priority+'</span><div><div class="card-name">'+o.n+o.g+' '+rh+' <span class="card-badge '+sc+'" style="margin-left:4px">'+st+'</span></div><div class="card-info">'+o.r+' | '+o.p+' | '+dp[o.dp]+'</div></div></div></div><div class="card-body"><span class="cls-tag c'+o.cls+'">'+o.cls+'·'+cl[o.cls]+sh+'</span>'+ah+(o.urgent?' <span class="tag tag-r">'+o.urgent+'</span>':'')+'</div><div class="card-action-row">→ <span class="act">'+ga(o)+'</span></div><div class="card-tags">'+th+'</div><div class="card-btns" onclick="event.stopPropagation()"><button class="btn btn-pri">拨号</button><button class="btn btn-sec">记录</button>'+(o.cs==="new"?'<button class="btn btn-sec">标记已拨</button>':'')+'</div></div>';
+  });
+  document.getElementById("list").innerHTML=h;
+}
+function om(id){
+  var o=D.find(function(x){return x.id===id});if(!o)return;
+  var sg=["A","B","C","D","E","F"];
+  var sH=sg.map(function(s){
+    var si=o.sg[s];var dc=si.on?cc[s]:"#cbd5e1";var bg=si.on?cc[s]+"12":"#f8fafc";
+    return'<div class="signal-item'+(si.on?" on":"")+'" style="background:'+bg+'"><span class="signal-dot" style="background:'+dc+'"></span>'+s+"·"+cl[s]+'<span style="font-size:9px;color:#94a3b8;margin-left:auto">'+(si.on?si.r:"○")+"</span></div>";
+  }).join("");
+  var wH=o.wo.length?o.wo.map(function(w){
+    var sl=w.st==="done"?"已完成 ★"+w.rt:w.st==="waitReview"?"待验收":w.st==="processing"?"处理中":"待处理";
+    return'<div class="timeline-item"><span class="time">'+w.ct+'</span>#'+w.id+" "+w.ca+' <span style="color:'+(w.st==="waitReview"?"#f59e0b":w.st==="done"?"#16a34a":"#64748b")+'">'+sl+"</span>"+(w.sr==="draft"?" (客服草稿)":" (业主自提)")+"</div>";
+  }).join(""):'<div class="empty" style="padding:8px">暂无工单</div>';
+  var lH=o.lg.length?o.lg.map(function(l){
+    return'<div class="timeline-item"><span class="time">'+l.t+"</span>"+l.ag+" "+l.tp+"·"+l.rs+(l.nt?" — "+l.nt:"")+"</div>";
+  }).join(""):'<div class="empty" style="padding:8px">暂无沟通记录</div>';
+  var act=ga(o);var sh=o.sub?" · "+o.sub:"";
+  document.getElementById("mc").innerHTML=
+    "<h3>"+o.n+o.g+" · "+o.r+' <span class="modal-close" onclick="cm()">×</span></h3>'+
+    '<div style="font-size:11px;color:#64748b;margin-bottom:12px">角色：'+rl[o.role]+" | 决策权："+dp[o.dp]+" | "+o.p+" | "+(o.lb||"无标签")+"</div>"+
+    '<div class="modal-section"><h4>画像摘要</h4>'+
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:24px;font-weight:800;color:'+cc[o.cls]+'">'+o.priority+'</span><span class="cls-tag c'+o.cls+'">'+o.cls+"·"+cl[o.cls]+sh+"</span>"+o.aux.map(function(a){return'<span class="cls-aux">+'+cl[a]+"</span>"}).join("")+(o.urgent?' <span class="tag tag-r">'+o.urgent+"</span>":"")+"</div>"+
+    '<div style="font-size:11px;color:#2563eb;margin-bottom:4px">→ '+act+"</div>"+
+    '<div style="font-size:10px;color:#64748b">最近："+o.le+" | 工单"+o.orders+"次 · 通话"+o.calls+"次</div></div>"+
+    '<div class="modal-section"><h4>信号明细</h4><div class="signal-grid">'+sH+"</div></div>"+
+    '<div class="modal-section"><h4>工单时间线</h4>'+wH+"</div>"+
+    '<div class="modal-section"><h4>沟通记录</h4>'+lH+"</div>"+
+    '<div class="verify-panel"><h4 style="font-size:11px;margin-bottom:6px">本次通话验证分类</h4>'+
+    '<label><input type="radio" name="v'+o.id+'" checked> 确认（分类正确）</label>'+
+    '<label><input type="radio" name="v'+o.id+'"> 质疑（实际是 <select style="font-size:10px"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option></select> 类）</label>'+
+    '<label><input type="radio" name="v'+o.id+'"> 跳过（本次无法判断）</label></div>'+
+    '<div style="text-align:right;margin-top:12px"><button class="btn btn-pri" onclick="cm()">拨号回访</button> <button class="btn btn-sec" onclick="cm()">关闭</button></div>';
+  document.getElementById("modal").classList.add("show");
+}
+function cm(){document.getElementById("modal").classList.remove("show")}
+function goBack(){alert("返回小区总览（演示）")}
+document.getElementById("sf").addEventListener("click",function(e){var b=e.target.closest(".fbtn");if(!b)return;this.querySelectorAll(".fbtn").forEach(function(x){x.classList.remove("on")});b.classList.add("on");sf=b.dataset.f;r()});
+document.getElementById("cf").addEventListener("click",function(e){var b=e.target.closest(".cbtn");if(!b)return;this.querySelectorAll(".cbtn").forEach(function(x){x.classList.remove("on")});b.classList.add("on");cf=b.dataset.c;r()});
+document.getElementById("modal").addEventListener("click",function(e){if(e.target===this)cm()});
+r();
+</script>
+</body>
+</html>

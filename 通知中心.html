@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · 供应链通知中心</title>
+<style>
+:root{--bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1000px;margin:0 auto}
+.page-hd{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.page-hd h1{font-size:1.5rem;font-weight:700}
+.page-hd .desc{font-size:0.85rem;color:var(--muted);margin-top:8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:8px;font-size:0.82rem;cursor:pointer;color:var(--muted);border:1px solid var(--border);transition:.15s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--cyan);color:#000;font-weight:600;border-color:var(--cyan)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-purple{background:rgba(139,92,246,0.12);color:var(--purple)}.tag-orange{background:rgba(249,115,22,0.12);color:var(--orange)}
+
+.notif{border-left:3px solid var(--border);padding:12px 16px;margin-bottom:8px;background:var(--card2);border-radius:0 8px 8px 0;font-size:0.82rem}
+.notif.unread{border-left-color:var(--cyan);background:rgba(6,182,212,0.03)}
+.notif.urgent{border-left-color:var(--red);background:rgba(239,68,68,0.03)}
+.notif .nf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.notif .nf-title{font-weight:700}
+.notif .nf-time{font-size:0.68rem;color:var(--muted)}
+.notif .nf-body{font-size:0.76rem;color:var(--muted);line-height:1.6}
+.notif .nf-from{font-size:0.68rem;color:var(--muted);margin-top:4px}
+.notif .nf-flow{font-size:0.7rem;color:var(--cyan);margin-top:4px}
+
+.flow-diagram{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;padding:16px 0;margin:16px 0;background:var(--card2);border-radius:var(--r)}
+.flow-item{text-align:center;padding:10px 16px;border-radius:8px;border:1px solid var(--border);font-size:0.75rem;font-weight:600}
+.flow-arr{font-size:1rem;color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="page-hd">
+  <h1>🔔 供应链通知中心</h1>
+  <p class="desc">跨端口事件通知·展示生态链路中信息如何流转</p>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+
+</div>
+
+<script>
+var cur='all';
+var tabs=[
+  {id:'all',label:'全部'},
+  {id:'t1',label:'T1入驻',color:'var(--orange)'},
+  {id:'t2',label:'T2小区',color:'var(--cyan)'},
+  {id:'proc',label:'采购审批',color:'var(--blue)'},
+  {id:'credit',label:'信用预警',color:'var(--red)'},
+  {id:'eval',label:'评价投诉',color:'var(--green)'}
+];
+
+var notifs=[
+  {id:1,cat:'t2',title:'锦绣清洁申请加入阳光花园T2供应链',body:'服务商"锦绣清洁服务有限公司"（信用72·T1已通过）申请加入本小区供应商池。请业委会审核。',time:'2026-07-26 10:30',from:'服务商端 → 业委会端',flow:'服务商端·提交申请 → 业委会端·收到通知',unread:true},
+  {id:2,cat:'proc',title:'物业张经理提交了采购申请',body:'采购项目"草坪补种+绿化修剪"，金额¥8,500，紧急。已推送至业委会审批队列。',time:'2026-07-25 14:20',from:'物业端 → 业委会端',flow:'物业端·提交采购 → 业委会端·审批队列',unread:true},
+  {id:3,cat:'credit',title:'⚠️ 安保用品商城信用分降至58',body:'API扫描发现新增经营异常记录，信用分从62降至58，已自动冻结。该供应商在阳光花园T2池中——建议移出。',time:'2026-07-25 09:00',from:'运营端 → 业委会端·阳光花园',flow:'运营端·API扫描告警 → 业委会端·收到预警',unread:true,urgent:true},
+  {id:4,cat:'eval',title:'业主张建国评价了通力电梯',body:'3栋客梯维保服务评分3星，评价内容："维保后电梯还是有点异响，希望能再检查一下"——已计入供应商信用分。',time:'2026-07-22 16:45',from:'业主端 → 物业端·服务商端',flow:'业主端·提交评价 → 服务商端·信用分更新 + 物业端·通知',unread:false},
+  {id:5,cat:'t1',title:'新锐安防科技提交了T1入驻申请',body:'服务商"新锐安防科技"已提交平台供应链入驻申请，等待API审核+人工复核。',time:'2026-07-26 08:00',from:'服务商端 → 运营端',flow:'服务商端·提交T1申请 → 运营端·待审核队列',unread:true},
+  {id:6,cat:'proc',title:'业委会审批通过了消防栓年检采购',body:'采购项目"消防栓年检+充装"（¥15,000）审批通过，已生成合同CT002，通知安盾消防执行。',time:'2026-07-18 11:00',from:'业委会端 → 物业端·服务商端',flow:'业委会端·审批通过 → 服务商端·收到订单 + 物业端·状态更新',unread:false},
+  {id:7,cat:'credit',title:'日丰管业信用分下降预警',body:'API扫描到1条劳务纠纷记录，信用分从82降至78。当前仍在安全区间(≥75)，持续关注。',time:'2026-07-20 07:30',from:'AI端 → 运营端',flow:'AI端·趋势预测 → 运营端·预警列表',unread:false},
+  {id:8,cat:'eval',title:'业主李芳提交了供应商投诉',body:'投诉内容："绿化修剪后树枝未清运，堆在单元门口2天"。已推送至物业端、业委会端、社区端。',time:'2026-07-15 15:00',from:'业主端 → 物业端·业委会端·社区端',flow:'业主端·提交投诉 → 社区端·待处理 + 物业端·通知',unread:false}
+];
+
+function rt(){
+  var h='';var nc={};notifs.forEach(function(n){nc[n.cat]=(nc[n.cat]||0)+1});
+  tabs.forEach(function(t){
+    var cnt=t.id==='all'?notifs.length:(nc[t.id]||0);
+    h+='<div class="tab'+(t.id===cur?' active':'')+'" onclick="sw(\''+t.id+'\')">'+t.label+(cnt?' ('+cnt+')':'')+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+function sw(id){cur=id;rt();r()}
+
+function r(){
+  var list=cur==='all'?notifs:notifs.filter(function(n){return n.cat===cur});
+  var h='<div class="card"><div class="card-hd"><h3>📬 '+(cur==='all'?'全部通知':tabs.find(function(t){return t.id===cur}).label)+'（'+list.length+'条）</h3></div>';
+
+  list.forEach(function(n){
+    var cls=n.urgent?'urgent':n.unread?'unread':'';
+    var unreadDot=n.unread?' 🔵':'';
+    h+='<div class="notif '+cls+'">';
+    h+='<div class="nf-header"><span class="nf-title">'+unreadDot+n.title+'</span><span class="nf-time">'+n.time+'</span></div>';
+    h+='<div class="nf-body">'+n.body+'</div>';
+    h+='<div class="nf-from">📤 '+n.from+'</div>';
+    h+='<div class="nf-flow">🔗 数据流：'+n.flow+'</div>';
+    h+='</div>';
+  });
+
+  h+='</div>';
+
+  // Flow legend
+  h+='<div class="card"><h3 style="margin-bottom:12px">通知流向说明</h3>';
+  h+='<div class="flow-diagram">';
+  h+='<div class="flow-item" style="border-color:var(--orange)">🏢 服务商端</div><div class="flow-arr">↔</div>';
+  h+='<div class="flow-item" style="border-color:var(--blue)">⚙️ 运营端</div><div class="flow-arr">↔</div>';
+  h+='<div class="flow-item" style="border-color:var(--cyan)">🏘️ 业委会端</div><div class="flow-arr">↔</div>';
+  h+='<div class="flow-item" style="border-color:var(--blue)">🏢 物业端</div><div class="flow-arr">↔</div>';
+  h+='<div class="flow-item" style="border-color:var(--green)">🏛️ 社区端</div><div class="flow-arr">↔</div>';
+  h+='<div class="flow-item" style="border-color:var(--amber)">🏠 业主端</div>';
+  h+='</div>';
+  h+='<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:0.72rem;color:var(--muted)">';
+  h+='<span>🔵 未读</span><span>🔴 紧急</span><span>📤 发送方 → 接收方</span><span>🔗 实际数据流转路径</span>';
+  h+='</div></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+rt();r();
+</script>
+</body>
+</html>

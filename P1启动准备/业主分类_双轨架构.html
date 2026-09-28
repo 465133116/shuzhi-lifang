@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业主分类 · 双轨架构 · 数治理方 P1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:32px 20px}
+h1{text-align:center;font-size:20px;margin-bottom:2px}
+.sub{text-align:center;font-size:12px;color:#64748b;margin-bottom:36px}
+
+.wrap{max-width:1300px;margin:0 auto}
+
+/* Top: two tracks side by side */
+.tracks{display:flex;gap:20px;margin-bottom:36px}
+.track{flex:1;border-radius:12px;overflow:hidden}
+.track-header{padding:14px 18px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.track-body{padding:18px;font-size:12px;line-height:1.8}
+.track-icon{font-size:24px}
+
+/* Track 1: Mini-program */
+.track-mp{border:1px solid #1e3a5f}
+.track-mp .track-header{background:linear-gradient(135deg,#0f2744,#1a365d)}
+.track-mp .track-body{background:rgba(15,39,68,.4)}
+
+/* Track 2: Customer Service */
+.track-cs{border:1px solid #3b1f4a}
+.track-cs .track-header{background:linear-gradient(135deg,#2d1a3a,#4a2958)}
+.track-cs .track-body{background:rgba(45,26,58,.4)}
+
+/* Mini tables inside tracks */
+.mini-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}
+.mini-table th{text-align:left;padding:5px 8px;color:#64748b;font-weight:600;border-bottom:1px solid rgba(255,255,255,.06);font-size:10px}
+.mini-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
+.mini-table tr:last-child td{border-bottom:none}
+
+.tag-sm{display:inline-block;padding:0 5px;border-radius:3px;font-size:10px;font-weight:600;margin-right:2px}
+.tag-a{background:rgba(245,158,11,.15);color:#f59e0b}
+.tag-b{background:rgba(16,185,129,.15);color:#10b981}
+.tag-c{background:rgba(148,163,184,.15);color:#94a3b8}
+.tag-d{background:rgba(249,115,22,.15);color:#f97316}
+.tag-e{background:rgba(239,68,68,.15);color:#ef4444}
+.tag-f{background:rgba(139,92,246,.15);color:#8b5cf6}
+.tag-mp{background:rgba(59,130,246,.15);color:#3b82f6}
+.tag-cs{background:rgba(168,85,247,.15);color:#a855f7}
+
+/* Merge center */
+.merge{text-align:center;padding:16px 0;margin-bottom:36px}
+.merge-arrow{font-size:28px;color:#475569;letter-spacing:20px}
+.merge-label{font-size:11px;color:#64748b;margin-top:4px}
+
+/* Bottom: combined output */
+.combined{border-radius:12px;border:1px solid #1e293b;overflow:hidden;margin-bottom:36px}
+.combined-header{padding:14px 18px;background:linear-gradient(135deg,#1e293b,#0f172a);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.combined-body{padding:18px;background:rgba(30,41,59,.3);font-size:12px;line-height:1.8}
+
+/* Decision table */
+.decision-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.decision-table th{text-align:left;padding:8px 10px;color:#94a3b8;font-weight:600;border-bottom:2px solid rgba(255,255,255,.08);font-size:11px}
+.decision-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.decision-table tr:last-child td{border-bottom:none}
+.decision-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* Example box */
+.example-box{border-radius:8px;padding:14px;margin-top:16px;font-size:11px;line-height:1.8}
+.example-box.mp{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)}
+.example-box.cs{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15)}
+.example-box.combined-ex{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15)}
+.example-title{font-weight:700;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+
+/* Signal source mapping */
+.signal-map{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.signal-card{border-radius:8px;padding:10px;font-size:11px;line-height:1.7}
+.signal-card .sig{font-weight:700;font-size:13px;margin-bottom:2px}
+
+/* Key diff strip */
+.diff-strip{display:flex;gap:12px;margin-bottom:36px}
+.diff-item{flex:1;border-radius:8px;padding:12px;font-size:11px;text-align:center}
+.diff-item .big{font-size:20px;font-weight:800;display:block;margin-bottom:2px}
+.diff-item .label{color:#64748b;font-size:10px}
+
+/* Color accents */
+.accent-blue{color:#3b82f6}
+.accent-purple{color:#a855f7}
+.accent-amber{color:#f59e0b}
+.accent-red{color:#ef4444}
+.accent-green{color:#10b981}
+.accent-orange{color:#f97316}
+
+hr{ border:none;border-top:1px solid #1e293b;margin:10px 0}
+
+/* Data source icon */
+.src-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;flex-shrink:0}
+.src-mp{background:#3b82f6}
+.src-cs{background:#a855f7}
+.src-both{background:linear-gradient(135deg,#3b82f6,#a855f7)}
+</style>
+</head>
+<body>
+
+<h1>📊 业主分类 · 双轨架构</h1>
+<div class="sub">小程序轨道 + 客服轨道 → 独立计算 → 统一输出</div>
+
+<div class="wrap">
+
+<!-- Key difference -->
+<div class="diff-strip">
+  <div class="diff-item" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)">
+    <span class="big accent-blue">小程序</span>
+    <span class="label">看业主做了什么</span>
+    <div style="margin-top:6px;font-size:10px;color:#64748b">工单行为 · 登录行为 · 满意度</div>
+    <div style="margin-top:2px;font-size:10px;color:#64748b">数据源：小程序埋点 + 工单系统</div>
+    <div style="margin-top:2px;font-size:10px;color:#64748b">衰减周期：<b style="color:#3b82f6">30天</b>半衰</div>
+  </div>
+  <div class="diff-item" style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2)">
+    <span class="big accent-purple">客服</span>
+    <span class="label">看业主说了什么</span>
+    <div style="margin-top:6px;font-size:10px;color:#64748b">通话态度 · 承诺行为 · 关键词检测</div>
+    <div style="margin-top:2px;font-size:10px;color:#64748b">数据源：客服通话记录 + 文本分析</div>
+    <div style="margin-top:2px;font-size:10px;color:#64748b">衰减周期：<b style="color:#a855f7">14天</b>半衰</div>
+  </div>
+</div>
+
+<!-- ===== TRACK 1: 小程序 ===== -->
+<div class="tracks">
+<div class="track track-mp">
+  <div class="track-header">
+    <span class="track-icon">📱</span>
+    <span>轨道一：小程序行为数据</span>
+    <span style="margin-left:auto;font-size:10px;opacity:.6">数据源：小程序埋点 + 工单系统</span>
+  </div>
+  <div class="track-body">
+
+    <div style="font-weight:600;color:#3b82f6;margin-bottom:6px">▸ 采集的原始字段</div>
+    <table class="mini-table">
+      <tr><th>字段</th><th>含义</th><th>取值</th><th>用途</th></tr>
+      <tr><td>li</td><td>是否登录过小程序</td><td>true / false</td><td>D消除 / 触达能力判断</td></tr>
+      <tr><td>tp</td><td>工单类型</td><td>baoxiu(报修) / tousu(投诉) / jianyi(建议)</td><td>A信号判定</td></tr>
+      <tr><td>st</td><td>工单状态</td><td>pending / processing / waitReview / done</td><td>A信号是否消除</td></tr>
+      <tr><td>rt</td><td>满意度评分</td><td>1~5 星</td><td>A消除条件 / C4信任缺失判定</td></tr>
+      <tr><td>ct</td><td>工单创建时间</td><td>日期</td><td>时间衰减计算</td></tr>
+      <tr><td>de</td><td>工单描述文本</td><td>字符串</td><td>攻击性投诉检测(E2) / 反复型判断</td></tr>
+      <tr><td>sr</td><td>工单来源</td><td>owner(业主自提) / draft(客服草稿)</td><td>A信号生成权重差异</td></tr>
+      <tr><td>ca</td><td>问题分类</td><td>水管漏水 / 电梯故障 / ...</td><td>同问题反复检测(A·反复型)</td></tr>
+    </table>
+
+    <div style="font-weight:600;color:#3b82f6;margin:14px 0 6px">▸ 本轨道可单独产生的信号</div>
+    <table class="mini-table">
+      <tr><th>信号</th><th>产生逻辑（仅小程序数据）</th><th>信号强度计算</th></tr>
+      <tr><td><span class="tag-sm tag-a">A</span></td><td>tp∈{baoxiu,tousu} AND st∉{done} → A=on<br>st=done AND rt≥3 → A=off<br>sr=draft AND 无小程序工单 → A=on（草稿也算）</td><td>未闭环数×40 + 报修数×15 + 投诉数×20 − 满意度×10</td></tr>
+      <tr><td><span class="tag-sm tag-e">E</span></td><td>de含攻击关键词（辱骂/威胁/群内攻击）→ E2触发<br>态度差评(rt≤2·原因=态度)累计≥3次 → E4触发</td><td>攻击投诉数×35 + 态度差评数×20</td></tr>
+      <tr><td><span class="tag-sm tag-c">C4</span></td><td>历史rt<3 但无tousu工单 → C4·信任缺失<br>（不满但没到正式投诉的程度）</td><td>—</td></tr>
+      <tr><td><span class="tag-sm tag-c">C5</span></td><td>A消除后自动产生 → C5·已解决</td><td>—</td></tr>
+    </table>
+
+    <div style="font-weight:600;color:#3b82f6;margin:14px 0 6px">▸ 本轨道可产生的交叉影响</div>
+    <table class="mini-table">
+      <tr><th>影响</th><th>逻辑</th></tr>
+      <tr><td>D消除</td><td>li=true → 登录行为覆盖承诺信号，D立即消除</td></tr>
+      <tr><td>E拒接修正</td><td>拒接有效计数 = 拒接次数 − min(拒接次数, 小程序工单数)<br>有工单行为→拒接不完全算对抗</td></tr>
+      <tr><td>A·反复型</td><td>同ca(问题分类)的工单≥3次 → A·反复型</td></tr>
+    </table>
+
+    <div class="example-box mp">
+      <div class="example-title">📱 示例</div>
+      业主在小程序提交了"水管漏水"报修 (tp=baoxiu, st=pending) → <span class="tag-sm tag-a">A信号产生</span><br>
+      物业修复后业主给4星 (rt=4) → <span class="tag-sm tag-c">A消除 → C5·已解决</span><br>
+      期间业主从未登录小程序 (li=false) → 不影响A，但影响D（无法用登录消除D）
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== TRACK 2: 客服 ===== -->
+<div class="track track-cs">
+  <div class="track-header">
+    <span class="track-icon">🎧</span>
+    <span>轨道二：客服通话数据</span>
+    <span style="margin-left:auto;font-size:10px;opacity:.6">数据源：通话记录 + 文本分析</span>
+  </div>
+  <div class="track-body">
+
+    <div style="font-weight:600;color:#a855f7;margin-bottom:6px">▸ 采集的原始字段</div>
+    <table class="mini-table">
+      <tr><th>字段</th><th>含义</th><th>取值</th><th>用途</th></tr>
+      <tr><td>tp</td><td>通话类型</td><td>外呼 / 呼入</td><td>标识</td></tr>
+      <tr><td>rs</td><td>通话结果</td><td>已接通 / 拒接 / 无争议 / 有争议</td><td>D信号 / E信号判定</td></tr>
+      <tr><td>nt</td><td>通话备注文本</td><td>自由文本（客服录入+语音识别）</td><td>B信号 / C1~C4判定 / 关键词检测</td></tr>
+      <tr><td>t</td><td>通话时间</td><td>日期</td><td>时间衰减计算</td></tr>
+      <tr><td>ag</td><td>客服人员</td><td>字符串</td><td>质检追踪</td></tr>
+    </table>
+
+    <div style="font-weight:600;color:#a855f7;margin:14px 0 6px">▸ 本轨道可单独产生的信号</div>
+    <table class="mini-table">
+      <tr><th>信号</th><th>产生逻辑（仅通话数据）</th><th>信号强度计算</th></tr>
+      <tr><td><span class="tag-sm tag-b">B</span></td><td>nt含困难关键词（"手头紧""失业""困难""没钱""交不起"）→ B产生<br>下次通话nt不含→ B消除（新通话覆盖旧）<br>≥2次困难表达→ B2，可做主分类</td><td>困难表达次数×35 + (1−li)×15</td></tr>
+      <tr><td><span class="tag-sm tag-d">D</span></td><td>rs=无争议 → 无争议承诺计数+1<br>有效计数≥2 → D信号产生<br>（有效计数 = 原始计数 − 衰减）</td><td>有效计数×30 + (1−li)×20</td></tr>
+      <tr><td><span class="tag-sm tag-e">E</span></td><td>rs=拒接 累计≥3次 → E1·拒接型<br>nt含"不交""死也不交"→ E3·拒缴型<br>nt含攻击关键词 → E2·攻击型</td><td>拒接×25 + 明确拒缴×30 + 攻击投诉×35</td></tr>
+      <tr><td><span class="tag-sm tag-c">C1</span></td><td>nt含从众关键词("别人交我就交"...)</td><td>—</td></tr>
+      <tr><td><span class="tag-sm tag-c">C2</span></td><td>nt含拖延关键词("不急""再看吧"...)</td><td>—</td></tr>
+      <tr><td><span class="tag-sm tag-c">C3</span></td><td>nt含对比关键词("隔壁小区""凭什么"...)</td><td>—</td></tr>
+    </table>
+
+    <div style="font-weight:600;color:#a855f7;margin:14px 0 6px">▸ C类关键词检测库</div>
+    <table class="mini-table">
+      <tr><th>→ 子类型</th><th>关键词（OR匹配，任意命中）</th></tr>
+      <tr><td><span class="tag-sm tag-c">C1·从众</span></td><td>"别人交我就交" "大家都交了吗" "交的人多吗" "有多少人交了" "别人也没交" "都拖着呢" "等别人先交" "邻居交了我就交" "随大流"</td></tr>
+      <tr><td><span class="tag-sm tag-c">C2·拖延</span></td><td>"不急" "再看吧" "到时候再说" "过段时间" "再说" "不急这一时" "不着急" "等等看" "观望一下"</td></tr>
+      <tr><td><span class="tag-sm tag-c">C3·对比</span></td><td>"隔壁小区" "人家那边" "凭什么我们" "别的小区" "人家小区" "别的地方" "我们小区不如" "看看人家"</td></tr>
+    </table>
+
+    <div class="example-box cs">
+      <div class="example-title">🎧 示例</div>
+      客服外呼，业主说"最近手头紧，失业了" → nt含困难关键词 → <span class="tag-sm tag-b">B信号产生</span><br>
+      下次通话业主说"下个月一定交" → rs=无争议 → <span class="tag-sm tag-d">D计数+1</span>，新通话覆盖旧nt → <span class="tag-sm tag-b">B消除</span><br>
+      再下次拒接 → rs=拒接，累计→ E计数+1
+    </div>
+
+  </div>
+</div>
+</div><!-- /tracks -->
+
+<!-- Merge point -->
+<div class="merge">
+  <div class="merge-arrow">▼ ▼ ▼</div>
+  <div class="merge-label">两条轨道各自算出信号后，<b>信号合并</b>（取OR逻辑，任一轨道产生=信号on）</div>
+</div>
+
+<!-- ===== COMBINED OUTPUT ===== -->
+<div class="combined">
+  <div class="combined-header">
+    <span>⚙️</span>
+    <span>统一分类引擎：信号合并 → 主分类判定 → 完整画像输出</span>
+  </div>
+  <div class="combined-body">
+
+    <div style="font-weight:600;color:#f59e0b;margin-bottom:8px">▸ 第一步：信号合并（两轨道取OR）</div>
+    <table class="decision-table">
+      <tr><th>信号</th><th>小程序可产生</th><th>客服可产生</th><th>合并逻辑</th></tr>
+      <tr>
+        <td><span class="tag-sm tag-f">F</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>lb含特殊关键词</td>
+        <td>仅客服轨道。独立通道，有则直接主分类=F</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-e">E</span></td>
+        <td><span class="src-dot src-mp"></span>攻击性投诉工单 / 态度差评≥3</td>
+        <td><span class="src-dot src-cs"></span>拒接≥3 / 明确拒缴 / 攻击通话</td>
+        <td><b>OR</b>：任一轨道触发即E=on<br>小程序攻击投诉→E2；客服攻击通话→E2<br>合并后按E1~E4细分规则归类</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-a">A</span></td>
+        <td><span class="src-dot src-mp"></span>未闭环报修/投诉工单</td>
+        <td><span class="src-dot src-cs"></span>客服建草稿(当无小程序工单时)</td>
+        <td><b>OR</b>：任一轨道有未闭环即A=on<br>小程序工单优先，客服草稿补充</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-b">B</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>nt含困难关键词</td>
+        <td>仅客服轨道。新通话覆盖旧通话</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-d">D</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>rs=无争议，有效计数≥2</td>
+        <td>仅客服轨道。但小程序登录(li=true)可消除D</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C1</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>nt含从众关键词</td>
+        <td>仅客服轨道。语音检测匹配</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C2</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>nt含拖延关键词</td>
+        <td>仅客服轨道。语音检测匹配</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C3</span></td>
+        <td>—</td>
+        <td><span class="src-dot src-cs"></span>nt含对比关键词</td>
+        <td>仅客服轨道。语音检测匹配</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C4</span></td>
+        <td><span class="src-dot src-mp"></span>历史rt<3 且 无tousu</td>
+        <td><span class="src-dot src-cs"></span>nt含不满关键词 且 无投诉工单</td>
+        <td><b>OR</b>：任一轨道触发即C4<br>但都要求"无正式投诉工单"(小程序验证)</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C5</span></td>
+        <td><span class="src-dot src-mp"></span>A消除后自动产生</td>
+        <td>—</td>
+        <td>仅小程序轨道触发</td>
+      </tr>
+      <tr>
+        <td><span class="tag-sm tag-c">C6</span></td>
+        <td colspan="2" style="text-align:center;color:#64748b">两轨道均无任何信号 → 兜底默认</td>
+        <td>无信号时的最终兜底</td>
+      </tr>
+    </table>
+
+    <div style="font-weight:600;color:#f59e0b;margin:16px 0 8px">▸ 第二步：主分类判定（合并后的信号走流水线）</div>
+    <div style="font-size:13px;font-weight:700;text-align:center;padding:10px;background:rgba(255,255,255,.03);border-radius:6px;letter-spacing:2px">
+      <span class="accent-purple">F</span> &gt; <span class="accent-red">E</span> &gt; <span class="accent-amber">A</span> &gt; <span class="accent-green">B</span> &gt; <span class="accent-orange">D</span> &gt; <span class="tag-c">C</span>
+    </div>
+    <div style="font-size:11px;color:#64748b;text-align:center;margin-top:4px">命中即停。取最高优先级有信号者为主分类，其余转为辅助信号</div>
+
+    <div style="font-weight:600;color:#f59e0b;margin:16px 0 8px">▸ 第三步：计算信号强度（两轨道各自贡献加权）</div>
+    <table class="mini-table">
+      <tr><th>信号</th><th>小程序贡献</th><th>客服贡献</th><th>合并强度 = 小程序分 + 客服分（各自衰减后相加，上限100）</th></tr>
+      <tr><td>A强度</td><td>未闭环数×40 + 报修数×15 + 投诉数×20 − 满意度×10</td><td>客服草稿数×20（权重低于小程序工单）</td></tr>
+      <tr><td>B强度</td><td>—</td><td>困难表达次数×35 + (1−li)×15</td></tr>
+      <tr><td>D强度</td><td>—</td><td>有效计数×30 + (1−li)×20</td></tr>
+      <tr><td>E强度</td><td>攻击投诉×35 + 态度差评×20</td><td>拒接×25 + 明确拒缴×30 + 攻击通话×35</td></tr>
+    </table>
+
+    <div style="font-weight:600;color:#f59e0b;margin:16px 0 8px">▸ 第四步：输出完整分类对象</div>
+<pre style="font-size:11px;background:rgba(0,0,0,.3);padding:12px;border-radius:6px;overflow-x:auto;line-height:1.6">
+{
+  main_class: "A",              // 主分类（合并后判定）
+  cls_sub: "A·报修型",          // 细分子类型
+  signal_strength: {A:3,B:0,C:0,D:0,E:0,F:0},  // 各信号强度0~4
+  aux_signals: [],              // 辅助信号
+  cross_pattern: null,          // 交叉模式
+  response_level: "R2",         // 响应级别
+
+  // === 双轨溯源（新增）===
+  source_breakdown: {
+    A: { mp: true,  cs: false },  // A信号来自小程序
+    B: { mp: false, cs: false },
+    D: { mp: false, cs: false },
+    E: { mp: false, cs: false },
+  },
+
+  // === 两轨道独立快照（各自保留，互不干扰）===
+  mp_snapshot: {                // 小程序轨道快照
+    work_orders_open: 1,        // 未闭环工单数
+    work_orders_total: 3,       // 历史总工单
+    avg_satisfaction: 4.2,      // 平均满意度
+    logged_in: true,            // 是否登录
+    signals: { A:true, E:false }
+  },
+  cs_snapshot: {                // 客服轨道快照
+    total_calls: 3,              // 通话总次数
+    answered: 2,                 // 接通次数
+    rejected: 0,                 // 拒接次数
+    undisputed_promises: 0,      // 无争议承诺有效计数
+    difficulty_mentions: 0,      // 困难表达次数
+    last_call_nt: "业主反映水管漏水，态度友好",  // 最近通话备注
+    signals: { B:false, D:false, C1:false }
+  }
+}
+</pre>
+
+    <div class="example-box combined-ex">
+      <div class="example-title">🔀 综合示例：两轨道协作产出最终分类</div>
+      <b>张建国，3-1502</b><br><br>
+      <span class="accent-blue">📱 小程序轨道：</span>报修水管漏水(st=pending) → A=on · 登录过(li=true) · 历史满意度4.5<br>
+      <span class="accent-purple">🎧 客服轨道：</span>通话中表达困难("手头紧") → B=on · 无拒接 · 无无争议承诺<br><br>
+      → 信号合并：{A:on, B:on, ...}<br>
+      → 主分类判定：A &gt; B → <span class="tag-sm tag-a">A·报修型</span>（主），<span class="tag-sm tag-b">B</span>（辅）<br>
+      → 交叉模式：<span style="color:#f59e0b">争议+困难</span> — 提示客服"先修水管，再协商费用"<br>
+      → 响应级别：R2·常规（A仅1个未闭环，不紧急）<br><br>
+      <span style="color:#64748b;font-size:10px">
+      ——此例中A来自小程序，B来自客服，两条轨道互不干扰但共同构成完整画像。
+      如果只看小程序会漏掉"业主经济困难"这个关键信息；
+      如果只看客服会漏掉"业主有未解决工单"这个更紧急的问题。
+      双轨合并才能看到全貌。
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Summary comparison -->
+<div style="margin-bottom:36px">
+  <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:#e2e8f0">📋 两轨道对比速查</div>
+  <table class="decision-table">
+    <tr>
+      <th></th>
+      <th style="color:#3b82f6">📱 小程序轨道</th>
+      <th style="color:#a855f7">🎧 客服轨道</th>
+    </tr>
+    <tr>
+      <td><b>核心问题</b></td>
+      <td>业主<b>做了什么</b></td>
+      <td>业主<b>说了什么</b></td>
+    </tr>
+    <tr>
+      <td><b>数据性质</b></td>
+      <td>结构化行为数据</td>
+      <td>非结构化对话数据</td>
+    </tr>
+    <tr>
+      <td><b>关键字段</b></td>
+      <td>tp, st, rt, li, de, ca, sr, ct</td>
+      <td>rs, nt, t（通话备注文本为核心）</td>
+    </tr>
+    <tr>
+      <td><b>可独立产生</b></td>
+      <td>A · E(攻击投诉/差评) · C4 · C5</td>
+      <td>B · D · E(拒接/拒缴/攻击) · C1 · C2 · C3</td>
+    </tr>
+    <tr>
+      <td><b>不能产生</b></td>
+      <td>B · D · C1/C2/C3（这些需要通话内容）</td>
+      <td>C5（需要工单闭环事件）</td>
+    </tr>
+    <tr>
+      <td><b>衰减周期</b></td>
+      <td>30天半衰（工单类）</td>
+      <td>14天半衰（通话类）</td>
+    </tr>
+    <tr>
+      <td><b>数据更新</b></td>
+      <td>事件驱动（提交工单/闭环/登录）</td>
+      <td>每次通话后实时更新</td>
+    </tr>
+    <tr>
+      <td><b>交叉影响</b></td>
+      <td>li=true → D消除<br>有工单 → E拒接修正</td>
+      <td>新nt → 覆盖旧nt（B消除）<br>rs=拒接 → E累计</td>
+    </tr>
+    <tr>
+      <td><b>前端展示</b></td>
+      <td>工单数 · 满意度 · 登录状态</td>
+      <td>通话次数 · 最近备注 · 态度标签</td>
+    </tr>
+  </table>
+</div>
+
+</div><!-- /wrap -->
+
+</body>
+</html>

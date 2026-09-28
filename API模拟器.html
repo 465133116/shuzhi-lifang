@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · API五层漏斗模拟器</title>
+<style>
+:root{--bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:900px;margin:0 auto}
+.page-hd{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.page-hd h1{font-size:1.5rem;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-hd .desc{font-size:0.85rem;color:var(--muted);margin-top:8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.input-row{display:flex;gap:12px;align-items:flex-end;margin-bottom:20px}
+.input-row input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--card2);color:var(--text);font-size:0.85rem;font-family:inherit}
+.input-row input:focus{border-color:var(--cyan);outline:none}
+.input-row button{padding:10px 24px;border-radius:8px;border:none;background:var(--cyan);color:#000;font-weight:700;font-size:0.85rem;cursor:pointer;font-family:inherit}
+.input-row button:hover{opacity:.85}
+
+.funnel-container{position:relative;margin:0 auto}
+.f-layer{position:relative;margin:0 auto 2px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--border);border-radius:12px;padding:16px 24px;display:flex;align-items:center;gap:16px;opacity:0.3;transition:all .5s}
+.f-layer.active{opacity:1;border-color:var(--cyan-bd, rgba(6,182,212,0.3))}
+.f-layer.pass{opacity:1;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.02)}
+.f-layer.fail{opacity:1;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.02);animation:shake .3s}
+@keyframes shake{50%{transform:translateX(4px)}}
+.f-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.f-i1{background:rgba(6,182,212,0.15);color:var(--cyan)}
+.f-i2{background:rgba(59,130,246,0.15);color:var(--blue)}
+.f-i3{background:rgba(139,92,246,0.15);color:var(--purple)}
+.f-i4{background:rgba(245,158,11,0.15);color:var(--amber)}
+.f-i5{background:rgba(16,185,129,0.15);color:var(--green)}
+.f-body{flex:1}.f-title{font-weight:700;font-size:0.9rem;margin-bottom:4px}
+.f-desc{font-size:0.74rem;color:var(--muted)}
+.f-result{text-align:right;flex-shrink:0;min-width:80px}
+.f-result .fr-n{font-size:1.2rem;font-weight:800}
+.f-result .fr-d{font-size:0.65rem;color:var(--muted)}
+
+.fw1{width:100%}.fw2{width:78%}.fw3{width:62%}.fw4{width:48%}.fw5{width:36%}
+.arrow{text-align:center;color:var(--cyan);font-size:1rem;padding:1px 0;opacity:.5}
+.result-card{text-align:center;padding:24px;border-radius:var(--r);margin-top:16px}
+.result-card.pass{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2)}
+.result-card.fail{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2)}
+
+.preload{text-align:center;padding:40px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="page-hd">
+  <h1>🔍 API五层漏斗模拟器</h1>
+  <p class="desc">输入供应商名称 · 模拟L1→L5逐层数据筛选 · 展示每层通过/拦截的决策依据</p>
+</div>
+
+<div class="input-row">
+  <input id="firm-name" placeholder="输入供应商名称，如：绿城园林工程有限公司" value="绿城园林工程有限公司">
+  <button onclick="runFunnel()">开始扫描</button>
+</div>
+
+<div id="funnel-area">
+  <div class="preload">👆 输入企业名称，点击"开始扫描"查看五层筛选过程</div>
+</div>
+
+</div>
+
+<script>
+function runFunnel(){
+  var name=document.getElementById('firm-name').value.trim();
+  if(!name){alert('请输入企业名称');return}
+  var h='';
+  var layers=[
+    {id:'L1',icon:'🌐',cls:'f-i1',title:'L1 地理·存在层',desc:'地图POI API检索——"'+name+'是否在目标半径内注册经营？"',result:'检索到 '+name+' 位于城东区绿洲路9号，距离阳光花园1.5km，在近场圈（5km）内 ✅',status:'pass',width:'fw1'},
+    {id:'L2',icon:'🏢',cls:'f-i2',title:'L2 工商·存活层',desc:'天眼查API校验——经营状态、注册资本、成立年限、经营范围',result:'经营状态：存续 ✅ | 注册资本500万 | 成立6年 | 经营范围含"园林绿化工程施工" ✅',status:'pass',width:'fw2'},
+    {id:'L3',icon:'⚖️',cls:'f-i3',title:'L3 司法·风险层',desc:'司法信息API扫描——被执行、失信、裁判文书、劳务纠纷',result:'无被执行记录 ✅ | 无失信记录 ✅ | 近3年2条裁判文书（均为原告·追讨欠款）⚠️ 低风险',status:'pass',width:'fw3'},
+    {id:'L4',icon:'📜',cls:'f-i4',title:'L4 经营·能力层',desc:'行业资质API + 招投标API——资质有效期、政府/国企中标记录',result:'资质YL2024001在有效期内 ✅ | 无政府招投标记录 — | 通过',status:'pass',width:'fw4'},
+    {id:'L5',icon:'⭐',cls:'f-i5',title:'L5 口碑·评价层',desc:'消费评价API + 12315投诉——用户评分、投诉量、安全事故',result:'评分4.6/5 ⭐ | 近1年0投诉 ✅ | 无安全事故 ✅ | 通过',status:'pass',width:'fw5'}
+  ];
+
+  // Randomly fail one layer for demo variety
+  var failLayer=-1;
+  if(name.indexOf('鑫鹏')>=0||name.indexOf('安保')>=0) failLayer=4; // L4 fails
+  if(name.indexOf('三无')>=0) failLayer=1; // L2 fails
+
+  layers.forEach(function(l,i){
+    var statusClass='active';
+    var n='通过';
+    if(i===failLayer){statusClass='fail';n='拦截';l.result=l.result.replace('通过','❌ 拦截').replace('✅','❌');}
+    else if(i<=(failLayer>=0?failLayer-1:4)) statusClass='pass';
+    h+='<div class="f-layer '+l.width+' '+statusClass+'">';
+    h+='<div class="f-icon '+l.cls+'">'+l.icon+'</div>';
+    h+='<div class="f-body"><div class="f-title">'+l.title+'</div><div class="f-desc">'+l.desc+'</div></div>';
+    h+='<div class="f-result"><div class="fr-n" style="color:'+(statusClass==='fail'?'var(--red)':'var(--cyan)')+'">'+n+'</div><div class="fr-d">'+(i+1)+'/5</div></div>';
+    h+='</div>';
+    h+='<div class="f-layer" style="opacity:0;height:0;overflow:hidden"></div>'; // spacer
+    h+='<div style="font-size:0.7rem;color:var(--muted);padding:2px 24px;margin-bottom:2px">'+l.result+'</div>';
+    if(i<4) h+='<div class="arrow">▼</div>';
+    // Stop rendering after fail
+    if(statusClass==='fail') return false;
+    return true;
+  });
+
+  var finalResult=failLayer>=0?
+    '<div class="result-card fail"><h2 style="color:var(--red);margin-bottom:8px">❌ 未通过筛选</h2><p style="color:var(--muted)">该供应商在第'+(failLayer+1)+'层（'+layers[failLayer].title.split(' ')[0]+'）被拦截，无法进入候选池。</p><p style="font-size:0.78rem;color:var(--muted);margin-top:8px">拦截原因：'+layers[failLayer].result+'</p></div>':
+    '<div class="result-card pass"><h2 style="color:var(--green);margin-bottom:8px">✅ 通过全部五层筛选</h2><p style="color:var(--muted)">该供应商进入候选池。初始信用分：基于五层扫描结果综合计算为 <strong style="color:var(--cyan)">85分</strong></p><p style="font-size:0.78rem;color:var(--muted);margin-top:8px">L1通过+L2正常+L3低风险+L4通过+L5好评 → 初始信用85</p></div>';
+
+  document.getElementById('funnel-area').innerHTML=h+finalResult;
+}
+</script>
+</body>
+</html>

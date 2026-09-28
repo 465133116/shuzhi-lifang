@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圆桌会议④ · 第二次流转规则</title>
+<style>
+:root{--bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;--orange:#f97316;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:32px 24px;line-height:1.8}
+h1{font-size:24px;color:var(--green);margin-bottom:4px}
+.subtitle{color:var(--dim);font-size:13px;margin-bottom:24px}
+.parts{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px}
+.person{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.person .av{font-size:34px;margin-bottom:6px}.person .n{font-size:14px;font-weight:700}.person .r{font-size:11px;color:var(--dim);margin-top:3px}
+.topic{background:var(--card);border:1px solid var(--green);border-radius:12px;padding:24px;margin-bottom:24px}
+.topic h2{font-size:16px;color:var(--green);margin-bottom:8px}
+.topic .brief{color:var(--dim);font-size:12px;margin-bottom:16px}
+.msg{display:flex;gap:12px;margin:14px 0;align-items:flex-start}
+.msg .av{font-size:26px;min-width:32px;text-align:center}
+.msg .bb{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1}
+.msg .who{font-size:13px;font-weight:700;margin-bottom:6px}
+.msg .ct{font-size:14px;color:var(--muted)}
+.hl{color:var(--amber);font-weight:600}.ag{color:var(--green)}.dg{color:var(--red)}.q{color:var(--purple)}.bl{color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+th{background:var(--card2);padding:9px 12px;text-align:left;color:var(--dim);font-size:11px;text-transform:uppercase}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--muted)}tr:last-child td{border:0}
+.conclusion{background:var(--card);border:2px solid var(--green);border-radius:12px;padding:24px;margin-bottom:20px}
+.conclusion h2{font-size:17px;color:var(--green);margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.scen{background:var(--card2);border-radius:10px;padding:18px;border:1px solid var(--border)}
+.scen h4{font-size:14px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<h1>🏛️ 圆桌会议④</h1>
+<p class="subtitle">议题：每周第二次流转(周三)的规则怎么定？与周一有何不同？</p>
+
+<div class="parts">
+  <div class="person"><div class="av">📐</div><div class="n">量化分析师</div><div class="r">数据+算法</div></div>
+  <div class="person"><div class="av">⚙️</div><div class="n">运营总监</div><div class="r">流程+效率</div></div>
+  <div class="person"><div class="av">🎧</div><div class="n">客服代表</div><div class="r">一线执行</div></div>
+  <div class="person"><div class="av">👔</div><div class="n">管理者</div><div class="r">全局+结果</div></div>
+  <div class="person"><div class="av">🖥️</div><div class="n">开发工程师</div><div class="r">系统+落地</div></div>
+</div>
+
+<!-- 背景 -->
+<div class="topic">
+<h2>📋 先对齐：周一 vs 周三的不同</h2>
+
+<table>
+<tr><th></th><th style="color:var(--green)">周一(第一轮)</th><th style="color:var(--amber)">周三(第二轮)</th></tr>
+<tr><td>时间窗口</td><td>周一8:30 ~ 周三11:30（2.5天）</td><td>周三12:30 ~ 周五17:00（2.5天）</td></tr>
+<tr><td>数据积累</td><td>上周整周+周末的数据</td><td>本周一~三上午的新数据</td></tr>
+<tr><td>保留名单来源</td><td>上周接通的·正标签判定成熟的</td><td>本周一~三刚接通的·标签可能不稳</td></tr>
+<tr><td>补位来源</td><td>主池大量未触达</td><td>主池未触达 + 周一释放回池的</td></tr>
+<tr><td>意向池</td><td>一直保留</td><td>一直保留（无争议）</td></tr>
+</table>
+</div>
+
+<!-- 核心矛盾 -->
+<div class="topic">
+<h2>📋 核心矛盾：周三该不该用同一套保留规则？</h2>
+
+<div class="msg">
+  <div class="av">📐</div>
+  <div class="bb">
+    <div class="who"><span>📐</span> 量化分析师</div>
+    <div class="ct">
+      周一和周三最大的区别是<span class="hl">数据成熟度</span>。<br><br>
+      周一用"接通+正标签"判定保留，标签是上周累计多次通话后的结果——C/D/B/A已经稳定。<br><br>
+      但周三面对的是一批<span class="q">周一~三才接通的新面孔</span>。只通过1-2次，标签可能还在C（默认），AI评分也只打了一次分。<br><br>
+      <span class="q">如果周三也用"正标签保留"，这批刚接通的基本全被保留——因为默认标签就是C，没触发E/F就不会筛掉。</span>然后补位量极小——等于周三根本没什么新人进来。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">⚙️</div>
+  <div class="bb">
+    <div class="who"><span>⚙️</span> 运营总监</div>
+    <div class="ct">
+      量化说的情况我验证一下：<br><br>
+      周一选了1250户全新。周一~三打了约600户（每人每天125×2.5天÷2≈150），其中接通约100户。<br>
+      这100户全是C/D/B/A——因为<span class="hl">第一次接通，AI没判出E/F的话默认就是C</span>。<br><br>
+      到了周三，这100户全被保留。需要补位的只剩1150户——和周一差不多，没什么区别。<br><br>
+      <span class="ag">所以周三的第一轮其实和周一差别不大。问题出在下周的周三</span>——那时候保留量已经积累上来了。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">🖥️</div>
+  <div class="bb">
+    <div class="who"><span>🖥️</span> 开发工程师</div>
+    <div class="ct">
+      从开发角度，我有一个简单的建议：<span class="ag">周三和周一用同一套逻辑，不搞特殊规则</span>。<br><br>
+      理由：<br>
+      1. 同一套代码跑两次，少写一套分支逻辑<br>
+      2. 保留标准不一致会导致客服困惑——"为什么周一保留的规则和周三不一样？"<br>
+      3. 2.5天的数据和7天的数据差异，在实际运行中不会造成质变<br>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 两个方案 -->
+<div class="topic">
+<h2>📋 两个方案对比</h2>
+
+<div class="row2">
+<div class="scen">
+  <h4 style="color:var(--green)">方案A：周一=周三，同一套规则</h4>
+  <p style="color:var(--muted);font-size:13px;line-height:1.7">
+  两次流转都用相同的保留判定：<br>
+  • 接通+正标签(C/D/B/A)→保留<br>
+  • 负标签(E)→释放<br>
+  • 补位=1250-保留量<br>
+  • 主池未触达·金额排序补位<br><br>
+  <span style="color:var(--green)">优点：简单。一套逻辑。开发量小。</span><br>
+  <span style="color:var(--red)">风险：周三保留的接通户可能只有1次通话就保留——成熟度不够。</span>
+</p>
+</div>
+<div class="scen">
+  <h4 style="color:var(--amber)">方案B：周三放宽补位，减少保留</h4>
+  <p style="color:var(--muted);font-size:13px;line-height:1.7">
+  周三的保留判定更严格：<br>
+  • 仅保留AI≥51 且 感受≥3的接通户<br>
+  • C类默认标签(无明确信号)→不保留<br>
+  • 补位从主池+周一释放回池的混合取<br><br>
+  <span style="color:var(--green)">优点：周三有更多新面孔进来。补位量大。</span><br>
+  <span style="color:var(--red)">风险：刚接通的人可能因为1次评分不够高就被释放。</span>
+</p>
+</div>
+</div>
+
+<div class="msg">
+  <div class="av">🎧</div>
+  <div class="bb">
+    <div class="who"><span>🎧</span> 客服代表</div>
+    <div class="ct">
+      我选<span class="ag">方案A</span>。周一刚接通的人，周三不给我继续打？我跟他聊了3分钟，下回一上来就能切入主题。你不给我保留，我周三跟一个陌生人重新破冰——<span class="dg">浪费我的时间也浪费他的时间</span>。<br><br>
+      而且客服的感受分是在通话后立刻录入的。感受分≥3的我都能判断他是不是值得再打。不需要AI评分多精确。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">👔</div>
+  <div class="bb">
+    <div class="who"><span>👔</span> 管理者</div>
+    <div class="ct">
+      方案A确实更简单。但我想确认一个问题：<br><br>
+      <span class="q">周三的那100户接通保留里——多少是上周已经在保留名单里的（周一延续下来的），多少是本周新接通的？</span><br><br>
+      如果是上周延续的，说明他已经被打了好几轮了——保留没问题。如果是本周新接通的第一次，保留也没问题——趁热打铁。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">📐</div>
+  <div class="bb">
+    <div class="who"><span>📐</span> 量化分析师</div>
+    <div class="ct">
+      管理者问得好。我来算一下：<br><br>
+      <span class="hl">周一1250户=上周延续的保留(~300) + 新补位(~950)。</span><br>
+      周一~三上午打了约600户。其中新补位里接通约80户（首次），上周保留里接通约30户（二次以上）。<br><br>
+      周三回收1250户→重新选：<br>
+      • 保留：上周延续的(~300) + 新接通80 = ~380户<br>
+      • 补位：1250-380=870户（从主池取）<br><br>
+      <span class="ag">结论：周三仍然有870户补位空间。新面孔进来的量足够。</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 决议 -->
+<div class="conclusion">
+<h2>✅ 会议决议</h2>
+
+<table>
+<tr><th>#</th><th>决议</th><th>通过</th></tr>
+<tr>
+  <td>1</td>
+  <td><b>周一=周三，同一套分配规则。</b>不搞两套逻辑。保留判定：接通+正标签(C/D/B/A)→保留。补位：1250-保留量，主池未触达·金额排序。</td>
+  <td><span class="ag">5/5</span></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><b>意向池无论周一还是周三都不回收。</b>意向池跟客服走，不受轮换影响。</td>
+  <td><span class="ag">5/5</span></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><b>保留名单以客服为单位。</b>周一A保留的业主，周三还给A。不会因为轮换把保留户分给别人。</td>
+  <td><span class="ag">5/5</span></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><b>同一周内两次流转的保留名单连续累计。</b>周一保留→周三保留→下周一保留，不断累积。直到标签变E或客服释放。</td>
+  <td><span class="ag">5/5</span></td>
+</tr>
+</table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圆桌会议② · 接通保留与意向池</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;
+  --text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;
+  --orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:32px 24px;line-height:1.8}
+h1{font-size:24px;color:var(--green);margin-bottom:4px}
+.subtitle{color:var(--dim);font-size:13px;margin-bottom:28px}
+.participants{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.person{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.person .avatar{font-size:36px;margin-bottom:8px}
+.person .name{font-size:15px;font-weight:700}
+.person .role{font-size:11px;color:var(--dim);margin-top:4px}
+.topic{background:var(--card);border:1px solid var(--green);border-radius:12px;padding:24px;margin-bottom:28px}
+.topic h2{font-size:17px;color:var(--green);margin-bottom:8px}
+.msg{display:flex;gap:12px;margin:16px 0;align-items:flex-start}
+.msg .av{font-size:26px;min-width:34px;text-align:center}
+.msg .bb{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;flex:1}
+.msg .who{font-size:13px;font-weight:700;margin-bottom:6px}
+.msg .ct{font-size:14px;color:var(--muted)}
+.hl{color:var(--amber);font-weight:600}
+.ag{color:var(--green)}.dg{color:var(--red)}.q{color:var(--purple)}.or{color:var(--orange)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th{background:var(--card2);padding:9px 12px;text-align:left;color:var(--dim);font-size:11px;text-transform:uppercase}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--muted)}
+tr:last-child td{border:0}
+.conclusion{background:var(--card);border:2px solid var(--green);border-radius:12px;padding:24px;margin-bottom:24px}
+.conclusion h2{font-size:17px;color:var(--green);margin-bottom:14px}
+.diagram{background:var(--card2);border-radius:12px;padding:24px;margin:16px 0;font-family:monospace;font-size:13px;color:var(--green);line-height:2.2;white-space:pre}
+.scenario{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.scen{background:var(--card2);border-radius:10px;padding:18px;border:1px solid var(--border)}
+.scen h4{font-size:14px;margin-bottom:8px}
+.scen .res{font-size:12px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.vote-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.vote-bar{flex:1;height:24px;border-radius:6px;background:var(--card2);overflow:hidden}
+.vote-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:11px;font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>🏛️ 圆桌会议②</h1>
+<p class="subtitle">议题：接通未入意向池的业主，下周还给同一个客服吗？ · 意向池上限50 · 不需要强制释放</p>
+
+<div class="participants">
+  <div class="person"><div class="avatar">📐</div><div class="name">量化分析师</div><div class="role">数据+算法</div></div>
+  <div class="person"><div class="avatar">⚙️</div><div class="name">运营总监</div><div class="role">流程+效率</div></div>
+  <div class="person"><div class="avatar">🎧</div><div class="name">客服代表</div><div class="role">一线执行</div></div>
+  <div class="person"><div class="avatar">👔</div><div class="name">管理者</div><div class="role">全局+结果</div></div>
+</div>
+
+<!-- 议题一 -->
+<div class="topic">
+<h2>📋 议题一：接通但未入意向池的业主，下周还给客服A吗？</h2>
+
+<p style="color:var(--dim);font-size:13px;margin-bottom:16px">场景：客服A周一拨通了业主X。聊了3分钟，X说"我看看，过两天再说"——没有明显对抗，也没有明确承诺。客服A没拉他进意向池。<br>问题：下周客服A的个人池里，X还在吗？</p>
+
+<div class="msg">
+  <div class="av">🎧</div>
+  <div class="bb">
+    <div class="who"><span>🎧</span> 客服代表</div>
+    <div class="ct">
+      我当然希望<span class="hl">接通过的都留给我</span>。我跟他聊过了，知道他是哪种人，下周一上来就能直奔主题——"张先生，上回您说看看，现在怎么样了？"这个效率完全不一样。<br><br>
+      但如果他没进我意向池，说明他<span class="q">没有特别强的还款信号</span>——只是普通接通。这种人要不要占我一个保留名额？我有50个保留名额，<span class="dg">都被这种"一般般"的占满了，真正有戏的反而不够位置</span>。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">📐</div>
+  <div class="bb">
+    <div class="who"><span>📐</span> 量化分析师</div>
+    <div class="ct">
+      从数据角度看，这个问题本质是：<span class="hl">接通本身有没有价值？</span><br><br>
+      接通的价值在于：<span class="ag">客服获取了信息</span>——知道这个人说话的语气、有没有在回避、大概什么态度。这些信息下次通话可以直接用。换一个新客服打，等于重新破冰，浪费一通电话。<br><br>
+      但并不是所有接通都有这个价值。我建议按<span class="hl">AI评分+感受分</span>来区别：<br>
+    </div>
+  </div>
+</div>
+
+<div class="scenario">
+<div class="scen">
+  <h4 style="color:var(--green)">✅ 值得保留的接通</h4>
+  <table>
+  <tr><th>条件</th><th>为什么保留</th></tr>
+  <tr><td>AI≥41 + 感受≥3</td><td>中等以上意愿。有跟进价值。客服已经建立了沟通基础</td></tr>
+  <tr><td>感受=4/5</td><td>配合度高。即使AI评分一般，态度好的人值得再打一次</td></tr>
+  <tr><td>AI≥61</td><td>高意愿。无论感受分如何，还款倾向强</td></tr>
+  <tr><td>标签=A(争议)</td><td>争议不是恶意。客服了解争议点，继续沟通效率高</td></tr>
+  </table>
+  <div class="res"><span class="ag">→ 下周保留给原客服。占保留名额。客服可选择是否拉入意向池</span></div>
+</div>
+<div class="scen">
+  <h4 style="color:var(--red)">❌ 不值得保留的接通</h4>
+  <table>
+  <tr><th>条件</th><th>为什么不保留</th></tr>
+  <tr><td>AI≤30 且 感受≤2</td><td>低意愿+消极态度。换人效果可能更好</td></tr>
+  <tr><td>标签=E(对抗)</td><td>对抗型。60天观察，不浪费保留名额</td></tr>
+  <tr><td>感受=1</td><td>明确对抗。不必再打</td></tr>
+  <tr><td>标签=C + AI≤40</td><td>纯观望+低信号。没有建立有价值的沟通</td></tr>
+  </table>
+  <div class="res"><span class="dg">→ 释放回主池。下周重新排队。可能分配给其他客服</span></div>
+</div>
+</div>
+
+<div class="msg">
+  <div class="av">⚙️</div>
+  <div class="bb">
+    <div class="who"><span>⚙️</span> 运营总监</div>
+    <div class="ct">
+      量化分的这套逻辑我认可。但我提一个<span class="hl">操作上的关键</span>：<br><br>
+      <span class="q">客服A接通了X，下周X保留给A——但A没拉X进意向池。这说明A觉得X还行但不急。这种人占着保留名额，挤掉了别的接通客户的保留机会。</span><br><br>
+      我建议：<span class="ag">保留≠永久持有。保留的接通户每周重新评估</span>——如果连续2周都在保留名单里但没有任何进展（AI评分没升、没拉入意向池、没承诺还款），第三周自动释放。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">🎧</div>
+  <div class="bb">
+    <div class="who"><span>🎧</span> 客服代表</div>
+    <div class="ct">
+      运营总监说得有道理。我补充一个实际情况：<span class="hl">有些人第一通电话确实不会马上表态。</span>"我看看"可能第二通就变成"行我交"。如果因为第一通没进展就丢了，可惜。<br><br>
+      但2周没进展还不放，就是占着茅坑了。<span class="ag">2周自动释放我同意</span>。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">👔</div>
+  <div class="bb">
+    <div class="who"><span>👔</span> 管理者</div>
+    <div class="ct">
+      我总结一下这个议题：<br><br>
+      <span class="ag">1. 接通但未入意向池的——按AI+感受分级。中等以上的保留，低质量的释放。</span><br>
+      <span class="ag">2. 保留的跟原客服走。但占保留名额（50个上限共享）。</span><br>
+      <span class="ag">3. 保留后连续2周无进展→自动释放回主池。</span><br>
+      <span class="ag">4. 客服随时可以选择把保留的接通户拉入意向池——拉入了就不受2周限制（意向池不限时长）。</span><br><br>
+      这样：<span class="hl">接通有价值的→保留→跟进→要么进展拉入意向池→要么2周没戏释放。低质量接通→直接释放→不占名额。</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 议题二 -->
+<div class="topic">
+<h2>📋 议题二：保留名额和意向池的关系</h2>
+<p style="color:var(--dim);font-size:13px;margin-bottom:16px">两个池都跟人走、都不随轮换回收。它们的关系是什么？</p>
+
+<div class="msg">
+  <div class="av">⚙️</div>
+  <div class="bb">
+    <div class="who"><span>⚙️</span> 运营总监</div>
+    <div class="ct">
+      这是最容易搞混的地方。我把它说清楚：<br><br>
+      <span class="or">意向池</span>：客服手动拉入。意思是"这个人的钱我负责收回来"。<span class="hl">上限50户</span>。不限时长。满了自己踢。<br><br>
+      <span class="ag">接通保留</span>：系统自动保留。意思是"接通过的，聊天记录还有用，别换人"。<span class="hl">上限也是50户</span>。连续2周无进展自动释放。<br><br>
+      <span class="q">这两个50是分开算还是共享？</span>
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">👔</div>
+  <div class="bb">
+    <div class="who"><span>👔</span> 管理者</div>
+    <div class="ct">
+      <span class="ag">共享一个50户上限。</span>理由很简单：都是"跟人走不回收"的业主。如果各算各的，客服A可能有50个意向+50个保留=100个固定业主——加上250个系统分配的，总共350户，每天125通打不完。<br><br>
+      规则：<span class="hl">意向池的业主自动占用保留名额。</span>即：<br>
+      <div style="background:var(--card);border-radius:6px;padding:14px;margin:10px 0;font-family:monospace;font-size:13px;color:var(--green)">
+      保留名额总上限 = 50户<br>
+      其中：意向池X户（客服手动） + 接通保留Y户（系统自动） ≤ 50<br>
+      意向池优先占位。满了50→接通保留自动停止添加
+      </div>
+      这样客服自己控制节奏——他觉得值得跟的人多了，就多拉意向池、少留接通保留。
+    </div>
+  </div>
+</div>
+
+<div class="msg">
+  <div class="av">🎧</div>
+  <div class="bb">
+    <div class="who"><span>🎧</span> 客服代表</div>
+    <div class="ct">
+      这个规则简单清晰。我每周的工作就是：<br>
+      <span class="ag">250个系统分配的 + 最多50个我的保留名单（意向池优先）</span> = 最多300个。每天125通，两天半打完一轮。<br><br>
+      周三轮换时：除了这50个保留的，其他全回收。
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 最终决议 -->
+<div class="conclusion">
+<h2>✅ 会议决议</h2>
+
+<table>
+<tr><th>#</th><th>决议</th><th>通过</th></tr>
+<tr>
+  <td>1</td>
+  <td><b>接通分级保留：</b>AI≥41或感受≥3的→保留给原客服。低质量的→释放回主池</td>
+  <td><span class="ag">4/4</span></td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><b>保留+意向池共享上限50户：</b>意向池自动占保留名额。总跟人走的不超过50</td>
+  <td><span class="ag">4/4</span></td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><b>保留2周无进展自动释放：</b>保留的接通户如果连续2周AI没升、没入意向池、没承诺→释放回主池。意向池中的人不受此限制</td>
+  <td><span class="ag">3/4</span></td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><b>意向池不限时长：</b>客服手动拉入的意向池客户，可以一直保留。回款自动移出。满了客服自己踢</td>
+  <td><span class="ag">4/4</span></td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><b>客服实际持有=250(系统)+≤50(保留/意向)=≤300户。</b>周三轮换时仅回收系统分配的250</td>
+  <td><span class="ag">4/4</span></td>
+</tr>
+</table>
+
+<div style="background:var(--card2);border-radius:8px;padding:20px;margin-top:16px">
+  <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:12px">核心结构</div>
+  <div class="diagram">
+每客250户个人池（系统分配·轮换回收）
+           +
+  ≤50户保留名单（跟人走·不回收）
+      ├── 意向池(客服手动拉入·不限时长)
+      └── 接通保留(系统保留·2周无进展释放)
+           =
+  ≤300户实际持有
+  </div>
+</div>
+</div>
+
+</body>
+</html>

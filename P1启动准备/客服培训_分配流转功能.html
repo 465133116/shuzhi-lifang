@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客服培训 · 分配流转功能</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;--orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;max-width:1100px;margin:0 auto;padding:40px 28px 60px;line-height:1.8}
+h1{font-size:30px;color:var(--green);margin-bottom:4px}
+.subtitle{color:var(--dim);font-size:14px;margin-bottom:30px}
+h2{font-size:21px;margin:44px 0 16px;display:flex;align-items:center;gap:10px}
+h2 .num{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--card2);border:1.5px solid var(--green);color:var(--green);align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+h3{font-size:16px;color:var(--amber);margin:18px 0 8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.card.green{border-color:rgba(16,185,129,.5)}
+.card.purple{border-color:rgba(139,92,246,.5)}
+.card.amber{border-color:rgba(245,158,11,.5)}
+.card.red{border-color:rgba(239,68,68,.4)}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+th{background:var(--card2);padding:10px 14px;text-align:left;color:var(--dim);font-size:12px}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--muted)}
+tr:last-child td{border:0}
+.hl{color:var(--amber);font-weight:600}
+.ag{color:var(--green);font-weight:600}
+.dg{color:var(--red);font-weight:600}
+.q{color:var(--purple);font-weight:600}
+.bl{color:var(--blue);font-weight:600}
+.big{font-size:22px;font-weight:700}
+.center{text-align:center}
+/* 一句话总览 */
+.slogan{background:linear-gradient(135deg,#0f172a,#13203a);border:2px solid var(--green);border-radius:16px;padding:32px;text-align:center;margin-bottom:30px}
+.slogan .main{font-size:28px;font-weight:700;color:var(--text);line-height:1.6}
+.slogan .sub{color:var(--muted);font-size:15px;margin-top:10px}
+/* 四池图 */
+.pools{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.pool{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 14px;text-align:center}
+.pool .name{font-size:17px;font-weight:700;margin-bottom:6px}
+.pool .cnt{font-size:12px;color:var(--dim);margin-bottom:8px}
+.pool .desc{font-size:12px;color:var(--muted);line-height:1.6}
+.pool .who{display:inline-block;font-size:11px;padding:2px 10px;border-radius:20px;margin-top:8px}
+.pool.main{border-color:#475569}.pool.main .name{color:#cbd5e1}
+.pool.flow{border-color:#64748b}.pool.flow .name{color:#94a3b8}
+.pool.self{border-color:var(--green)}.pool.self .name{color:var(--green)}
+.pool.intent{border-color:var(--purple)}.pool.intent .name{color:var(--purple)}
+.flowarrow{text-align:center;color:var(--dim);font-size:20px;margin:2px 0;letter-spacing:6px}
+/* 三Tab */
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tab{background:var(--card2);border-radius:14px;padding:22px 18px;border:1px solid var(--border)}
+.tab .thead{font-size:16px;font-weight:700;margin-bottom:4px}
+.tab .tqty{font-size:12px;color:var(--dim);margin-bottom:12px}
+.tab ul{list-style:none}
+.tab li{font-size:13px;color:var(--muted);padding:5px 0 5px 18px;position:relative}
+.tab li:before{content:"•";position:absolute;left:2px}
+.tab.t1{border-color:var(--purple);border-width:1.5px}.tab.t1 .thead{color:var(--purple)}
+.tab.t2{border-color:var(--green);border-width:1.5px}.tab.t2 .thead{color:var(--green)}
+.tab.t3{border-color:#64748b;border-width:1.5px}.tab.t3 .thead{color:#94a3b8}
+/* 周节奏 */
+.week{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.half{background:var(--card2);border-radius:14px;padding:20px;border:1px solid var(--border)}
+.half h4{font-size:15px;margin-bottom:10px}
+.half.first h4{color:var(--green)}
+.half.second h4{color:var(--amber)}
+.half ul{list-style:none}
+.half li{font-size:13px;color:var(--muted);padding:4px 0 4px 18px;position:relative}
+.half li:before{content:"▸";position:absolute;left:2px;color:var(--dim)}
+.weekmiddle{text-align:center;padding:10px 0}
+.weekmiddle .divider{display:inline-block;background:var(--amber);color:#0b1120;font-size:13px;font-weight:700;padding:6px 18px;border-radius:20px}
+/* 去向四格 */
+.gos{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.go{background:var(--card2);border-radius:12px;padding:18px;border:1px solid var(--border)}
+.go .gt{font-size:15px;font-weight:700;margin-bottom:6px}
+.go p{font-size:13px;color:var(--muted)}
+.go.g1 .gt{color:var(--green)}.go.g1{border-color:rgba(16,185,129,.5)}
+.go.g2 .gt{color:var(--amber)}.go.g2{border-color:rgba(245,158,11,.4)}
+.go.g3 .gt{color:var(--red)}.go.g3{border-color:rgba(239,68,68,.4)}
+.go.g4 .gt{color:var(--dim)}.go.g4{border-color:#334155}
+/* 感受分 */
+.feel{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.fb{background:var(--card2);border-radius:12px;padding:14px 10px;text-align:center;border:1px solid var(--border)}
+.fb .fn{font-size:26px;font-weight:800;display:block;margin-bottom:6px}
+.fb .fd{font-size:11px;color:var(--muted);line-height:1.5}
+.fb.f1 .fn{color:var(--red)}
+.fb.f2 .fn{color:var(--orange)}
+.fb.f3 .fn{color:var(--amber)}
+.fb.f4 .fn{color:var(--blue)}
+.fb.f5 .fn{color:var(--green)}
+/* 自动清单 */
+.autogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.auto{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;color:var(--muted)}
+.auto b{color:var(--text);display:block;margin-bottom:4px}
+.auto .tag{display:inline-block;font-size:10px;background:rgba(16,185,129,.15);color:var(--green);border-radius:10px;padding:1px 8px;margin-bottom:6px}
+/* Q&A */
+.qa{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:12px}
+.qa .qq{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.qa .qa2{font-size:14px;color:var(--muted)}
+.qa .qq:before{content:"问 " ;color:var(--purple);font-size:12px;border:1px solid var(--purple);border-radius:6px;padding:0 6px;margin-right:6px}
+.qa .qa2:before{content:"答 ";color:var(--green);font-size:12px;border:1px solid var(--green);border-radius:6px;padding:0 6px;margin-right:6px}
+/* 口诀 */
+.motto{background:linear-gradient(135deg,#0f172a,#13203a);border:2px solid var(--green);border-radius:16px;padding:30px;text-align:center;margin-top:8px}
+.motto .mm{font-size:21px;font-weight:700;line-height:2}
+.footer{color:var(--dim);font-size:11px;margin-top:40px;text-align:center;line-height:1.8}
+.note{font-size:12px;color:var(--dim);margin-top:8px}
+</style>
+</head>
+<body>
+
+<h1>🎧 客服培训 · 分配流转功能</h1>
+<p class="subtitle">从「按项目分号」到「系统四池自动流转」 · 5人客服团队 · 2026-08</p>
+
+<div class="slogan">
+  <div class="main">以后你每天只需要做三件事：<br><span class="ag">① 点拨号</span>　<span class="q">② 通话结束选感受分（1~5）</span>　<span class="q">③ 想留的拉进意向池</span></div>
+  <div class="sub">分号、轮换、记录、分类、打分——全部系统自动完成，你不用管</div>
+</div>
+
+<!-- ============ 1 变了什么 ============ -->
+<h2><span class="num">1</span>变了什么：以前 vs 现在</h2>
+<div class="card">
+  <table>
+    <tr><th>环节</th><th style="color:var(--dim)">以前（按项目分工）</th><th style="color:var(--green)">现在（系统自动流转）</th></tr>
+    <tr><td><b>号码怎么来</b></td><td>经理按项目手动分配，你打固定小区</td><td class="ag">系统打散全部项目，按金额+标签自动发到你的名单</td></tr>
+    <tr><td><b>打不通怎么办</b></td><td>Excel 导出、汇总、换人——周三下午手工折腾</td><td class="ag">周三中午系统自动轮换：收走你的未接，换一批新号给你</td></tr>
+    <tr><td><b>通话记什么</b></td><td>Excel 手动记事件类型、分类、回访日期</td><td class="ag">录音自动转文字，AI 自动分类、自动打分，你什么都不用写</td></tr>
+    <tr><td><b>跟进谁</b></td><td>自己记回访清单，容易漏</td><td class="ag">意向池自动置顶，你圈的重点户永远排最前面</td></tr>
+  </table>
+  <p class="note">目的只有一个：让每个人每天拨的，都是当前最值得拨的号。别管这个号以前是谁的——现在系统说了算。</p>
+</div>
+
+<!-- ============ 2 四池 ============ -->
+<h2><span class="num">2</span>四个池子：你的号码从哪来、到哪去</h2>
+<div class="card">
+  <div class="pools">
+    <div class="pool main">
+      <div class="name">🏊 主池</div>
+      <div class="cnt">全部业主 · 系统管</div>
+      <div class="desc">号码仓库。所有没分配出去的号都在这里，按金额排队</div>
+      <span class="who" style="color:var(--dim)">客服看不到</span>
+    </div>
+    <div class="pool flow">
+      <div class="name">🔄 流动池</div>
+      <div class="cnt">中转站 · 系统管</div>
+      <div class="desc">打过但没接通的号在这里排队，等下一次重新分配</div>
+      <span class="who" style="color:var(--dim)">客服看灰Tab</span>
+    </div>
+    <div class="pool self">
+      <div class="name">✅ 个人池</div>
+      <div class="cnt">250户/轮 · 系统发</div>
+      <div class="desc">你的本轮工作清单。按金额从大到小，从上往下打</div>
+      <span class="who" style="color:var(--green)">绿色Tab</span>
+    </div>
+    <div class="pool intent">
+      <div class="name">⭐ 意向池</div>
+      <div class="cnt">最多50户 · 你自己圈</div>
+      <div class="desc">你的私有重点户。周三轮换永远不动它，跟着你走</div>
+      <span class="who" style="color:var(--purple)">紫色Tab</span>
+    </div>
+  </div>
+  <div class="flowarrow">▼</div>
+  <p class="center" style="font-size:13px;color:var(--dim)">
+    主池 → 每周两次发到你的个人池 → 你打 → <span class="dg">没接通→回收流动池</span> → 下次轮换再发（可能给别人，也可能还给你）
+  </p>
+</div>
+
+<!-- ============ 3 三Tab ============ -->
+<h2><span class="num">3</span>你的系统界面：三个Tab，一眼分清</h2>
+<div class="tabs">
+  <div class="tab t1">
+    <div class="thead">🟣 意向池 Tab（紫色）</div>
+    <div class="tqty">最多 50 户 · 你自己圈的</div>
+    <ul>
+      <li>想重点跟的户，挂断后拉进来（无门槛）</li>
+      <li>拨打节奏你自己安排，意向池是重点资产</li>
+      <li>周三轮换不回收，永远是你的</li>
+      <li>回款以物业报数为准自动移出 · 回款又取消由管理员标记放回（不占名额·标签不变）· 满50拉新先踢</li>
+    </ul>
+  </div>
+  <div class="tab t2">
+    <div class="thead">🟢 个人池 Tab（绿色）</div>
+    <div class="tqty">250 户/轮 · 系统发的</div>
+    <ul>
+      <li>你的本轮工作清单，按系统顺序从上往下打</li>
+      <li>排序规则：按金额从大到小（大额在前）</li>
+      <li>周三中午系统会刷新：收走没打通的，补进新号</li>
+      <li>每天约拨 125 通，拨打节奏你自己安排</li>
+    </ul>
+  </div>
+  <div class="tab t3">
+    <div class="thead">⚪ 流动池 Tab（灰色）</div>
+    <div class="tqty">中转站 · 系统管的</div>
+    <ul>
+      <li>流转中的公共号码：别人没打通的、AI 打过的</li>
+      <li>周三轮换时，号码的进出在这里排队</li>
+      <li>你不需要操作它——只用来"看懂"号去哪了</li>
+      <li>疑问："我打的号呢？" → 看这个Tab就明白</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 4 一周节奏 ============ -->
+<h2><span class="num">4</span>一周节奏：两个半周，周三中午换一次</h2>
+<div class="card">
+  <div class="week">
+    <div class="half first">
+      <h4>上半周 · 周一 8:30 → 周三 11:15</h4>
+      <ul>
+        <li>周一 8:30 系统发新名单（个人池刷新，250户）</li>
+        <li>9:10 开始拨号，拨打节奏自行安排</li>
+        <li>每天约 125 通，11:15 停、11:30 午休</li>
+        <li>每通结束：选个感受分（1~5），点下一条</li>
+      </ul>
+    </div>
+    <div class="half second">
+      <h4>下半周 · 周三 13:45 → 周五 17:00</h4>
+      <ul>
+        <li>周三午休期间系统自动轮换（12:00~12:30）</li>
+        <li>13:45 上班打开系统：<b>名单已经换了一批</b></li>
+        <li>没接通的被收走，别人没接通的可能到你手上</li>
+        <li>周五 17:00 收工，周末双休，下周一再来一批</li>
+      </ul>
+    </div>
+  </div>
+  <div class="weekmiddle"><span class="divider">周三中午 · 系统自动轮换（你什么都不用做）</span></div>
+  <p class="note center">名单变了不是系统出错——是流转在干活。你的目标是把你名单上的号尽量多打通，打不完的也不用急，系统会安排别人接力。</p>
+</div>
+
+<!-- ============ 5 号码去向 ============ -->
+<h2><span class="num">5</span>我打过的号去哪了？（四种去向）</h2>
+<div class="card">
+  <div class="gos">
+    <div class="go g1">
+      <div class="gt">① 聊得好 → 拉进意向池 → 留下</div>
+      <p>意向池是你<b>留住业主的唯一通道</b>。接通后觉得有价值，挂断后就拉进来（无门槛、挂断后操作）。不拉的号，下次轮换回收给别人接力。</p>
+    </div>
+    <div class="go g2">
+      <div class="gt">② 没接通 → 收走换人接力</div>
+      <p>周三轮换时系统收走，放进流动池重新排队，可能分给任何同事。同时你也会收到别人没打通的号——接力不是惩罚，是让每个号都被不同的人、不同时段试过。</p>
+    </div>
+    <div class="go g3">
+      <div class="gt">③ 明确不交 / 骂人 / 连续拒接3次以上 → 回仓库</div>
+      <p>系统自动判为 E 类（对抗失信），释放回主池，<b>60天后</b>系统再看是否重新分配。这种号不纠缠、不浪费时间，交给时间。</p>
+    </div>
+    <div class="go g4">
+      <div class="gt">④ 空号 / 停机 / 搬家 → 移出名单</div>
+      <p>系统自动判为 F 类（历史复杂），客观打不通，直接从分配池剔除。以后不会再出现在任何人名单里。</p>
+    </div>
+  </div>
+  <p class="note">关键点：<b>意向池跟人走</b>。接通的号只有拉进意向池才留得住——周三轮换不回收、下周下下周都跟着你，直到回款或你移出。没拉的号一律回收接力。</p>
+</div>
+
+<!-- ============ 6 感受分 ============ -->
+<h2><span class="num">6</span>接通后你唯一要做的动作：选感受分</h2>
+<div class="card">
+  <p>通话结束挂断后，系统弹窗问：<span class="hl">"本次沟通感受？"</span> 凭你的第一感觉选一个数字。这是你全流程唯一需要手动输入的东西。</p>
+  <div class="feel">
+    <div class="fb f1"><span class="fn">1</span><span class="fd">辱骂、威胁<br>直接挂断<br>"再打报警"</span></div>
+    <div class="fb f2"><span class="fn">2</span><span class="fd">冷淡、敷衍<br>"再说吧"<br>"不方便"</span></div>
+    <div class="fb f3"><span class="fn">3</span><span class="fd">愿意听但没表态<br>"嗯"<br>"你继续说"</span></div>
+    <div class="fb f4"><span class="fn">4</span><span class="fd">提供信息<br>接受建议<br>"好的我看看"</span></div>
+    <div class="fb f5"><span class="fn">5</span><span class="fd">主动配合<br>表达谢意<br>"谢谢你提醒"</span></div>
+  </div>
+  <table>
+    <tr><th>规则</th><th>说明</th></tr>
+    <tr><td>必选</td><td>每次接通都必须选，不能跳过（拒接、未接不用选）</td></tr>
+    <tr><td>可改</td><td>当天 24:00 前可以修改</td></tr>
+    <tr><td>选它干嘛</td><td>影响这个号的排序：感受分高 → 排名单前面；1分 → 排后面。选得准，系统就给你排得准</td></tr>
+    <tr><td>不冲突</td><td>AI 也会自己打分（1~100），你们俩各算各的，互不影响。你选的是"氛围"，AI 算的是"还钱概率"</td></tr>
+  </table>
+</div>
+
+<!-- ============ 7 自动化 ============ -->
+<h2><span class="num">7</span>系统自动完成的（你全都不用管）</h2>
+<div class="card">
+  <div class="autogrid">
+    <div class="auto"><span class="tag">自动</span><b>呼叫结果记录</b>已接/未接/拒接/空号，系统自动记，不用点任何按钮</div>
+    <div class="auto"><span class="tag">自动</span><b>通话转文字</b>每通电话录音自动转成文字，不用你写备注</div>
+    <div class="auto"><span class="tag">自动</span><b>六类标签判定</b>AI 听内容自动分类（F/E/A/B/D/C），不用你判断</div>
+    <div class="auto"><span class="tag">自动</span><b>AI 评分</b>接通后自动打分（1~100），拒接不评</div>
+    <div class="auto"><span class="tag">自动</span><b>每周两次分配</b>周一 8:30 和周三中午，名单自动刷新</div>
+    <div class="auto"><span class="tag">自动</span><b>意向池回款移出</b>物业公司报回款到账，自动从意向池清出</div>
+  </div>
+  <p class="note">你的完整操作 = <span class="ag">点"拨号"</span> → 说话 → 挂断 → <span class="q">选感受分</span> → 系统自动跳下一条。全程两次点击。</p>
+</div>
+
+<!-- ============ 8 意向池 ============ -->
+<h2><span class="num">8</span>意向池：你的私有资产（紫色Tab）</h2>
+<div class="card purple">
+  <h3>一句话：想重点跟的户，挂断后拉进意向池——无门槛，拉入即移入。</h3>
+  <table>
+    <tr><th>规则</th><th>内容</th></tr>
+    <tr><td>唯一通道</td><td>意向池是你<b>留住业主的唯一方式</b>——接通的号不拉进来，下次轮换就归别人</td></tr>
+    <tr><td>上限</td><td>最多 <b>50户</b>，<b>只数三种状态</b>：催收中 / 暂停 / 部分还款；其他状态一律不占名额</td></tr>
+    <tr><td>排序</td><td>池内列表<b>按欠费金额大小排</b>（大额在前）</td></tr>
+    <tr><td>E/F 户</td><td>池内户后续被判 E/F 也<b>不自动移出</b>（继续留着，你自己判断）</td></tr>
+    <tr><td>声称已缴</td><td>业主说"已经交了" → <b>先拉入意向池等物业确认</b>，确认期间你自己决定要不要联系</td></tr>
+    <tr><td>锁定</td><td>池内户<b>全局锁定</b>——不会再被分进任何人的个人池名单</td></tr>
+    <tr><td>拉入</td><td><b>无门槛</b>——聊得好的都可以拉（<b>挂断后</b>操作）。拉入 = 从个人池<b>移入</b>，唯一归你</td></tr>
+    <tr><td>部分还款</td><td><b>还1分钱也算</b>"部分还款"（计数），回款数据经工作群沟通确认。剩余金额继续跟；剩余减免结清 → 算回款自动移出</td></tr>
+    <tr><td>暂停</td><td>由<b>管理员</b>触发（争议处理、业主要求缓联、<b>投诉</b>等），暂停期间不拨打；恢复时机由你跟进，暂停户也可手动移出</td></tr>
+    <tr><td>回款</td><td><b>以物业公司报的回款为准</b>，到账 → 自动移出，记入你的回款业绩</td></tr>
+    <tr><td>回款又取消</td><td>管理员标记后放回意向池继续跟，<b>放回时标签不变、不计入50上限</b>（理论上可超50）；后续通话标签照常更新</td></tr>
+    <tr><td>满了踢 / 手动移出</td><td>踢出或移出的户<b>回流动池，下次流转给其他人</b>。踢人只踢计入名额的</td></tr>
+    <tr><td>归属</td><td>你的私有池。<b>周三轮换不回收，永远跟你走</b>，别人碰不到</td></tr>
+    <tr><td>独立</td><td>不算在个人池250户里；拨打节奏你自己安排</td></tr>
+    <tr><td>离职 / 结案</td><td>你离职 → 意向池由管理员回收后<b>分派给其他客服</b>；项目结案 → 该小区户自动终止</td></tr>
+    <tr><td>前期规则</td><td>暂不做自动移出——但别囤着不打，浪费的是你自己的回款机会</td></tr>
+  </table>
+</div>
+
+<!-- ============ 9 Q&A ============ -->
+<h2><span class="num">9</span>你可能会问的</h2>
+<div class="qa"><div class="qq">周三中午我的名单为什么变了？我打到一半的号去哪了？</div>
+<div class="qa2">系统轮换。个人池的号周三全部回收，从主池补进新号；只有你拉进意向池的号不会动。所以你的名单 = 新补进来的 + 意向池里你继续跟的。</div></div>
+
+<div class="qa"><div class="qq">上周接通聊得挺好的人，这周为什么不在我名单里了？</div>
+<div class="qa2">三种可能：① 你上次没把他拉进意向池 → 回收流转给别人了；② 他进了你的意向池（在紫色Tab里）；③ 被判 E/F 类或其实回款了。看灰色流动池Tab能查到号的下落。</div></div>
+
+<div class="qa"><div class="qq">我拿到的号是别人打过的，这正常吗？</div>
+<div class="qa2">正常。系统会优先发"从没被打过"的新号（按金额从大到小），主池新号发完后，被打过但没接通的号会进入轮转。别人打过的号，他留下的标签和感受分你都能看到——接力成本比你想象的低。</div></div>
+
+<div class="qa"><div class="qq">意向池里的户会不会被别人抢走？</div>
+<div class="qa2">不会。意向池是你的私有资产，任何轮换都不回收。只有你自己能移出，或者回款后系统自动清出。</div></div>
+
+<div class="qa"><div class="qq">业主回款了，后来又取消了，怎么办？</div>
+<div class="qa2">管理员确认后把他放回你的意向池继续跟，<b>标签不变、不占你50个名额</b>（这种户理论上可以超过50）。另外，除"催收中/暂停/部分还款"三种状态外，其他状态都不占意向池名额。</div></div>
+
+<div class="qa"><div class="qq">业主说"我已经交过了"，怎么办？</div>
+<div class="qa2">先把他拉进意向池，等物业公司确认回款。<b>确认期间联不联系你自己决定</b>——物业确认已交 → 自动移出；没交 → 继续正常跟进。</div></div>
+
+<div class="qa"><div class="qq">感受分选错了怎么办？会不会影响别人？</div>
+<div class="qa2">当天24:00前可以改。感受分只影响排序（1分排后面、5分排前面），不会给AI评分、标签造成任何影响，也不会扣任何东西。凭第一感觉选就行。</div></div>
+
+<div class="qa"><div class="qq">名单打完了干什么？</div>
+<div class="qa2">回访意向池、跟进当天聊过的人——节奏你自己安排。都打完了，说明你完成得早，可以收工前再刷一遍意向池。</div></div>
+
+<div class="qa"><div class="qq">我打不通的号反复出现在我名单里怎么办？</div>
+<div class="qa2">不会反复。没接通的周三就流转给别人了。如果你老看到同一个号，多半是"拒接"——系统会记次数，拒接3次以上自动判E类回仓库，不用你管。</div></div>
+
+<div class="qa"><div class="qq">空号、错号、打错了人怎么办？</div>
+<div class="qa2">正常拨完挂断即可。呼叫状态系统自动记录，AI 自动识别 F 类并移出名单。你不需要额外操作，也不要因为怕记错号就跳过不拨。</div></div>
+
+<!-- ============ 10 口诀 ============ -->
+<h2><span class="num">10</span>一句话记住</h2>
+<div class="motto">
+  <div class="mm">
+    打开系统 → <span style="color:var(--green)">拨你的名单</span> → <span style="color:var(--amber)">每通选个感受分</span><br>
+    周三中午名单换 → 想留的拉进紫池 → 不拉的换人接力<br>
+    <span style="color:var(--green)">分号是系统的事，打电话是我的事，回款是我们的事。</span>
+  </div>
+</div>
+
+<div class="footer">
+  客服培训 · 分配流转功能 · 口径依据：催收端_分配逻辑_最终.xlsx（8/12）+ 圆桌会议④第二次流转（8/12）+ 业主标签体系V9开发规格书（8/5）+ 意向池规则_定稿（8/14）<br>
+  培训中如有与实际系统不一致之处，以系统实际界面为准
+</div>
+
+</body>
+</html>

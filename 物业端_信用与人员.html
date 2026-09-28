@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 物业端·信用与人员</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px;gap:12px}
+.tn span{font-weight:700;font-size:15px}.tn .info{font-size:11px;opacity:0.7;margin-left:auto}
+.ct{max-width:1200px;margin:0 auto;padding:16px}
+.side{width:180px;background:var(--c);border-radius:var(--r);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.side a{display:block;padding:10px 20px;font-size:13px;color:var(--t);text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:.15s}
+.side a:hover,.side a.on{background:#eff6ff;color:var(--p);border-left-color:var(--p);font-weight:600}
+.main{flex:1;min-width:0}
+.card{background:var(--c);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.stat{text-align:center;padding:12px}.stat .n{font-size:24px;font-weight:700}.stat .l{font-size:11px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-r{background:#fef2f2;color:var(--d)}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}
+.flex{display:flex;gap:16px}
+.score-circle{width:100px;height:100px;border-radius:50%;border:6px solid var(--p);display:flex;align-items:center;justify-content:center;margin:0 auto}
+.score-circle span{font-size:32px;font-weight:700;color:var(--p)}
+.timeline-item{padding:6px 0 6px 16px;border-left:2px solid var(--b);font-size:12px;margin-left:8px}.timeline-item.p{border-left-color:var(--s)}.timeline-item.m{border-left-color:var(--d)}
+</style></head><body>
+<div class="tn"><span>数治理方 · 物业端（信用分+人员管理）</span><span class="info">阳光花园 | 张经理</span></div>
+<div class="ct"><div class="flex">
+<div class="side">
+<a onclick="st('credit')" class="on" id="st-credit">信用分</a>
+<a onclick="st('workers')" id="st-workers">维修人员</a>
+<a onclick="st('stewards')" id="st-stewards">管家管理</a>
+</div>
+<div class="main" id="main"></div>
+</div></div>
+<script>
+
+var D={
+credit:{score:87,grade:'良好',max:100,
+history:[
+{date:'2026-06-25',event:'#1001水管漏水 24分钟完成 五星好评',points:2,type:'plus'},
+{date:'2026-06-24',event:'#1003门禁 超时2小时',points:-1,type:'minus'},
+{date:'2026-06-23',event:'#1005楼道照明 15分钟完成 四星好评',points:2,type:'plus'},
+{date:'2026-06-22',event:'业主文字表扬"终于修好了"',points:3,type:'plus'},
+{date:'2026-06-20',event:'公区垃圾清运 超时4小时',points:-3,type:'minus'}
+]},
+workers:[
+{id:'W001',name:'张师傅',type:'水电',orders:28,avgTime:32,satisfaction:4.8,status:'active'},
+{id:'W002',name:'李师傅',type:'电梯',orders:22,avgTime:45,satisfaction:4.2,status:'active'},
+{id:'W003',name:'王师傅',type:'综合',orders:35,avgTime:28,satisfaction:4.6,status:'active'},
+{id:'W004',name:'赵师傅',type:'水电',orders:15,avgTime:65,satisfaction:3.5,status:'warning'}
+],
+stewards:[
+{id:'S001',name:'小周',buildings:'1-3栋',units:360,notes:'经验丰富,业主关系好'},
+{id:'S002',name:'小吴',buildings:'4-6栋',units:440,notes:'新入职3个月,需指导'},
+{id:'S003',name:'小陈',buildings:'7-9栋',units:400,notes:'沟通能力强,获好评'}
+]
+};
+
+function st(t){
+document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('on')});
+document.getElementById('st-'+t).classList.add('on');
+if(t==='credit')sc();else if(t==='workers')sw();else if(t==='stewards')ss();
+}
+
+function sc(){
+var h='<h2 style="margin-bottom:16px">物业信用分</h2><div class="g2" style="margin-bottom:16px">'+
+'<div class="card" style="text-align:center"><div class="score-circle" style="border-color:#2563eb;margin:10px auto"><span style="color:#2563eb">'+D.credit.score+'</span></div><div style="font-size:16px;margin-top:8px;color:#2563eb">'+D.credit.grade+'</div><div style="font-size:11px;color:var(--sub)">满分: '+D.credit.max+' | 滚动30天</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">近期变动</h3>';
+D.credit.history.forEach(function(h){
+h+='<div class="timeline-item '+(h.type==='plus'?'p':'m')+'"><div style="display:flex;justify-content:space-between"><span>'+h.event+'</span><span style="font-weight:700;color:'+(h.type==='plus'?'var(--s)':'var(--d)')+'">'+(h.type==='plus'?'+':'')+h.points+'</span></div><div style="color:var(--sub);font-size:10px">'+h.date+'</div></div>';
+});
+h+='</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">评分说明</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">+1 按时完成 | +2 按时+好评 | +3 文字表扬 | -1 超时 | -3 严重超时 | -5 地面验证未通过<br>信用分公开透明，业主端可同步查看</div></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sw(){
+var h='<h2 style="margin-bottom:16px">维修人员管理</h2><div class="card"><table><tr><th>工号</th><th>姓名</th><th>类型</th><th>工单数</th><th>平均耗时(分)</th><th>满意度</th><th>状态</th></tr>';
+D.workers.forEach(function(w){
+var ss=w.status==='active'?'tag-g':'tag-y';
+h+='<tr><td>'+w.id+'</td><td>'+w.name+'</td><td>'+w.type+'</td><td>'+w.orders+'</td><td>'+w.avgTime+'</td><td>'+'★'.repeat(Math.floor(w.satisfaction))+' '+w.satisfaction+'</td><td><span class="tag '+ss+'">'+(w.status==='active'?'正常':'关注')+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function ss(){
+var h='<h2 style="margin-bottom:16px">管家管理</h2><div class="card"><table><tr><th>编号</th><th>姓名</th><th>负责楼栋</th><th>户数</th><th>备注</th></tr>';
+D.stewards.forEach(function(s){
+h+='<tr><td>'+s.id+'</td><td>'+s.name+'</td><td>'+s.buildings+'</td><td>'+s.units+'户</td><td>'+s.notes+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+sc();
+
+</script></body></html>

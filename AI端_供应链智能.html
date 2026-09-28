@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI端 · 供应链智能</title>
+<style>
+:root {
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
+  --cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1100px;margin:0 auto}
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.3rem;font-weight:700}
+.mod-header .badge{padding:4px 12px;border-radius:12px;font-size:0.72rem;background:rgba(139,92,246,0.12);color:var(--purple)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.stat .n{font-size:1.5rem;font-weight:800;color:var(--purple)}.stat .l{font-size:0.65rem;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:0.79rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem}
+tr:hover td{background:rgba(139,92,246,0.02)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}.tag-purple{background:rgba(139,92,246,0.12);color:var(--purple)}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;font-family:inherit}
+.btn:hover{opacity:.85}.btn-p{background:var(--purple);color:#fff;font-weight:600}.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-sm{padding:4px 10px;font-size:0.68rem}
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-r{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.insight-row{display:flex;gap:12px;margin-bottom:8px;align-items:start}
+.insight-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:rgba(139,92,246,0.1)}
+.insight-body{flex:1;font-size:0.8rem}
+.insight-body .it{font-weight:700;margin-bottom:4px}
+.insight-body .id{color:var(--muted);font-size:0.74rem;line-height:1.6}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="mod-header">
+  <h2>🧠 供应链智能 <span class="badge">AI端</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">数据驱动 · 持续学习</span>
+</div>
+
+<div id="content"></div>
+
+</div>
+
+<script>
+
+function r(){
+  // ═══ 统计 ═══
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">3</div><div class="l">活跃预警</div></div>';
+  h+='<div class="stat"><div class="n">87%</div><div class="l">信用预测准确率</div></div>';
+  h+='<div class="stat"><div class="n">12</div><div class="l">智能匹配推荐</div></div>';
+  h+='<div class="stat"><div class="n">2</div><div class="l">隐性拆单检测</div></div>';
+  h+='</div>';
+
+  // ═══ 异常报价识别 ═══
+  h+='<div class="card"><div class="card-hd"><h3>📈 异常报价识别</h3></div>';
+  h+='<table><tr><th>采购项目</th><th>供应商报价</th><th>市场参考价</th><th>偏离度</th><th>状态</th></tr>';
+  h+='<tr><td>草坪补种·阳光花园</td><td>¥8,500</td><td>¥6,200~7,800</td><td style="color:var(--amber)">+9%</td><td><span class="tag tag-cyan">正常范围</span></td></tr>';
+  h+='<tr><td>保安制服·阳光花园</td><td>¥4,800</td><td>¥2,800~3,500</td><td style="color:var(--red)">+37%</td><td><span class="tag tag-red">⚠ 异常报价</span></td></tr>';
+  h+='<tr><td>电梯钢丝绳·阳光花园</td><td>¥28,000</td><td>¥22,000~30,000</td><td style="color:var(--green)">基准线</td><td><span class="tag tag-green">正常范围</span></td></tr>';
+  h+='</table></div>';
+
+  // ═══ 信用趋势预测 ═══
+  h+='<div class="card"><div class="card-hd"><h3>📉 信用趋势预测</h3></div>';
+  var preds=[
+    {name:'日丰管业',current:78,trend:'下降',reason:'近30天1条劳务纠纷+无新订单→预计降至72',risk:'amber'},
+    {name:'安保用品商城',current:58,trend:'持续下降',reason:'经营异常未解除+差评→预计降至50以下',risk:'red'},
+    {name:'绿城园林',current:88,trend:'稳定',reason:'3个月内2次好评+复购→预计维持85+',risk:'green'},
+    {name:'三安电梯',current:65,trend:'缓慢恢复',reason:'近半年无新纠纷+完成1单→预计恢复至68',risk:'cyan'}
+  ];
+  preds.forEach(function(p){
+    h+='<div class="insight-row">';
+    h+='<div class="insight-icon">'+(p.risk==='red'?'🔴':p.risk==='amber'?'🟡':'🟢')+'</div>';
+    h+='<div class="insight-body"><div class="it">'+p.name+'（当前'+p.current+'分·趋势'+p.trend+'）</div>';
+    h+='<div class="id">'+p.reason+'</div></div></div>';
+  });
+  h+='</div>';
+
+  // ═══ 智能匹配 ═══
+  h+='<div class="card"><div class="card-hd"><h3>🎯 智能采购匹配</h3></div>';
+  h+='<div class="alert alert-i">基于采购需求品类、金额、紧急程度 + 供应商信用分、距离、历史履约，自动推荐最优供应商</div>';
+  var matches=[
+    {need:'绿化修剪·阳光花园·紧急',match:'绿城园林',score:'94%',reason:'信用88+距离1.5km+该小区6次合作+全好评'},
+    {need:'管道维修·翠苑新村',match:'日丰管业',score:'76%',reason:'信用78+品类匹配·但距离8.5km+近期信用下降·建议关注'},
+    {need:'消防年检·锦绣家园',match:'安盾消防',score:'97%',reason:'信用96+专业资质+无差评记录'}
+  ];
+  matches.forEach(function(m){
+    var tagCls=m.score>=90?'tag-green':m.score>=75?'tag-cyan':'tag-amber';
+    h+='<div style="border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>'+m.need+'</strong><span class="tag '+tagCls+'">匹配 '+m.score+' → '+m.match+'</span></div>';
+    h+='<div style="font-size:0.72rem;color:var(--muted)">'+m.reason+'</div></div>';
+  });
+  h+='</div>';
+
+  // ═══ 隐性拆单检测 ═══
+  h+='<div class="card"><div class="card-hd"><h3>🕵️ 隐性拆单检测</h3></div>';
+  h+='<div class="alert alert-w">AI检测到2笔潜在拆单行为——不同于同日同供应商的显性规则，这些是跨时间的隐性模式</div>';
+  h+='<table><tr><th>涉及采购</th><th>供应商</th><th>模式</th><th>累计金额</th><th>置信度</th></tr>';
+  h+='<tr><td>PO004(7/22)+PO005(7/25)</td><td>安保用品商城</td><td>3天内同一供应商、相近品类（制服+门禁）</td><td>¥9,300</td><td><span class="tag tag-red">92%</span></td></tr>';
+  h+='<tr><td>历史：5-6月小额采购×4</td><td>某管道供应商</td><td>每笔1900元×4笔=7600元，疑似规避2000元审批线</td><td>¥7,600</td><td><span class="tag tag-amber">78%</span></td></tr>';
+  h+='</table></div>';
+
+  // ═══ 供应商风险评分聚合 ═══
+  h+='<div class="card"><div class="card-hd"><h3>⚡ 多源风险评分聚合</h3></div>';
+  h+='<div style="font-size:0.78rem;color:var(--muted);line-height:2">';
+  h+='<p>AI每日聚合以下数据源，计算供应商综合风险评分：</p>';
+  h+='<p>工商API状态（15%）+ 司法API风险（15%）+ 资质API有效期（10%）+ 平台履约评分（20%）+ 履约时效（15%）+ 价格偏离度（10%）+ 售后响应（10%）+ 复购趋势（5%）</p>';
+  h+='<p><strong>今日聚合结果：</strong>156家T1供应商 → 高风险2家（1.3%）| 关注5家（3.2%）| 正常149家（95.5%）</p>';
+  h+='</div></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+r();
+</script>
+</body>
+</html>

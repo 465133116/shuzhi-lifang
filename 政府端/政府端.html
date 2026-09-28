@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 政府端</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f4f6fa;--card:#ffffff;--card2:#f8fafc;--line:#e2e8f0;
+  --tx:#1e293b;--sub:#5b6b7f;--dim:#8b99ab;
+  --main:#dc2626;--main2:#b91c1c;--gold:#faad14;
+  --g:#059669;--y:#faad14;--r:#dc2626;--b:#2563eb;--p:#7c3aed;--o:#ea580c;
+}
+html{scrollbar-color:#cbd5e1 transparent}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;display:flex;flex-direction:column}
+.hd{background:#ffffff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(15,23,42,.06)}
+.hd-in{max-width:1460px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .ic{width:38px;height:38px;border-radius:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.3);display:flex;align-items:center;justify-content:center;font-size:19px}
+.logo b{font-size:17px;letter-spacing:.5px;color:#0f172a}
+.logo span{font-size:11px;color:var(--dim);display:block;margin-top:2px}
+.seg{display:flex;background:#f1f5f9;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{padding:8px 16px;font-size:12.5px;background:transparent;border:none;color:var(--sub);cursor:pointer;font-family:inherit;transition:.15s}
+.seg button.on{background:linear-gradient(135deg,var(--main),var(--main2));color:#ffffff;font-weight:700}
+.seg button:not(.on):hover{color:var(--tx)}
+.hd .sp{flex:1}
+.sig{display:flex;gap:10px;font-size:11px;color:var(--sub);align-items:center;flex-wrap:wrap}
+.sig i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}
+.sig .gr i{background:var(--g)}.sig .ye i{background:var(--y)}.sig .re i{background:var(--r)}.sig .bl i{background:var(--b)}
+.hd .meta{font-size:11.5px;color:var(--dim);text-align:right;line-height:1.6}
+.hd .meta b{color:var(--sub)}
+.dtbanner{max-width:1460px;margin:12px auto 0;padding:10px 16px;background:linear-gradient(90deg,rgba(220,38,38,.05),rgba(220,38,38,.1));border:1px solid rgba(220,38,38,.22);border-radius:10px;font-size:12px;color:#991b1b;line-height:1.7;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dtbanner b{flex-shrink:0;white-space:nowrap}
+.ct{max-width:1460px;margin:0 auto;padding:14px 20px 16px;display:flex;gap:16px;align-items:flex-start}
+.nav{width:200px;flex-shrink:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 0;position:sticky;top:82px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.nav a{display:flex;align-items:center;gap:9px;padding:11px 18px;font-size:13px;color:var(--sub);cursor:pointer;text-decoration:none;border-left:3px solid transparent;transition:.15s}
+.nav a:hover{color:var(--tx);background:#f8fafc}
+.nav a.on{color:var(--main2);border-left-color:var(--main);background:rgba(220,38,38,.06);font-weight:600}
+.nav .nl{font-size:10px;color:var(--dim);margin-left:auto;background:#eef2f7;padding:2px 7px;border-radius:99px}
+.nav .grp{font-size:10px;color:var(--dim);padding:14px 18px 6px;letter-spacing:2px}
+.main{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.card h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h3 .tip{font-size:11px;color:var(--dim);font-weight:400}
+.sec-t{font-size:17px;font-weight:700;margin:4px 0 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#0f172a}
+.sec-t .sub{font-size:11.5px;color:var(--dim);font-weight:400}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+.stat .n{font-size:26px;font-weight:800}
+.stat .l{font-size:12px;color:var(--sub)}
+.stat .m{font-size:10.5px;color:var(--dim);margin-top:2px;line-height:1.5}
+.staff-chip{display:inline-block;padding:6px 12px;border:1px solid #cbd5e1;border-radius:16px;font-size:12px;color:var(--sub);cursor:pointer;user-select:none;transition:.13s;background:#fff}
+.staff-chip:hover{border-color:var(--main);color:var(--main)}
+.staff-chip.sel{background:rgba(8,145,178,.12);border-color:var(--main);color:var(--main);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{padding:9px 10px;text-align:left;font-weight:600;color:var(--dim);border-bottom:1px solid var(--line);white-space:nowrap;font-size:11.5px;background:#f8fafc}
+td{padding:10px;border-bottom:1px solid #eef2f7;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8fafc}
+.tag{display:inline-block;padding:2.5px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag.g{background:rgba(5,150,105,.12);color:#047857}
+.tag.y{background:rgba(250,173,20,.16);color:#ad6800}
+.tag.r{background:rgba(220,38,38,.1);color:#b91c1c}
+.tag.b{background:rgba(37,99,235,.1);color:#1d4ed8}
+.tag.p{background:rgba(124,58,237,.1);color:#6d28d9}
+.tag.o{background:rgba(234,88,12,.12);color:#c2410c}
+.tag.gr{background:#eef2f7;color:#64748b}
+.lv{font-size:10px;font-weight:800;padding:1.5px 6px;border-radius:4px;letter-spacing:.5px}
+.lv1{background:#eef2f7;color:#64748b}
+.lv2{background:rgba(124,58,237,.12);color:#6d28d9}
+.lv3{background:rgba(5,150,105,.12);color:#047857}
+.lv4{background:rgba(37,99,235,.1);color:#1d4ed8}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;font-family:inherit;transition:.15s}
+.btn:hover{filter:brightness(1.08)}
+.btn.p{background:var(--main);color:#ffffff;font-weight:700}
+.btn.g{background:var(--g);color:#ffffff;font-weight:700}
+.btn.r{background:var(--r);color:#ffffff;font-weight:700}
+.btn.o{background:#ffffff;border:1px solid #cbd5e1;color:var(--sub)}
+.dd{position:relative;display:inline-block}
+.ddmenu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 10px 28px rgba(15,23,42,.14);min-width:172px;z-index:60;overflow:hidden;padding:4px}
+.dd.open .ddmenu{display:block}
+.ddmenu a{display:block;padding:9px 12px;font-size:12.5px;color:#334155;cursor:pointer;white-space:nowrap;border-radius:7px}
+.ddmenu a:hover{background:#f1f5f9;color:var(--main)}
+.expbtn{float:right;margin-top:-2px}
+.rpick{padding:10px 12px;cursor:pointer;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:var(--tx)}
+.rpick:last-child{border-bottom:none}
+.rpick:hover{background:#f8fafc}
+.rpick.sel{background:#eff6ff;box-shadow:inset 3px 0 0 var(--b)}
+.rpick .dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex-shrink:0;background:var(--r)}
+.btn.o:hover{color:var(--tx);border-color:#94a3b8}
+.btn.sm{padding:4px 10px;font-size:11.5px}
+.notice{padding:10px 14px;border-radius:9px;font-size:12px;margin-bottom:14px;line-height:1.7}
+.notice.b{background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.25);color:#1e40af}
+.notice.g{background:rgba(5,150,105,.07);border:1px solid rgba(5,150,105,.25);color:#065f46}
+.notice.y{background:rgba(250,173,20,.12);border:1px solid rgba(250,173,20,.35);color:#854d0e}
+.notice.r{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.22);color:#991b1b}
+.notice.m{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.28);color:#991b1b}
+.sigcard{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:9px;background:var(--card2)}
+.guide{background:linear-gradient(135deg,#f0f7ff,#f6f3ff);border:1px solid #c7d8f5;border-radius:12px;margin-bottom:14px;overflow:hidden}
+.guide .g-hd{display:flex;align-items:center;gap:8px;padding:11px 16px;cursor:pointer;font-size:13px;font-weight:700;color:#1e40af;user-select:none}
+.guide .g-hd .sub{font-size:11px;color:var(--dim);font-weight:400}
+.guide .g-hd .ga{margin-left:auto;font-size:11px;color:var(--dim);transition:transform .2s}
+.guide.fold .g-hd .ga{transform:rotate(-90deg)}
+.guide.fold .g-bd{display:none}
+.guide .g-bd{padding:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.guide .g-blk{background:#ffffff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:11.5px;color:var(--sub);line-height:1.8}
+.guide .g-blk h5{font-size:11.5px;color:var(--tx);margin-bottom:5px}
+.guide .g-flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:11px}
+.guide .g-node{background:#eef4ff;border:1px solid #c7d8f5;border-radius:7px;padding:3px 9px;color:#1e40af;font-weight:600}
+.guide .g-arr{color:var(--dim)}
+.sigcard .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.sigcard.r{border-color:rgba(220,38,38,.35)}
+.sigcard.y{border-color:rgba(250,173,20,.4)}
+.sigcard.b{border-color:rgba(37,99,235,.3)}
+.sigcard.dimc{opacity:.45}
+.sigcard .gt{flex:1;min-width:0}
+.sigcard .gt b{font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sigcard .gt p{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.65}
+.sigcard .ops{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;align-items:flex-start}
+.xqgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.xq{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:15px}
+.xq h4{font-size:13.5px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.xq .k{display:flex;justify-content:space-between;font-size:11.5px;color:var(--sub);padding:4.5px 0;border-bottom:1px dashed #e2e8f0}
+.xq .k b{color:var(--tx);font-weight:600}
+.xq .sigbar{margin-top:10px;font-size:11px}
+.chart{display:flex;align-items:flex-end;gap:14px;height:150px;padding:10px 4px 0}
+.chart .c{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.chart .c .barbox{width:100%;max-width:46px;display:flex;align-items:flex-end;justify-content:center;height:calc(100% - 22px)}
+.chart .c .barbox i{display:block;width:22px;border-radius:4px 4px 0 0;min-height:3px}
+.chart .c span{font-size:10.5px;color:var(--dim)}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:none;backdrop-filter:blur(2px)}
+.mask.show{display:block}
+.panel{position:fixed;top:0;right:0;height:100vh;width:min(520px,94vw);background:#ffffff;border-left:1px solid rgba(220,38,38,.3);z-index:201;padding:26px 26px 40px;overflow-y:auto;display:none;box-shadow:-8px 0 24px rgba(15,23,42,.1)}
+.panel.show{display:block}
+.panel h2{font-size:17px;margin-bottom:6px;color:#991b1b}
+.panel .sub{font-size:11.5px;color:var(--dim);margin-bottom:18px}
+.panel .lrow{border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin-bottom:10px;background:#f8fafc}
+.panel .lrow h4{font-size:13px;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.panel .lrow p{font-size:11.5px;color:var(--sub);line-height:1.7}
+.panel .close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer}
+.panel .close:hover{color:var(--tx)}
+.panel .fld{margin-bottom:12px}
+.panel .fld label{display:block;font-size:12px;color:var(--sub);margin-bottom:6px;font-weight:600}
+.panel .fld input,.panel .fld select,.panel .fld textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:12.5px;font-family:inherit;background:var(--card2)}
+.panel .fld textarea{min-height:76px;resize:vertical}
+.panel .fld input:focus,.panel .fld select:focus,.panel .fld textarea:focus{outline:none;border-color:var(--main)}
+.actfoot{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+.upzone{border:1.5px dashed #cbd5e1;border-radius:10px;padding:18px 14px;text-align:center;color:#64748b;font-size:12.5px;cursor:pointer;margin-top:8px;transition:all .15s;background:#f8fafc}
+.upzone:hover{border-color:#1d4ed8;color:#1d4ed8;background:#eff6ff}
+.fli{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-bottom:1px solid #f1f5f9}
+.fli span:first-child{flex:1}
+.att{display:inline-block;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:2px 8px;font-size:11px;margin:2px 4px 2px 0;color:#334155}
+.slog{margin-top:8px;border-left:2px solid #dbe4f0;padding-left:10px;font-size:11px;color:var(--sub);line-height:1.9}
+.slog .lt{font-family:Consolas,monospace;color:var(--dim);margin-right:6px}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#ffffff;border:1px solid rgba(220,38,38,.5);color:#b91c1c;padding:11px 22px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 8px 24px rgba(15,23,42,.18)}
+.toast.show{opacity:1}
+.ft{background:rgba(255,255,255,.96);border-top:1px solid var(--line);z-index:40;margin-top:auto}
+.ft-in{max-width:1460px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:18px;font-size:11.5px;color:var(--dim);flex-wrap:wrap}
+.ft-in b{color:var(--sub)}
+.bar{height:6px;border-radius:3px;background:#eef2f7;overflow:hidden;min-width:64px}
+.bar i{display:block;height:100%;border-radius:3px}
+.mono{font-family:Consolas,monospace;font-size:11px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-in">
+    <div class="logo">
+      <div class="ic">🏛</div>
+      <div><b>数治理方 · 政府端</b><span>信号数据对接展示 · 按数据要求展示给政府</span></div>
+    </div>
+    <div class="seg" id="viewSeg">
+      <button class="on" onclick="setView('street')">🏘 街道视图</button>
+      <button onclick="setView('district')">🏙 区级视图</button>
+    </div>
+    <div class="sp"></div>
+    <div class="sig">
+      <span class="gr"><i></i>常态</span><span class="ye"><i></i>关注</span><span class="re"><i></i>预警</span><span class="bl"><i></i>需求</span>
+      <button class="btn o sm" onclick="openPanel()">📐 数据要求 L1-L4</button>
+    </div>
+    <div class="meta" id="metaBox"><b>文昌街道</b> · 第二层 街镇执行协调层<br>街道是区政府的派出机关 · 指导·支持·帮助</div>
+  </div>
+</div>
+
+<div class="dtbanner" id="dtBanner"><b>🚩 党建引领</b><span>街道党工委统筹辖区治理数据归集与资源调配、协调条块关系；社区党组织领导居委会工作，确保自治在法治轨道上运行。</span></div>
+
+<div class="ct">
+  <div class="nav" id="nav"></div>
+  <div class="main" id="main"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="mask" id="mask" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <button class="close" onclick="closePanel()">✕</button>
+  <h2>📐 数据要求 · 分级展示规则</h2>
+  <div class="sub">政府端只接收经分级的信号数据——L1-L4 决定政府能看到什么、看不到什么</div>
+  <div class="lrow"><h4><span class="lv lv1">L1</span> 个人隐私</h4><p>房号 · 姓名 · 电话 · 缴费明细<br><b style="color:#b91c1c">不出社区，严格保密 —— 政府端不可见 🔒</b></p></div>
+  <div class="lrow"><h4><span class="lv lv2">L2</span> 内部博弈</h4><p>个别纠纷 · 调解过程 · 内部表决 · 议事讨论<br>不出社区，<b>脱敏后以统计形式</b>归集展示</p></div>
+  <div class="lrow"><h4><span class="lv lv3">L3</span> 治理记录</h4><p>工单记录 · 评价结果 · 信用记录 · 合同信息<br>依约归集，标准化输出 —— <b>治理统计实时 / 信用·资金月度</b>归集</p></div>
+  <div class="lrow"><h4><span class="lv lv4">L4</span> 统计汇总</h4><p>履约率统计 · 满意度均值 · 异常占比 · 趋势分析<br>可公开共享，用于决策与态势研判</p></div>
+  <div class="lrow"><h4>🔐 访问权限（RBAC）</h4><p>居委会看本社区 · 街道看辖区 · 区级看全区 · 不可越权<br>所有数据访问行为全量审计，审计日志不可删除</p></div>
+  <div class="lrow"><h4>📡 归集机制</h4><p>治理运行统计：<b>系统自动归集 · 实时</b>（非专项填报）<br>异常事件标记：自动推送 · 实时<br>信用记录 / 公共收益与维修资金：月度归集<br>自治决策记录：社区<b>主动报备 · 事后</b><br><b>治理原则：治产数用 · 一次采集 · 依法共享 · 最小必要</b></p></div>
+  <div class="lrow"><h4>🛡 数据保存期限 · 用户权利</h4><p>信用记录保存期限符合《征信业管理条例》（不良信息5年）；工单记录保存期限可自定义<br>提供数据<b>查询、更正、删除</b>申请通道（《个人信息保护法》第四章）——用户权利保障内置于系统</p></div>
+  <div class="lrow"><h4>🚫 政府端不做的事</h4><p>不催报表 · 不看台账 · 不向下摊派数据采集<br>不排名评比（无法律依据的排名一律不做）<br>不直接向居委会下达行政命令（指导关系，非领导关系）<br>不替代业主大会做自治决策</p></div>
+</div>
+
+<div class="mask" id="actMask" onclick="closeAct()"></div>
+<div class="panel" id="actPanel"></div>
+
+<div class="ft">
+  <div class="ft-in">
+    <span>数据来源：<b>治理活动自然沉淀（治产数用）</b> · 非专项填报</span>
+    <span>🔒 L1个人隐私不出社区 · 本端不可见</span>
+    <span>📡 治理统计实时归集 · 信用/资金月度归集 · 决策事后报备</span>
+    <span style="margin-left:auto" class="sig"><span class="gr"><i></i>常态</span><span class="ye"><i></i>关注</span><span class="re"><i></i>预警</span><span class="bl"><i></i>需求</span></span>
+  </div>
+</div>
+
+<script>
+var VIEW='street', STAB='board', DTAB='dash';
+
+var STREET='文昌街道';
+var COMMUNITIES=[
+ {name:'景宜社区居委会',xq:'景宜花园'},
+ {name:'翠苑社区居委会',xq:'翠苑新村'},
+ {name:'阳光社区居委会',xq:'阳光花园'},
+ {name:'锦绣社区居委会',xq:'锦绣家园'},
+ {name:'翠竹社区居委会',xq:'翠竹苑'},
+];
+function getCommunityOf(xq){var c=COMMUNITIES.filter(function(m){return m.xq===xq})[0];return c?c.name:xq+'居委会'}
+function getStreetOf(xq){return STREET}
+var XQ=[
+ {name:'阳光花园',type:'商品房',sig:'g',wd:32,close:94.3,sat:4.3,pub:'已公示',rate:'A-',note:''},
+ {name:'翠苑新村',type:'老旧小区',sig:'y',wd:18,close:91.2,sat:4.0,pub:'已公示',rate:'B+',note:''},
+ {name:'锦绣家园',type:'商品房',sig:'y',wd:25,close:83.4,sat:3.6,pub:'已公示',rate:'B',note:''},
+ {name:'景宜花园',type:'安置房',sig:'b',wd:21,close:92.1,sat:4.2,pub:'已公示',rate:'B+',note:''},
+ {name:'翠竹苑',type:'商品房',sig:'r',wd:29,close:88.6,sat:3.9,pub:'本月异常',rate:'C-',note:''},
+];
+var FUNDS=[
+ {xq:'阳光花园',income:18600,repair:0,n:3,pub:'已公示',
+  incDetail:[['电梯广告位',8600],['停车费',7000],['场地租赁',3000]],
+  expDetail:[],
+  pubInfo:'公示期7天（2026-08-25 至 08-31）· 渠道：公告栏 + 业主群 + 平台'},
+ {xq:'翠苑新村',income:9800,repair:0,n:1,pub:'已公示',
+  incDetail:[['停车费',6800],['快递柜场地',3000]],
+  expDetail:[],
+  pubInfo:'公示期7天（2026-08-20 至 08-26）· 渠道：公告栏 + 业主群'},
+ {xq:'锦绣家园',income:14500,repair:4500,n:2,pub:'已公示',
+  incDetail:[['电梯广告位',9500],['停车费',5000]],
+  expDetail:[['单元门禁系统维修',4500]],
+  pubInfo:'公示期7天（2026-08-24 至 08-30）· 渠道：公告栏 + 平台'},
+ {xq:'景宜花园',income:7600,repair:2300,n:2,pub:'已公示',
+  incDetail:[['停车费',5600],['场地租赁',2000]],
+  expDetail:[['路灯检修更换',2300]],
+  pubInfo:'公示期7天（2026-08-22 至 08-28）· 渠道：公告栏 + 业主群'},
+ {xq:'翠竹苑',income:2600,repair:0,n:1,pub:'本月异常',
+  incDetail:[['电梯广告位',2600]],
+  expDetail:[],
+  pubInfo:'本月公示异常 · 广告合同到期未续签（与预警联动）'},
+];
+var FILINGS=[
+ {xq:'翠苑新村',item:'第三季度公共收益使用方案表决',type:'表决',t:'2026-08-28',st:'已接收',note:'',
+  bg:'第三季度公共收益约¥9,800，拟定使用方案',proc:'业委会拟案 → 方案公示 → 业主大会表决',vote:'参与154户：同意138 · 反对9 · 弃权7',pub:'方案公示7天（2026-08-15 至 08-21）',obj:'异议期7天 · 收到异议1件（已答复并公示处理结果）',amt:'¥9,800'},
+ {xq:'锦绣家园',item:'物业服务合同续聘议事',type:'议事',t:'2026-08-25',st:'已接收',note:'',
+  bg:'物业合同将于11月到期，业委会启动续聘评估',proc:'履约数据评估 → 业主满意度调研 → 议事讨论',vote:'议事（非表决）：到场87户',pub:'议事纪要已公示',obj:'异议期3天 · 异议0件',amt:'—'},
+ {xq:'翠竹苑',item:'业委会换届改选议事',type:'议事',t:'2026-09-06',st:'待接收',note:'',
+  bg:'本届业委会任期届满，启动换届程序',proc:'换届公告 → 候选人推选 → 候选人公示 → 业主大会选举',vote:'筹备中（选举拟于10月举行）',pub:'换届公告已公示（2026-09-06）',obj:'异议期7天 · 异议0件',amt:'—'},
+];
+
+var SALERTS=[
+ {lv:'r',xq:'景宜花园',title:'地下车库违规住人 · 巡查发现',trig:'网格巡查发现地下车库有人员居住迹象',src:'网格巡查 · 实时推送',adv:'上门核实 · 确认后按违规住人整治流程处置',t:'2026-09-10 08:30',resp:'24小时内响应',st:'待响应'},
+ {lv:'r',xq:'阳光花园',title:'电梯检验到期跟踪 · 排期临近',trig:'触发法定监管阈值 · 检验到期前15天',src:'设备台账 · 维保记录自动归集',adv:'电梯检验即将逾期 · 街道无检验安排权限 → 已吹哨区市场监管局优先安排检验 · 跟进检验完成与结果留痕',t:'2026-09-05 14:20',resp:'24小时内响应 · 已吹哨区市场监管局',st:'已吹哨'},
+ {lv:'r',xq:'翠竹苑',title:'公共收益8月收入骤降62%',trig:'偏离过去6个月均值超过2个标准差 · 月度归集比对发现',src:'治理数据自动归集 · 经8月公示确认',adv:'街道无核查权限 → 已吹哨区住建局联合核查 · 同步提示业委会核对广告合同与停车场收费系统',t:'2026-09-06 09:00',resp:'24小时内响应 · 启动联合核查程序',st:'已吹哨'},
+ {lv:'r',xq:'景宜花园',title:'消防通道堆物 · 区消防检查反馈',trig:'区消防检查发现楼道堆物占用消防通道',src:'消防检查通报 · 实时推送',adv:'安排社区先行劝导清理，逾期移交执法',t:'2026-09-06 14:00',resp:'24小时内响应',st:'社区处理中'},
+ {lv:'r',xq:'翠苑新村',title:'小区消防设施过期失效',trig:'年检发现灭火器过期、水带破损',src:'消防设施年检 · 实时推送',adv:'责令物业限期整改更换（消防设施管理主体责任）· 逾期移交消防部门依法处理',t:'2026-09-07 09:00',resp:'24小时内响应 · 下达限期整改通知',st:'自行处理中'},
+ {lv:'y',xq:'翠苑新村',title:'业主满意度连续下滑（4.2→4.0）',trig:'满意度均值偏离小区历史基线',src:'工单回访评价 · 月度归集',adv:'关注服务感知度变化，必要时列入需求信号',t:'2026-09-03',resp:'管理者查看',st:'待判断'},
+ {lv:'y',xq:'锦绣家园',title:'物业履约率连续两月下降10%以上',trig:'单项指标偏离正常范围 · 系统自动标记',src:'工单闭环率 · 满意度 · 月度归集',adv:'了解物业人员变动与服务波动原因',t:'2026-09-04',resp:'管理者查看 · 判断是否跟进',st:'跟进中'},
+ {lv:'y',xq:'阳光花园',title:'业主投诉量短时上升',trig:'7日投诉量超历史基线1.5倍',src:'工单数据自动归集',adv:'观察是否与近期施工噪音相关',t:'2026-08-20',resp:'管理者查看',st:'已闭环',done:true},
+ {lv:'r',xq:'翠竹苑',title:'疑似群租线索上报',trig:'网格员巡查上报 · 人员进出异常',src:'网格巡查 · 实时推送',adv:'上门核实 · 确认后按群租整治流程处置',t:'2026-08-15',resp:'24小时内响应',st:'已标记误报',done:true},
+];
+
+var NEEDS=[
+ {xq:'翠竹苑',reason:'公共收益8月收入骤降62%（偏离6个月均值2个标准差）· 物业履约评级B+→C- · 业委会本月议事仅1次',suggest:'现场质询',execDept:'区住建局',st:'待审批'},
+ {xq:'景宜花园',reason:'新物业入驻3个月 · 工单按期闭环率92.1%低于辖区均值 · 公共收益公示与维修资金申报流程不熟悉',suggest:'业务培训',execDept:'区住建局',st:'已调配'},
+ {xq:'锦绣家园',reason:'业主满意度4.3→3.6 · 履约率连续两月下降10%以上 · 物业人员变动频繁',suggest:'调研走访',execDept:'区住建局',st:'已派遣',p1:'社建办',p2:'本周内'},
+ {xq:'阳光花园',reason:'7日投诉量超历史基线1.5倍 · 集中于夜间施工噪音与电梯停梯纠纷',suggest:'矛盾调解',execDept:'区生态环境局、区市场监管局',st:'已完成',done:true},
+];
+
+var GUIDES=[
+ {t:'2026-08-28',obj:'翠竹苑业委会',item:'公共收益管理合规辅导',way:'上门',res:'已明确整改要求',bg:'公共收益公示异常引发关注，上门辅导业委会规范公示流程'},
+ {t:'2026-08-15',obj:'景宜花园居委会',item:'新物业入场三方联席会议',way:'会议',res:'已召开·达成共识',bg:'物业更换交接期，组织物业、业委会、居委会三方协调进场事项'},
+ {t:'2026-07-30',obj:'阳光花园物业',item:'维修资金申报流程辅导',way:'书面',res:'已送达指引',bg:'维修资金申报流程更新，向物业送达新版申报指引'},
+];
+
+var PIPES=[
+ {xq:'翠竹苑',item:'翠竹苑公共收益异常 · 联合核查',dept:'区住建局',t:'2026-09-06',st:'已响应',res:'处置中 · 3个工作日内反馈',bg:'公共收益收入骤降，涉及广告合同与收费系统，街道无核查权限，吹哨区住建局联合核查',sIdx:2},
+ {xq:'阳光花园',item:'阳光花园电梯检验协调',dept:'区市场监管局',t:'2026-09-02',st:'已响应',res:'处置中 · 检验安排协调中',bg:'电梯检验即将逾期，检验机构排期紧张，街道协调区市场监管局优先安排',sIdx:1},
+ {xq:'景宜花园',item:'消防通道堆物 · 联合执法衔接',dept:'区消防救援大队',t:'2026-09-01',st:'已闭环',res:'联合检查完成 · 堆物已清理',bg:'消防通道堆物反复反弹，街道吹哨消防部门开展联合执法检查',sIdx:null},
+];
+SALERTS.forEach(function(a){a.log=[{t:a.t,by:'系统',act:'信号自动推送',note:''}]});
+SALERTS.filter(function(a){return a.st==='社区处理中'}).forEach(function(a){a.comm=getCommunityOf(a.xq);a.log.push({t:'2026-09-06 16:00',by:'文昌街道',act:'安排社区先行处理',note:a.comm+' · 请先行劝导清理，3日内反馈'})});
+SALERTS.filter(function(a){return a.st==='自行处理中'}).forEach(function(a){a.log.push({t:'2026-09-07 10:00',by:'文昌街道',act:'街道直接处置',note:'向物业下达消防设施限期整改通知，要求15日内完成更换并回传凭证'})});
+SALERTS.filter(function(a){return a.xq==='阳光花园'&&a.title==='业主投诉量短时上升'}).forEach(function(a){a.log.push({t:'2026-08-21 10:00',by:'文昌街道',act:'开始跟进',note:'联系物业了解近期施工安排与投诉分类'},{t:'2026-08-26 15:00',by:'文昌街道',act:'记录跟进',note:'投诉集中在夜间施工噪音，施工将于9月1日结束'},{t:'2026-09-03 09:30',by:'文昌街道',act:'解除关注',note:'8月下旬投诉回落至基线 · 与装修集中期相关 · 指标恢复'})});
+SALERTS.filter(function(a){return a.xq==='翠竹苑'&&a.title==='疑似群租线索上报'}).forEach(function(a){a.log.push({t:'2026-08-15 14:00',by:'文昌街道',act:'推送科室核实',note:'网格员+物业上门核实'},{t:'2026-08-16 10:00',by:'文昌街道',act:'标记误报',note:'上门核实为合租亲友探访 · 非群租 · 误报排除'})});
+SALERTS.filter(function(a){return a.st==='跟进中'}).forEach(function(a){a.log.push({t:'2026-09-04 16:00',by:'文昌街道',act:'开始跟进',note:'联系物业经理了解服务波动原因'},{t:'2026-09-05 15:00',by:'文昌街道',act:'记录跟进',note:'物业反馈近期客服人员流失，已补充招聘'})});
+SALERTS.filter(function(a){return a.xq==='阳光花园'&&a.title.indexOf('电梯')>=0}).forEach(function(a){a.log.push({t:'2026-09-05 15:30',by:'文昌街道',act:'发起吹哨',note:'电梯检验即将逾期 · 吹哨区市场监管局优先安排检验'})});
+SALERTS.filter(function(a){return a.xq==='翠竹苑'&&a.title.indexOf('公共收益')>=0}).forEach(function(a){a.log.push({t:'2026-09-06 10:30',by:'文昌街道',act:'发起吹哨',note:'街道无核查权限 → 吹哨区住建局联合核查'})});
+NEEDS.forEach(function(n){
+ n.log=[{t:'2026-09-05 10:00',by:'系统',act:'需求信号自动生成',note:''}];
+ if(n.st==='已调配')n.log.push({t:'2026-09-05 15:00',by:'区级',act:'审批通过 · 调配下达',note:'同意调配'});
+ if(n.st==='已派遣')n.log.push({t:'2026-09-05 15:00',by:'区级',act:'审批通过 · 调配下达',note:'同意调配'},{t:'2026-09-06 09:30',by:STREET,act:'承接 · 派遣',note:'派遣人员：'+n.p1+' · 时限：'+n.p2});
+ if(n.st==='已完成')n.log.push({t:'2026-09-01 10:00',by:'区级',act:'审批通过 · 调配下达',note:'推送科室：区住建局 · 同意调配 · 社建办承办'},{t:'2026-09-01 14:00',by:STREET,act:'承接 · 派遣',note:'派遣人员：社建办 · 时限：9月5日前'},{t:'2026-09-04 15:00',by:STREET,act:'下沉实施完成 · 待区级验收',note:'矛盾调解完成 · 组织物业/施工方/业主三方协调会 · 施工时段调整并公示 · 投诉回落至基线',files:[{name:'三方协调会记录.jpg',size:204800},{name:'调解回访记录.pdf',size:86016}]},{t:'2026-09-05 10:00',by:'区级',act:'区级验收通过 · 归档',note:'实施到位 · 投诉回落至基线 · 验收通过归档'});
+});
+PIPES.forEach(function(p){p.log=[{t:p.t,by:'文昌街道',act:'发起吹哨',note:''}]});
+PIPES.filter(function(p){return p.st==='已响应'}).forEach(function(p){p.log.push({t:'2026-09-07',by:p.dept,act:'部门已响应',note:'已接收事项 · 处置中'})});
+PIPES.filter(function(p){return p.st==='已闭环'}).forEach(function(p){p.log.push({t:'2026-09-06',by:p.dept,act:'响应回传',note:'部门处置完成 · 结果回传 → 系统自动闭环'})});
+FILINGS.forEach(function(f){f.log=[{t:f.t,by:f.xq+'居委会',act:'主动报备',note:''}]});
+GUIDES.forEach(function(g){g.log=[{t:g.t,by:'文昌街道',act:'开展指导',note:g.way+' · '+g.item}]});
+FUNDS.forEach(function(f){f.log=[{t:'2026-08-31',by:'系统',act:'月度自动归集',note:f.pub==='已公示'?'资金数据归集完成 · 公示正常':'资金数据归集完成 · 异常标记：收入骤降'}]});
+
+var DIST='文昌区';
+var DSTAT={g:40,y:5,r:3,b:3};
+var STREETS=[
+ {name:'文昌街道',total:17,g:9,y:3,r:2,b:3},
+ {name:'明湖街道',total:16,g:15,y:1,r:0,b:0},
+ {name:'临江街道',total:18,g:16,y:1,r:1,b:0},
+];
+var TREND=[
+ {m:'4月',close:90.1,sat:4.0},
+ {m:'5月',close:90.8,sat:4.1},
+ {m:'6月',close:91.4,sat:4.1},
+ {m:'7月',close:91.0,sat:4.0},
+ {m:'8月',close:89.6,sat:3.9},
+ {m:'9月',close:88.9,sat:3.8},
+];
+var DALERTS=[
+ {xq:'明湖花园',st:'明湖街道',title:'高空坠物隐患 · 整改超期未完成',trig:'高空坠物隐患排查清单整改超期',src:'隐患排查台账 · 月度归集',adv:'下发明湖街道核查整改落实情况',t:'2026-09-09',st2:'待处置'},
+ {xq:'临江花园',st:'临江街道',title:'高空坠物隐患 · 排查整改未完成',trig:'高空坠物隐患排查清单整改超期',src:'隐患排查台账 · 月度归集',adv:'核查临江花园隐患整改落实情况',t:'2026-09-08',st2:'待处置'},
+ {xq:'江畔华庭',st:'临江街道',title:'消防通道被占 · 整改复查',trig:'区消防抽查发现问题 · 复查整改落实',src:'消防抽查通报 · 实时推送',adv:'复查整改落实情况',t:'2026-09-02',st2:'已标记闭环',done:true},
+];
+DALERTS.forEach(function(a){a.log=[{t:a.t,by:'系统',act:'预警自动推送',note:''}]});
+DALERTS.filter(function(a){return a.done}).forEach(function(a){a.log.push({t:'2026-09-08',by:'区级',act:'推送科室核实',note:'推送至区消防救援大队 · 联合消防复查'},{t:'2026-09-08',by:'区级',act:'标记闭环',note:'复查通过 · 隐患已消除'})});
+var CREDITS=[
+ {name:'晟和物业',xq:12,rate:'A-',resp:94.3,close:91.4,sat:4.1,watch:'',serv:'阳光花园等',good:true,
+  d4:'过程质量4.2 · 结果质量4.0 · 协同质量4.3 · 感知质量4.0',chg:'2026-08：B+ → A-（系统自动建议 · 人工审核确认生效）',app:'近12个月异议申诉0件'},
+ {name:'华宇物业',xq:8,rate:'B+',resp:90.2,close:88.7,sat:4.0,watch:'',serv:'翠苑新村等',good:false,
+  d4:'过程质量4.0 · 结果质量4.0 · 协同质量3.9 · 感知质量4.0',chg:'2026-07：B → B+（满意度回升触发上调）',app:'近12个月异议申诉1件（经核查不成立，记录保持）'},
+ {name:'佳宜物业',xq:5,rate:'C-',resp:82.1,close:79.3,sat:3.5,watch:'翠竹苑履约下滑 · 议事频率下降',serv:'翠竹苑等',good:false,
+  d4:'过程质量3.6 · 结果质量3.4 · 协同质量3.7 · 感知质量3.5',chg:'2026-08：B → C-（履约率连续两月下降10%以上触发降级）',app:'近12个月异议申诉0件'},
+ {name:'和诚物业',xq:3,rate:'B',resp:88.0,close:85.9,sat:3.9,watch:'',serv:'景宜花园等',good:false,
+  d4:'过程质量3.9 · 结果质量3.9 · 协同质量4.0 · 感知质量3.9',chg:'2026-06：B+ → B（按期响应率回落触发调整）',app:'近12个月异议申诉0件'},
+];
+var YCRED=[
+ {xq:'阳光花园',mtg:'月度议事2次',pub:'公示完整率100%',pur:'采购合规率100%',st:'正常',watch:'',
+  bg:'本届业委会2025年6月经业主大会选举产生',chg:'连续3个月履职正常（议事/公示/采购三项达标）'},
+ {xq:'翠竹苑',mtg:'本月仅1次',pub:'公示完整率87%',pur:'采购合规率100%',st:'关注',watch:'议事频率下降',
+  bg:'本届业委会2023年产生 · 换届改选程序已启动',chg:'本月议事频率下降（2次→1次）触发关注标记'},
+];
+var VCRED=[
+ {name:'通力电梯',type:'电梯维保',score:88,note:'近期验收评分 4.8/5',
+  chg:'信用88 · 近6个月验收均分4.8 · 投诉闭环率100%',app:'数据来源：采购端履约上报 + 验收评分回传（月度归集）'},
+ {name:'金盾消防',type:'消防维保',score:86,note:'近期验收评分 4.7/5',
+  chg:'信用86 · 近6个月验收均分4.7 · 投诉闭环率100%',app:'数据来源：采购端履约上报 + 验收评分回传（月度归集）'},
+ {name:'安保用品商城',type:'制服装备',score:58,note:'投诉闭环率低 · 供应商池预警',
+  chg:'信用58 · 投诉闭环率50% · L6口碑预警（已触发供应商池降级提示）',app:'数据来源：采购端履约上报 + 投诉闭环统计（月度归集）'},
+];
+var INCENT=[
+ ['信用等级公示（红榜）','物业服务企业','连续6个月履约率≥95%且满意度≥4.0'],
+ ['续聘优先推荐','物业服务企业','连续12个月信用等级A级以上'],
+ ['多小区项目投标加分','物业服务企业','在服务的所有小区信用等级均在B+以上'],
+ ['公共事务参与权重提升','居民','连续缴纳物业费 + 积极参与公共事务'],
+ ['小额维修基金使用快速审批','业委会','连续12个月采购合规率100%'],
+ ['评优评先推荐','社区/小区','信用治理成效显著的社区'],
+];
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+function toggleStaff(el){el.classList.toggle('sel')}
+var STREET_STAFF=['社区办 · 陈雨','城建科 · 李强','社建办 · 王芳','综治办 · 赵斌','城管科 · 孙悦'];
+function money(n){return '¥'+n.toLocaleString('zh-CN')}
+function guide(flow,btns,red){
+ var h='<div class="guide"><div class="g-hd" onclick="this.parentNode.classList.toggle(\'fold\')">📖 操作引导 <span class="sub">数据怎么流动 · 按钮怎么用 · 本页红线（点击收起/展开）</span><span class="ga">▾</span></div><div class="g-bd">';
+ h+='<div class="g-blk"><h5>📡 数据怎么流动</h5><div class="g-flow">'+flow.map(function(n,i){return '<span class="g-node">'+n+'</span>'+(i<flow.length-1?'<span class="g-arr">→</span>':'')}).join('')+'</div></div>';
+ h+='<div class="g-blk"><h5>🔘 按钮怎么使用</h5>'+btns+'</div>';
+ if(red)h+='<div class="g-blk" style="grid-column:1/-1"><h5>🚫 本页红线</h5>'+red+'</div>';
+ h+='</div></div>';
+ return h;
+}
+function sigDot(s){var c=s==='g'?'var(--g)':s==='y'?'var(--y)':s==='r'?'var(--r)':'var(--b)';return '<span style="width:9px;height:9px;border-radius:50%;background:'+c+';display:inline-block"></span>'}
+function xqSig(x){
+ if(SALERTS.some(function(a){return a.xq===x.name&&a.lv==='r'&&!a.done}))return 'r';
+ if(SALERTS.some(function(a){return a.xq===x.name&&a.lv==='y'&&!a.done}))return 'y';
+ if(NEEDS.some(function(n){return n.xq===x.name&&(n.st==='待审批'||n.st==='已调配'||n.st==='已派遣')}))return 'b';
+ return 'g';
+}
+function xqNote(x){
+ var parts=[];
+ SALERTS.filter(function(a){return a.xq===x.name&&a.lv==='r'&&!a.done&&a.st!=='已上报区级'}).forEach(function(a){parts.push('<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--r);margin:0 5px 1px 1px"></span>'+a.title)});
+ SALERTS.filter(function(a){return a.xq===x.name&&a.lv==='y'&&!a.done}).forEach(function(a){parts.push('<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--y);margin:0 5px 1px 1px"></span>'+a.title)});
+ var ns=NEEDS.filter(function(n){return n.xq===x.name&&(n.st==='已派遣'||n.st==='待验收')});
+ if(ns.length)parts.push('<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--b);margin:0 5px 1px 1px"></span>'+(ns[0].st==='已派遣'?'资源下沉中：':'待区级验收：')+ns[0].suggest);
+ var nd=NEEDS.filter(function(n){return n.xq===x.name&&n.st==='已调配'});
+ if(nd.length)parts.push('<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--b);margin:0 5px 1px 1px"></span>区级已调配 · 待街道承接：'+nd[0].suggest);
+ var np=NEEDS.filter(function(n){return n.xq===x.name&&n.st==='待审批'});
+ if(np.length)parts.push('<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--b);margin:0 5px 1px 1px"></span>区级待审批：'+np[0].suggest);
+ return parts.slice(0,3).join('；');
+}
+function credWatch(c){
+ if(c.name==='佳宜物业'){
+  var parts=[];
+  var a=SALERTS.filter(function(s){return s.xq==='翠竹苑'&&s.lv==='r'})[0];
+  if(a&&a.st!=='已标记误报')parts.push(a.done?'翠竹苑预警已闭环 · 整改观察中':'翠竹苑预警中：'+a.title.slice(0,10)+'…（'+a.st+'）');
+  var y=YCRED.filter(function(t){return t.xq==='翠竹苑'&&t.watch})[0];
+  if(y)parts.push(y.watch);
+  return parts.join(' · ')||'—';
+ }
+ return c.watch;
+}
+function examStats(){
+ var s=SALERTS,d=DALERTS,n=NEEDS;
+ return {
+  totS:s.length,
+  respS:s.filter(function(a){return a.st!=='待响应'}).length,
+  closeS:s.filter(function(a){return a.st==='已闭环'}).length,
+  mis:s.filter(function(a){return a.st==='已标记误报'}).length+d.filter(function(a){return a.st2==='已标记误报'}).length,
+  resDone:n.filter(function(m){return m.st==='已完成'}).length,
+  resPend:n.filter(function(m){return m.st==='已调配'||m.st==='已派遣'}).length
+ };
+}
+function syncDistrict(){
+ var activeR=0;
+ var perR={'文昌街道':0,'明湖街道':0,'临江街道':0};
+ var perY={'明湖街道':1,'临江街道':1};
+ DALERTS.forEach(function(a){
+  if(a.st2==='待处置'||a.st2==='已推送科室核实'||a.st2==='已转入资源统筹调配'){activeR++;perR[a.st]=(perR[a.st]||0)+1}
+ });
+ var streetR=SALERTS.filter(function(a){return a.lv==='r'&&!a.done&&a.st!=='已上报区级'}).length;
+ var streetY=SALERTS.filter(function(a){return a.lv==='y'&&!a.done}).length;
+ perR[STREET]+=streetR;
+ DSTAT.r=activeR+streetR;
+ DSTAT.y=streetY+(perY['明湖街道']||0)+(perY['临江街道']||0);
+ var activeB=NEEDS.filter(function(n){return n.st==='待审批'||n.st==='已调配'||n.st==='已派遣'||n.st==='待验收'}).length;
+ DSTAT.b=activeB;
+ DSTAT.dR=activeR;
+ DSTAT.streetR=streetR;
+ DSTAT.streetY=streetY;
+ DSTAT.baseY=(perY['明湖街道']||0)+(perY['临江街道']||0);
+ STREETS.forEach(function(s){
+  if(s.name===STREET){s.r=streetR;s.b=activeB;s.y=streetY}
+  else{s.r=perR[s.name]||0;s.b=0}
+  s.g=s.total-s.y-s.r-s.b;
+ });
+ DSTAT.g=51-DSTAT.y-DSTAT.r-DSTAT.b;
+}
+function openPanel(){document.getElementById('mask').classList.add('show');document.getElementById('panel').classList.add('show')}
+function closePanel(){document.getElementById('mask').classList.remove('show');document.getElementById('panel').classList.remove('show')}
+
+function setView(v){
+ VIEW=v;
+ document.querySelectorAll('#viewSeg button').forEach(function(b,i){b.classList.toggle('on',(v==='street'&&i===0)||(v==='district'&&i===1))});
+ document.getElementById('metaBox').innerHTML=v==='street'?'<b>文昌街道</b> · 第二层 街镇执行协调层<br>街道是区政府的派出机关 · 指导·支持·帮助':'<b>文昌区</b> · 第三层 区市管理决策层<br>法定监管 · 态势研判 · 信用管理 · 资源调配';
+ document.getElementById('dtBanner').innerHTML=v==='street'?'<b>🚩 党建引领</b><span>街道党工委统筹辖区治理数据归集与资源调配、协调条块关系；社区党组织领导居委会工作，确保自治在法治轨道上运行；小区党支部组织党员在业委会、物业服务监督、邻里纠纷调解中发挥带头作用。</span>':'<b>🚩 党建引领</b><span>区委把方向、管大局，统筹全区治理资源、审定重大政策；街道党工委统筹条块协同；信用评价体系纳入党员履约示范的正向引导。</span>';
+ buildNav();render();
+}
+function tab(t){if(VIEW==='street')STAB=t;else DTAB=t;buildNav();render()}
+function buildNav(){
+ var h='<div class="grp">'+(VIEW==='street'?'第二层 · 街镇执行协调层':'第三层 · 区市管理决策层')+'</div>';
+ var items=VIEW==='street'?
+  [['board','📊 归集看板','不排名'],['alerts','🚨 预警接收','🔴'],['handle','🛠 街道处理事件',''],['needs','🎯 资源下沉','🔵'],['guide','📒 指导台账',''],['pipe','📣 条块协同','吹哨']]:
+  [['dash','🗺 态势仪表盘','全区'],['alertc','🚨 预警中心','🔴'],['resc','🎯 资源统筹调配','🔵'],['sig','📡 区级信号','五层模型']];
+ var cur=VIEW==='street'?STAB:DTAB;
+ items.forEach(function(it){
+  h+='<a class="'+(cur===it[0]?'on':'')+'" onclick="tab(\''+it[0]+'\')">'+it[1]+(it[2]?'<span class="nl">'+it[2]+'</span>':'')+'</a>';
+ });
+ document.getElementById('nav').innerHTML=h;
+}
+
+var ACT=null;
+function now(){
+ var d=new Date();
+ var p=function(n){return String(n).padStart(2,'0')};
+ return '2026-09-08 '+p(d.getHours())+':'+p(d.getMinutes());
+}
+var ACT_CFG={
+ sig:{
+  push:{title:'推送科室核实',icon:'📨',sub:'推送至相关科室核实——预警只是线索，部门法定职责不变 · 可附图片/文档佐证',fields:['dept','txt'],lbl:'核实要点',ph:'如：请3个工作日内反馈核查情况（可留空）',req:false,files:true,btn:'确认推送',deptLbl:'推送科室',depts:['城建科','社区办','综治办','安监办','城管科']},
+  sendC:{title:'安排社区先行处理',icon:'🏘',sub:'街道安排社区先行处理——社区处理完毕后由街道确认闭环 · 可附图片/文档佐证',fields:['comm','txt'],commLbl:'推送社区',lbl:'安排事项',ph:'如：请居委会上门劝导，3日内反馈（必填）',req:true,files:true,btn:'确认安排'},
+  cClose:{title:'街道确认闭环',icon:'✅',sub:'社区处理完毕后，街道确认闭环——处理详情记入指导台账',fields:['txt'],lbl:'社区处理详情',ph:'如：堆物已清理 · 现场复查通过（必填）',req:true,files:true,btn:'确认闭环'},
+  cFail:{title:'街道收回',icon:'↩',sub:'社区处理不了——街道收回事件，退回预警接收后由街道直接处置（督办整改 / 协调执法）',fields:['txt'],lbl:'收回说明',ph:'如：涉及消防执法，社区无处置权限（必填）',req:true,files:true,btn:'确认收回'},
+  self:{title:'街道直接处置',icon:'🛠',sub:'街道直接处置——下达督办/限期整改通知、协调执法力量，事件转入「街道处理事件」',fields:['txt'],lbl:'处置安排',ph:'如：向物业下达限期整改通知+跟进督办（必填）',req:true,files:true,btn:'确认转入'},
+  close:{title:'标记闭环',icon:'✅',sub:'记录处置结果——预警闭环 · 看板回落',fields:['txt'],lbl:'处置结果',ph:'如：电梯检验已完成，报告已归档（必填）',req:true,files:true,btn:'确认闭环'},
+  mis:{title:'标记误报',icon:'🚫',sub:'记录误报原因——信号解除并归档',fields:['txt'],lbl:'误报原因',ph:'如：数据口径偏差，已核实（必填）',req:true,files:true,btn:'确认误报'},
+  up:{title:'上报区级',icon:'⬆',sub:'街道处置不了——推送区级预警中心 · 可附图片/文档佐证',fields:['txt'],lbl:'上报说明',ph:'如：涉及资金安全，需区级部门介入（必填）',req:true,files:true,btn:'确认上报'},
+  pipe:{title:'发起吹哨 · 条块协同',icon:'📣',sub:'街道无处置权限——吹哨区级职能部门（可多选 · 联合处置），事项进入「条块协同」',fields:['dept','txt'],lbl:'吹哨说明',ph:'如：涉及公共收益核查，街道无权限（必填）',req:true,files:true,btn:'确认吹哨',deptLbl:'吹哨部门',deptMulti:true,depts:['区住建局','区市场监管局','区消防救援大队','区城管执法局','区公安分局','区卫健委','区生态环境局','区应急管理局']},
+  follow:{title:'记录跟进',icon:'📝',sub:'记录跟进情况——状态保持"跟进中"，可多次记录',fields:['txt'],lbl:'跟进记录',ph:'如：已联系物业经理了解人员变动（必填）',req:true,files:true,btn:'确认记录'},
+  startF:{title:'开始跟进',icon:'▶',sub:'管理者决定跟进——了解指标偏离原因',fields:['txt'],lbl:'跟进方向',ph:'如：联系物业了解服务波动原因（必填）',req:true,files:true,btn:'确认跟进'},
+  release:{title:'解除关注',icon:'✅',sub:'指标恢复/情况明确——关注解除并归档',fields:['txt'],lbl:'解除说明',ph:'如：履约率已恢复至历史基线（必填）',req:true,files:true,btn:'确认解除'},
+  ignore:{title:'忽略信号',icon:'🚫',sub:'记录忽略原因——信号解除并归档',fields:['txt'],lbl:'忽略原因',ph:'如：季节性波动，属正常范围（必填）',req:true,files:true,btn:'确认忽略'}
+ },
+ need:{
+  ok:{title:'审批 · 调配下达',icon:'✅',sub:'审批通过后，资源调配下达街道承接（派遣由街道实施）· 推送科室发起时已确定',fields:['street','dept','txt'],streetLbl:'调配街道',deptLbl:'推送科室',deptReadOnly:true,lbl:'审批意见',ph:'如：同意调配，请街道及时承接（可留空）',req:false,files:true,btn:'确认下达'},
+  recv:{title:'承接 · 派遣资源',icon:'📥',sub:'街道承接区级调配——记录派遣人员（可多选）与完成时限',fields:['p1','p2'],lbl:'',ph:'',req:false,files:true,btn:'确认承接派遣'},
+  wait:{title:'暂缓',icon:'⏸',sub:'记录暂缓原因',fields:['txt'],lbl:'暂缓原因',ph:'如：先观察本月数据（必填）',req:true,files:true,btn:'确认暂缓'},
+  no:{title:'不派遣',icon:'🚫',sub:'记录不派遣原因',fields:['txt'],lbl:'不派遣原因',ph:'如：问题已由其他渠道解决（必填）',req:true,files:true,btn:'确认不派遣'},
+  accept:{title:'验收通过 · 归档',icon:'🏁',sub:'区级验收街道下沉实施结果——通过后需求归档，关联预警同步闭环',fields:['txt'],lbl:'验收意见',ph:'如：实施到位 · 效果达标（必填）',req:true,files:true,btn:'确认归档'},
+  ret:{title:'退回补充',icon:'↩',sub:'区级验收不通过——退回街道补充实施',fields:['txt'],lbl:'退回原因',ph:'如：佐证材料不足，请补充现场回访记录（必填）',req:true,files:true,btn:'确认退回'},
+  done:{title:'标记完成',icon:'🏁',sub:'记录资源下沉实施效果——上传佐证材料，效果计入考核',fields:['txt'],lbl:'效果说明',ph:'如：现场质询已开展，整改要求已送达（必填）',req:true,files:true,btn:'确认完成'}
+ },
+ file:{
+  recv:{title:'接收报备',icon:'📥',sub:'社区主动报备的自治决策记录——接收后进入"指导"职能的信息基础',fields:['txt'],lbl:'接收备注',ph:'如：已查阅，纳入指导台账参考（选填）',req:false,files:true,btn:'确认接收'}
+ },
+ dalert:{
+  down:{title:'推送科室核实',icon:'📨',sub:'推送至区级职能部门核实——部门权责不变',fields:['dept','txt'],deptLbl:'推送科室',depts:['区住建局','区市场监管局','区消防救援大队','区城管执法局','区公安分局','区卫健委','区生态环境局','区应急管理局'],lbl:'核查要求',ph:'如：7个工作日内反馈核查结果（选填）',req:false,files:true,btn:'确认推送'},
+  close:{title:'标记闭环',icon:'✅',sub:'记录核查结论——街道同源信号同步闭环',fields:['txt'],lbl:'核查结论',ph:'如：核查属实，已责令整改（必填）',req:true,files:true,btn:'确认闭环'},
+  mis:{title:'标记误报',icon:'✕',sub:'说明误报原因——街道同源信号同步解除',fields:['txt'],lbl:'误报原因',ph:'如：数据口径偏差，已人工复核（必填）',req:true,files:true,btn:'确认标记误报'}
+ }
+};
+var UP_FILES=[];
+function fmtSize(n){return n>1048576?(n/1048576).toFixed(1)+' MB':n>1024?(n/1024).toFixed(0)+' KB':n+' B'}
+function fileIcon(n){var e=n.split('.').pop().toLowerCase();if(['jpg','jpeg','png','gif','webp'].indexOf(e)>=0)return '🖼';if(e==='pdf')return '📕';if(['doc','docx'].indexOf(e)>=0)return '📘';if(['xls','xlsx','csv'].indexOf(e)>=0)return '📊';return '📎'}
+function addFiles(fs){
+ for(var i=0;i<fs.length;i++){
+  if(UP_FILES.length>=5){toast('最多上传5个文件');break}
+  var f=fs[i];
+  if(f.type&&f.type.indexOf('image/')===0){
+   var rd=new FileReader();
+   rd.onload=(function(nm,sz){return function(ev){UP_FILES.push({name:nm,size:sz,type:'img',dataUrl:ev.target.result});renderFileList()}})(f.name,f.size);
+   rd.readAsDataURL(f);
+  }else{
+   UP_FILES.push({name:f.name,size:f.size,type:'doc'});
+  }
+ }
+ renderFileList();
+}
+function renderFileList(){
+ var el=document.getElementById('af_list');if(!el)return;
+ el.innerHTML=UP_FILES.map(function(f,i){return '<div class="fli">'+(f.type==='img'?'<img src="'+f.dataUrl+'" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:6px;flex-shrink:0">':'')+'<span>'+fileIcon(f.name)+' '+f.name+'</span><span class="mono" style="color:var(--dim)">'+fmtSize(f.size)+'</span><button class="btn o sm" onclick="UP_FILES.splice('+i+',1);renderFileList()">移除</button></div>'}).join('');
+}
+function showImg(src){
+ var lb=document.createElement('div');
+ lb.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+ lb.innerHTML='<img src="'+src+'" style="max-width:86vw;max-height:86vh;border-radius:8px">';
+ lb.onclick=function(){lb.remove()};
+ document.body.appendChild(lb);
+}
+function openAct(type,idx,act){
+ ACT={type:type,idx:idx,act:act};
+ UP_FILES=[];
+ var cfg=ACT_CFG[type][act];
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>'+cfg.icon+' '+cfg.title+'</h2><div class="sub">'+cfg.sub+'</div>';
+ if(cfg.fields.indexOf('dept')>=0){var preDept=(type==='need'&&NEEDS[ACT.idx]&&NEEDS[ACT.idx].execDept)?NEEDS[ACT.idx].execDept:'';if(cfg.deptReadOnly){h+='<div class="fld"><label>'+(cfg.deptLbl||'推送科室')+'</label><div style="padding:10px 12px;border:1px solid rgba(37,99,235,.25);border-radius:8px;background:rgba(37,99,235,.06);color:#1e40af;font-size:13px;font-weight:600">🏛 '+preDept+'</div>'+(type==='need'&&NEEDS[ACT.idx]?'<div style="font-size:11px;color:var(--dim);margin-top:5px">发起资源统筹调配时已确定 · 审批阶段直接确认，不再选择</div>':'')+'</div>';}else if(cfg.deptMulti){var preArr=preDept?preDept.split('、'):[];h+='<div class="fld"><label>'+(cfg.deptLbl||'推送科室')+' <span style="font-weight:400;color:var(--dim)">（点击选择 · 可多选 · 联合承办）</span></label><div id="af_depts" style="display:flex;flex-wrap:wrap;gap:6px">'+(cfg.depts||[]).map(function(d){return '<span class="staff-chip'+(preArr.indexOf(d)>=0?' sel':'')+'" data-n="'+d+'" onclick="toggleStaff(this)">'+d+'</span>'}).join('')+'</div><div style="font-size:11px;color:var(--dim);margin-top:5px">已选科室将作为任务承办科室 · 再次点击取消</div></div>';}else{var dOpts=(cfg.depts||['城建科','社区办','综治办']).map(function(d){return '<option'+(d===preDept?' selected':'')+'>'+d+'</option>'}).join('');if(preDept&&(cfg.depts||[]).indexOf(preDept)<0)dOpts='<option selected>'+preDept+'</option>'+dOpts;h+='<div class="fld"><label>'+(cfg.deptLbl||'推送科室')+'</label><select id="af_dept">'+dOpts+'</select></div>';}}
+ if(cfg.fields.indexOf('street')>=0){var nd=NEEDS[ACT.idx];var stName=nd?getStreetOf(nd.xq):'';h+='<div class="fld"><label>'+(cfg.streetLbl||'调配街道')+'</label><div style="padding:10px 12px;border:1px solid rgba(37,99,235,.25);border-radius:8px;background:rgba(37,99,235,.06);color:#1e40af;font-size:13px;font-weight:600">🏙 '+stName+'</div>'+(nd?'<div style="font-size:11px;color:var(--dim);margin-top:5px">需求小区 '+nd.xq+' 所在街道 · 审批下达后由该街道承接实施</div>':'')+'</div>';}
+ if(cfg.fields.indexOf('comm')>=0){var sigC=SALERTS[ACT.idx];var curC=sigC?getCommunityOf(sigC.xq):'';h+='<div class="fld"><label>'+(cfg.commLbl||'推送社区')+'</label><div style="padding:10px 12px;border:1px solid rgba(37,99,235,.25);border-radius:8px;background:rgba(37,99,235,.06);color:#1e40af;font-size:13px;font-weight:600">🏘 '+curC+'</div>'+(sigC?'<div style="font-size:11px;color:var(--dim);margin-top:5px">信号所属小区 '+sigC.xq+' 的对应社区 · 事件将推送给该社区处理</div>':'')+'</div>';}
+ if(cfg.fields.indexOf('txt')>=0)h+='<div class="fld"><label>'+cfg.lbl+'</label><textarea id="af_txt" placeholder="'+cfg.ph+'"></textarea></div>';
+ if(cfg.fields.indexOf('p1')>=0)h+='<div class="fld"><label>派遣人员 <span style="font-weight:400;color:var(--dim)">（点击选择 · 可多选）</span></label><div id="af_p1" style="display:flex;flex-wrap:wrap;gap:6px">'+STREET_STAFF.map(function(s){return '<span class="staff-chip" data-n="'+s+'" onclick="toggleStaff(this)">'+s+'</span>'}).join('')+'</div><div style="font-size:11px;color:var(--dim);margin-top:5px">选择 1 人或多人共同实施 · 再次点击取消</div></div>';
+ if(cfg.fields.indexOf('p2')>=0)h+='<div class="fld"><label>完成时限</label><input id="af_p2" placeholder="如：3个工作日内（必填）"></div>';
+ if(cfg.files)h+='<div class="fld"><label>佐证材料（图片/文档，最多5个）</label><div class="upzone" id="af_zone">📎 点击选择文件，或将文件拖拽到此处</div><input type="file" id="af_file" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx" style="display:none" onchange="addFiles(this.files)"><div id="af_list"></div></div>';
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">取消</button><button class="btn p" onclick="confirmAct()">'+cfg.btn+'</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+ var zone=document.getElementById('af_zone');
+ if(zone){
+  zone.onclick=function(){document.getElementById('af_file').click()};
+  zone.ondragover=function(e){e.preventDefault();zone.style.borderColor='#1d4ed8';zone.style.background='#eff6ff'};
+  zone.ondragleave=function(){zone.style.borderColor='';zone.style.background=''};
+  zone.ondrop=function(e){e.preventDefault();zone.style.borderColor='';zone.style.background='';if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files)};
+ }
+}
+function closeAct(){
+ ACT=null;
+ RESC_PICKS=[];
+ UP_FILES=[];
+ document.getElementById('actMask').classList.remove('show');
+ document.getElementById('actPanel').classList.remove('show');
+}
+function confirmAct(){
+ var a=ACT;if(!a)return;
+ var cfg=ACT_CFG[a.type][a.act];
+ var noteEl=document.getElementById('af_txt');
+ var note=noteEl?noteEl.value.trim():'';
+ if(cfg.req&&!note){toast(cfg.ph.split('（')[0].trim()+'（必填）');return}
+ var deptEl=document.getElementById('af_dept');
+ var dept='';
+ if(deptEl){dept=deptEl.value}
+ else{var deptChips=document.querySelectorAll('#af_depts .staff-chip.sel');dept=Array.prototype.map.call(deptChips,function(e){return e.getAttribute('data-n')}).join('、')}
+ var commEl=document.getElementById('af_comm');
+ var comm=commEl?commEl.value:'';
+ var p1El=document.getElementById('af_p1'),p2El=document.getElementById('af_p2');
+ var p1=p1El?(p1El.tagName==='INPUT'?p1El.value.trim():Array.prototype.map.call(p1El.querySelectorAll('.staff-chip.sel'),function(e){return e.getAttribute('data-n')}).join('、')):'',p2=p2El?p2El.value.trim():'';
+ if(a.type==='need'&&a.act==='recv'&&(!p1||!p2)){toast('请填写派遣人员与完成时限');return}
+ if(a.type==='sig')sigExec(a.idx,a.act,note,dept,comm,UP_FILES.slice());
+ if(a.type==='need')needExec(a.idx,a.act,note,p1,p2,UP_FILES.slice(),dept);
+ if(a.type==='dalert')dAlertExec(a.idx,a.act,note,UP_FILES.slice());
+ if(a.type==='file')fileExec(a.idx,note,UP_FILES.slice());
+ closeAct();
+ render();
+}
+function fileExec(i,note,files){
+ var f=FILINGS[i];if(!f)return;
+ if(f.st==='已接收'){toast('该报备已接收 · 无需重复操作');return}
+ f.st='已接收';f.note=note;
+ f.log.push({t:now(),by:byName(),act:'接收报备',note:note,files:files&&files.length?files:null});
+ GUIDES.unshift({t:now().slice(0,10),obj:f.xq+'业委会',item:f.item+'（自治决策报备）',way:'报备查阅',res:note||'已接收 · 纳入指导台账参考',bg:'社区主动报备 · 街道接收查阅',log:[{t:now(),by:byName(),act:'接收报备',note:note||'',files:files&&files.length?files:null}]});
+ toast('报备已接收 · 已纳入指导台账参考');
+}
+function dRow(l,v){return '<div class="fld"><label>'+l+'</label><div style="font-size:12.5px;color:var(--tx);line-height:1.7">'+v+'</div></div>'}
+function openSigDetail(i){
+ var a=SALERTS[i];if(!a)return;
+ var lvName=a.lv==='r'?'🔴 预警信号':a.lv==='y'?'🟡 关注信号':'🔵 信号';
+ var stTag='<span class="tag '+(a.done?'gr':(a.lv==='r'?'r':'y'))+'">'+a.st+'</span>';
+ var x=XQ.filter(function(q){return q.name===a.xq})[0];
+ var rel='';
+ if(x)rel+='小区当前信号灯：'+sigDot(xqSig(x))+' '+(xqSig(x)==='g'?'常态':xqSig(x)==='r'?'预警中':xqSig(x)==='y'?'关注中':'资源下沉中')+' · 物业履约评级 '+x.rate;
+ if(/公共收益|资金|收入|支出/.test(a.title)){
+  var f=FUNDS.filter(function(q){return q.xq===a.xq})[0];
+  if(f)rel+='<br>本月公共收益收入：'+money(f.income)+' · 公示状态：'+(f.pub==='已公示'?'已公示':'本月异常');
+ }
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🚨 信号详情 · '+a.xq+'</h2><div class="sub">'+lvName+' · '+a.title+' '+stTag+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('推送时间',a.t)+dRow('响应要求',a.resp||'24小时内响应')+
+ dRow('信号级别',lvName)+dRow('当前状态',stTag)+'</div>';
+ h+=dRow('触发条件',a.trig);
+ h+=dRow('数据来源',a.src+' <span class="lv lv3">L3</span>');
+ h+=dRow('系统建议',a.adv);
+ var pp2=PIPES.filter(function(p){return p.sIdx===i})[0];
+ h+=dRow('关联数据',rel);
+ h+=dRow('条块协同（吹哨）',pp2?'📣 已吹哨 '+pp2.dept+' · <span style="color:#ad6800">'+pp2.st+'</span><br>事项：'+pp2.item+'<br>处置结果：'+pp2.res:'— 未吹哨 —');
+ h+=dRow('完整留痕',logHTML(a.log));
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button>'+(a.done?'':sigOps(a,i))+'</div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openNeedDetail(i){
+ var n=NEEDS[i];if(!n)return;
+ var stTag='<span class="tag '+(n.st==='已完成'?'g':n.st==='待审批'?'y':n.st==='已调配'?'b':n.st==='已派遣'?'b':'gr')+'">'+n.st+'</span>';
+ var x=XQ.filter(function(q){return q.name===n.xq})[0];
+ var rel='';
+ if(x)rel+='小区当前信号灯：'+sigDot(xqSig(x));
+ var relA=SALERTS.filter(function(s){return s.xq===n.xq&&!s.done});
+ if(relA.length)rel+='<br>在途预警：'+relA.map(function(s){return s.title}).join('；');
+ var gen=n.log&&n.log.length?n.log[0].t:'—';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🎯 需求详情 · '+n.xq+'</h2><div class="sub">需求信号 '+stTag+' · 全流程数据与佐证</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('信号生成时间',gen)+dRow('建议资源',n.suggest)+
+ dRow('承办科室',n.execDept||'<span style="color:var(--dim)">—</span>')+
+ dRow('当前环节',({待审批:'待区级审批',已调配:'已调配下达 · 待街道承接',已派遣:'已派遣 · 街道实施中',已完成:'已完成 · 已归档',已暂缓:'已暂缓',不派遣:'不派遣'})[n.st]||'—')+
+ dRow('派遣人员',n.p1||'<span style="color:var(--dim)">—</span>')+dRow('完成时限',n.p2||'<span style="color:var(--dim)">—</span>')+'</div>';
+ if(n.dRef!==undefined&&DALERTS[n.dRef]){var da=DALERTS[n.dRef];h+='<div style="margin-top:10px;padding:9px 12px;border:1px solid rgba(220,38,38,.25);border-radius:8px;background:rgba(220,38,38,.05)"><b style="color:#b91c1c">🔴 关联预警</b>：'+da.st+' · '+da.xq+' · '+da.title+' <span class="tag '+(da.done?'gr':'r')+'">'+da.st2+'</span>'+(da.done?'（已完成闭环）':'（街道实施闭环并经区级验收后自动闭环）')+'</div>';}
+ h+='<div style="margin-top:12px"><b style="font-size:12.5px">📜 全流程留痕（'+(n.log?n.log.length:0)+' 条 · 附件可点击查看）</b>'+logHTML(n.log,true)+'</div>';
+ h+='<div style="margin-top:10px"><b style="font-size:12.5px">🔍 小区关联</b><div style="font-size:12px;color:var(--sub);margin-top:4px;line-height:1.8">'+rel+'</div></div>';
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button>'+needOps(n,i)+'</div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openGuideDetail(i){
+ var g=GUIDES[i];if(!g)return;
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📒 指导记录详情</h2><div class="sub">'+g.t+' · '+g.obj+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('指导时间',g.t)+dRow('指导对象',g.obj)+
+ dRow('指导方式',g.way)+dRow('指导事项',g.item)+'</div>';
+ h+=dRow('指导背景',g.bg||'—');
+ h+=dRow('指导结果',g.res||'—');
+ h+=dRow('留痕记录',logHTML(g.log));
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openPipeDetail(i){
+ var p=PIPES[i];if(!p)return;
+ var stTag='<span class="tag '+(p.st==='已响应'?'y':'g')+'">'+p.st+'</span>';
+ var relA=(p.sIdx!==undefined&&SALERTS[p.sIdx])?[SALERTS[p.sIdx]]:SALERTS.filter(function(s){return s.xq===p.xq&&!s.done});
+ var rel=relA.length?relA.map(function(s){return s.title+'（'+s.st+'）'}).join('；'):'—';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📣 吹哨详情 · '+p.xq+'</h2><div class="sub">'+p.item+' '+stTag+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('发起时间',p.t)+dRow('响应部门',p.dept)+
+ dRow('响应状态',stTag)+dRow('处置结果',p.res)+'</div>';
+ h+=dRow('事项背景',p.bg||'—');
+ h+=dRow('关联在途预警',rel);
+ h+=dRow('完整留痕',logHTML(p.log));
+ h+=dRow('闭环方式',p.st==='已响应'?'<span style="color:#ad6800">⏳ 等待部门处置回传——回传后系统自动闭环，街道不手动标记</span>':'<span style="color:#059669">部门响应回传 · 系统自动闭环</span>');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openDAlerDetail(i){
+ var a=DALERTS[i];if(!a)return;
+ var stTag='<span class="tag '+(a.done?'gr':'r')+'">'+a.st2+'</span>';
+ var rel=a.sRef!==undefined?'街道同源信号：'+SALERTS[a.sRef].st:'—';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🚨 区级预警详情 · '+a.xq+'</h2><div class="sub">'+a.title+' '+stTag+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('所属街道',a.st)+dRow('推送时间',a.t)+
+ dRow('当前状态',stTag)+dRow('响应要求','24小时内响应')+'</div>';
+ h+=dRow('触发条件',a.trig);
+ h+=dRow('数据来源',a.src+' <span class="lv lv3">L3</span>');
+ h+=dRow('系统建议',a.adv);
+ h+=dRow('关联数据',rel);
+ h+=dRow('完整留痕',logHTML(a.log));
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button>'+(a.done?'':dAlertOps(a,i))+'</div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openCredDetail(i){
+ var c=CREDITS[i];if(!c)return;
+ var rateTag=c.rate.charAt(0)==='A'?'g':c.rate.charAt(0)==='B'?'y':'r';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🏢 物业信用详情 · '+c.name+'</h2><div class="sub">服务 '+c.xq+' 个小区 · '+c.serv+' · <span class="tag '+rateTag+'">履约等级 '+c.rate+'</span></div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('按期响应率',c.resp+'%')+dRow('按期闭环率',c.close+'%')+
+ dRow('业主评价均分',c.sat.toFixed(1)+' / 5')+dRow('关键异常标记',credWatch(c)||'<span style="color:var(--dim)">—</span>')+'</div>';
+ h+=dRow('四维评价（自动汇总）',c.d4);
+ h+=dRow('信用等级变更追溯',c.chg);
+ h+=dRow('异议申诉',c.app+' · 被评价方有权对不利记录提出异议，异议成立则修正记录');
+ h+=dRow('正向激励',c.good?'<span class="tag g">红榜 · 续聘优先推荐</span>':'<span style="color:var(--dim)">—</span>');
+ h+=dRow('失信后果递进','提醒 → 约谈 → 限期整改 → 信用降级 → 合同终止');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openYcrDetail(i){
+ var y=YCRED[i];if(!y)return;
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🏛 业委会履职信用详情 · '+y.xq+'</h2><div class="sub"><span class="tag '+(y.st==='正常'?'g':'y')+'">'+y.st+'</span></div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('议事留痕',y.mtg)+dRow('公示完整度',y.pub)+
+ dRow('采购合规率',y.pur)+dRow('关键异常标记',y.watch||'<span style="color:var(--dim)">—</span>')+'</div>';
+ h+=dRow('履职背景',y.bg);
+ h+=dRow('信用变更追溯',y.chg);
+ h+=dRow('承诺来源','业主大会授权 + 法律法规规定的忠实勤勉义务');
+ h+=dRow('监督链','业主大会授权 → 业委会执行 → 数据留痕 → 社区监督');
+ h+=dRow('失信后果递进','社区居委会/业主质询 → 整改要求 → 罢免程序');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openVcrDetail(i){
+ var v=VCRED[i];if(!v)return;
+ var col=v.score>=80?'var(--g)':v.score>=70?'var(--y)':'var(--r)';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📦 供应商信用详情 · '+v.name+'</h2><div class="sub">'+v.type+' · 信用分 <b style="color:'+col+'">'+v.score+'</b></div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('信用分',v.score)+dRow('近期表现',v.note)+'</div>';
+ h+=dRow('信用构成',v.chg);
+ h+=dRow('数据来源',v.app);
+ h+=dRow('失信后果递进','信用降级 → 减少派单 → 一票否决');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+var INCENT_D=[
+ {land:'信用管理中心 ① 物业服务信用表（红榜标记实时呈现）'},
+ {land:'信用管理中心 ① 物业服务信用表（红榜·续聘优先推荐标记）'},
+ {land:'采购端 供应商候选池（信用≥B+的供应商获得投标加分）'},
+ {land:'社区端 参与记录统计（不出社区，正向引导）'},
+ {land:'采购端 业委会采购审批（采购合规率100%触发快速审批通道）'},
+ {land:'政府端 归集看板 + 信用管理中心（治理成效由数据自动呈现）'},
+];
+function openIncentDetail(i){
+ var ic=INCENT[i];if(!ic)return;
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🌟 正向激励详情</h2><div class="sub">'+ic[0]+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('适用对象',ic[1])+dRow('触发条件',ic[2])+'</div>';
+ h+=dRow('在本端的落地位置',INCENT_D[i].land);
+ h+=dRow('设计依据','正反馈优先：信用的核心价值是让守信者获得正向反馈，不是惩罚失信者');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+var EXAM_D=[
+ {land:'归集看板：五类数据全部自动归集，本端无任何"填报"入口'},
+ {land:'预警接收 + 预警中心：待响应/已推送/已闭环全程留痕'},
+ {land:'资源统筹调配：审批 · 调配下达 → 街道承接 · 派遣 → 完成（效果说明）全流程留痕'},
+ {land:'态势仪表盘 + 趋势图：决策依据全部来自实时信号，无汇报材料入口'},
+];
+function openExamDetail(i){
+ var e=EXAM_D[i];if(!e)return;
+ var st=examStats();
+ var rts=['实时验证：页面底部归集机制表 + 归集条件说明','实时验证：'+st.respS+'/'+st.totS+' 已响应 · 闭环 '+st.closeS+' 条','实时验证：已完成 '+st.resDone+' 条（指导台账同步留痕）','实时验证：信号驱动运行中 · 态势报告由系统自动生成'];
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📏 考核指标重构详情</h2><div class="sub">重构后的考核指标</div>';
+ h+=dRow('重构后指标',['治理数据自动归集覆盖率','预警信号响应率与闭环率','向社区精准匹配资源的次数与效果','基于数据的决策改善率'][i]);
+ h+=dRow('本端落地位置',e.land);
+ h+=dRow('实时验证',rts[i]);
+ h+=dRow('设计依据','考核不考核基层"填报"——考核管理端"响应与匹配"。基层的负担是考核的敌人，不是考核的指标。');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+var STAT_D=[
+ {name:'街道预警响应率',scope:'口径：已上报区级/已吹哨/已闭环的街道信号数 ÷ 街道信号总数',src:'数据源：预警接收模块的实际操作（实时计算）'},
+ {name:'街道预警已闭环',scope:'口径：街道信号中状态为"已闭环"的数量（含区级处置后同步闭环）',src:'数据源：预警接收 + 区级预警中心（实时计算）'},
+ {name:'误报解除数',scope:'口径：街道标记误报数 + 区级标记误报数',src:'数据源：预警接收 + 区级预警中心（实时计算）'},
+ {name:'资源统筹调配已完成',scope:'口径：需求信号中状态为"已完成"的数量；在途=已调配/已派遣',src:'数据源：资源统筹调配（区级审批）+ 资源下沉（街道实施）的实际操作（实时计算）'},
+];
+function openStatDetail(k){
+ var s=STAT_D[k];if(!s)return;
+ var st=examStats();
+ var vals=[st.respS+'/'+st.totS,st.closeS+' 条',st.mis+' 条',st.resDone+' 条'+(st.resPend?'（'+st.resPend+' 在途）':'')];
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📊 统计口径详情</h2><div class="sub">'+s.name+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('当前实时值','<b>'+vals[k]+'</b>')+dRow('统计口径',s.scope)+'</div>';
+ h+=dRow('数据来源',s.src);
+ h+=dRow('联动说明','去预警接收 / 预警中心 / 资源统筹调配（区级）· 资源下沉（街道）操作一条，本数字立即变化——考核看的是系统里真实发生的响应与闭环，不是填报材料。');
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openStreetDetail(i){
+ var s=STREETS[i];if(!s)return;
+ var isDemo=s.name===STREET;
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🏙 街道详情 · '+s.name+'</h2><div class="sub">'+s.total+' 个小区 · 第二层 街镇执行协调层</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('🟢 常态小区',s.g+' 个')+dRow('🟡 关注小区',s.y+' 个')+
+ dRow('🔴 预警小区',s.r+' 个')+dRow('🔵 需求小区',s.b+' 个')+'</div>';
+ if(isDemo){
+  h+='<div class="fld"><label>示例小区（'+XQ.length+' 个）</label>'+XQ.map(function(x){var sg=xqSig(x);return '<div style="font-size:12px;color:var(--tx);line-height:1.9">'+sigDot(sg)+' '+x.name+' · 工单 '+x.wd+' 单 · 闭环率 '+x.close+'% · 满意度 '+x.sat.toFixed(1)+' · 履约评级 '+x.rate+'</div>'}).join('')+'</div>';
+ }else{
+  h+='<div class="fld"><label>辖区小区</label><div style="font-size:12px;color:var(--dim)">本演示仅展开'+STREET+'明细，该街道小区明细未在本页展开。</div></div>';
+ }
+ var relA=DALERTS.filter(function(a){return a.st===s.name});
+ h+='<div class="fld"><label>在途预警（区级）</label>'+(relA.length?relA.map(function(a){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">🔴 '+a.xq+' · '+a.title+' <span class="tag '+(a.done?'gr':'r')+'">'+a.st2+'</span></div>'}).join(''):'<div style="font-size:12px;color:var(--dim)">— 无在途预警</div>')+'</div>';
+ if(isDemo){
+  h+='<div class="fld"><label>需求信号（'+NEEDS.length+' 条）</label>'+NEEDS.map(function(n){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">🔵 '+n.xq+' · '+n.suggest+' <span class="tag '+(n.st==='已完成'?'g':n.st==='待审批'?'y':n.st==='已调配'?'b':n.st==='已派遣'?'b':'gr')+'">'+n.st+'</span></div>'}).join('')+'</div>';
+  h+='<div class="fld"><label>本月资金归集合计</label><div style="font-size:12px;color:var(--tx);line-height:1.8">公共收益收入合计 <b>'+money(FUNDS.reduce(function(t,f){return t+f.income},0))+'</b> · 维修资金支出合计 '+money(FUNDS.reduce(function(t,f){return t+f.repair},0))+'</div></div>';
+  h+='<div class="fld"><label>自治决策报备（'+FILINGS.length+' 条）</label>'+FILINGS.map(function(q){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">📋 '+q.xq+' · '+q.item+' <span class="tag '+(q.st==='已接收'?'g':'y')+'">'+q.st+'</span></div>'}).join('')+'</div>';
+  h+='<div class="fld"><label>条块协同 · 吹哨（'+PIPES.length+' 条）</label>'+PIPES.map(function(p){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">📣 '+p.item+' <span class="tag '+(p.st==='已响应'?'y':'g')+'">'+p.st+'</span></div>'}).join('')+'</div>';
+ }
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openXqDetail(i){
+ var x=XQ[i];if(!x)return;
+ var sg=xqSig(x);
+ var sigName=sg==='g'?'🟢 常态':sg==='y'?'🟡 关注':sg==='r'?'🔴 预警':'🔵 需求';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>🏘 小区详情 · '+x.name+'</h2><div class="sub">'+x.type+' · '+sigDot(sg)+' 当前信号：'+sigName+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('本月工单 <span class="lv lv3">L3</span>',x.wd+' 单')+dRow('按期闭环率',(x.close>=90?'<span style="color:#059669">':'<span style="color:#ad6800">')+x.close+'%</span>')+
+ dRow('业主满意度 <span class="lv lv4">L4</span>',x.sat.toFixed(1)+' / 5')+dRow('公共收益公示',x.pub==='已公示'?'<span style="color:#059669">已公示</span>':'<span style="color:#b91c1c">本月异常</span>')+
+ dRow('物业履约评级 <span class="lv lv3">L3</span>',x.rate)+dRow('当前信号灯',sigDot(sg)+' '+sigName)+'</div>';
+ var relA=SALERTS.filter(function(s){return s.xq===x.name});
+ h+='<div class="fld"><label>关联预警/关注信号</label>'+(relA.length?relA.map(function(s){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">'+(s.lv==='r'?'🔴':'🟡')+' '+s.title+' <span class="tag '+(s.done?'gr':'r')+'">'+s.st+'</span></div>'}).join(''):'<div style="font-size:12px;color:var(--dim)">— 无关联信号</div>')+'</div>';
+ var relN=NEEDS.filter(function(n){return n.xq===x.name});
+ h+='<div class="fld"><label>需求信号</label>'+(relN.length?relN.map(function(n){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">🔵 '+n.suggest+' <span class="tag '+(n.st==='已完成'?'g':n.st==='待审批'?'y':n.st==='已调配'?'b':n.st==='已派遣'?'b':'gr')+'">'+n.st+'</span></div>'}).join(''):'<div style="font-size:12px;color:var(--dim)">— 无需求信号</div>')+'</div>';
+ var f=FUNDS.filter(function(q){return q.xq===x.name})[0];
+ if(f)h+='<div class="fld"><label>本月资金归集</label><div style="font-size:12px;color:var(--tx);line-height:1.8">公共收益收入 <b>'+money(f.income)+'</b> · 维修资金支出 '+(f.repair?money(f.repair):'<span style="color:var(--dim)">—</span>')+' · '+f.n+' 笔 · '+(f.pub==='已公示'?'<span style="color:#059669">已公示</span>':'<span style="color:#b91c1c">本月异常</span>')+'<br><span style="color:var(--dim);font-size:11px">收入构成：'+f.incDetail.map(function(d){return d[0]+' '+money(d[1])}).join(' + ')+'</span></div></div>';
+ var relF=FILINGS.filter(function(q){return q.xq===x.name});
+ h+='<div class="fld"><label>自治决策报备</label>'+(relF.length?relF.map(function(q){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">📋 '+q.item+' <span class="tag '+(q.type==='公示'?'p':q.type==='表决'?'b':'gr')+'">'+q.type+'</span> <span class="tag '+(q.st==='已接收'?'g':'y')+'">'+q.st+'</span></div>'}).join(''):'<div style="font-size:12px;color:var(--dim)">— 无报备记录</div>')+'</div>';
+ var relP=PIPES.filter(function(p){return p.xq===x.name});
+ h+='<div class="fld"><label>条块协同 · 吹哨</label>'+(relP.length?relP.map(function(p){return '<div style="font-size:12px;color:var(--tx);line-height:1.8">📣 '+p.item+' <span class="tag '+(p.st==='已响应'?'y':'g')+'">'+p.st+'</span></div>'}).join(''):'<div style="font-size:12px;color:var(--dim)">— 无吹哨事项</div>')+'</div>';
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openFundDetail(i){
+ var f=FUNDS[i];if(!f)return;
+ var anom=SALERTS.filter(function(s){return s.xq===f.xq&&!s.done&&/公共收益|资金|收入|支出/.test(s.title)})[0];
+ var incTbl='<div class="fld"><label>本月收入构成</label><table style="margin:0"><tr><th>收入项目</th><th>金额</th></tr>'+
+ f.incDetail.map(function(d){return '<tr><td>'+d[0]+'</td><td style="text-align:right">'+money(d[1])+'</td></tr>'}).join('')+
+ '<tr><td style="color:var(--sub)">合计</td><td style="text-align:right"><b>'+money(f.income)+'</b></td></tr></table></div>';
+ var expTbl=f.expDetail.length?'<div class="fld"><label>维修资金支出明细</label><table style="margin:0"><tr><th>支出项目</th><th>金额</th></tr>'+
+ f.expDetail.map(function(d){return '<tr><td>'+d[0]+'</td><td style="text-align:right">'+money(d[1])+'</td></tr>'}).join('')+
+ '<tr><td style="color:var(--sub)">合计</td><td style="text-align:right"><b>'+money(f.repair)+'</b></td></tr></table></div>':'<div class="fld"><label>维修资金支出明细</label><div style="font-size:12.5px;color:var(--dim)">本月无维修资金支出</div></div>';
+ var stTag='<span class="tag '+(f.pub==='已公示'?'g':'r')+'">'+f.pub+'</span>';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>💰 资金归集详情 · '+f.xq+'</h2><div class="sub">月度自动归集 · 法定资金监管 '+stTag+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ dRow('本月公共收益收入',money(f.income))+dRow('维修资金支出',f.repair?money(f.repair):'<span style="color:var(--dim)">—</span>')+
+ dRow('交易笔数',f.n+' 笔')+dRow('公示状态',stTag)+'</div>';
+ h+=incTbl+expTbl;
+ h+=dRow('公示情况',f.pubInfo);
+ h+=dRow('资金异常标记',anom?'<span style="color:#b91c1c">'+anom.title+'（'+anom.st+'）</span>':'<span style="color:var(--dim)">—</span>');
+ h+=dRow('留痕记录',logHTML(f.log));
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function openDetail(i){
+ var f=FILINGS[i];if(!f)return;
+ var typeTag='<span class="tag '+(f.type==='公示'?'p':f.type==='表决'?'b':'gr')+'">'+f.type+'</span>';
+ var stTag='<span class="tag '+(f.st==='已接收'?'g':'y')+'">'+f.st+'</span>';
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>📋 报备详情 · '+f.xq+'</h2><div class="sub">'+typeTag+' '+f.item+'</div>';
+ h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:14px">'+
+ '<div class="fld"><label>报备时间</label><div style="font-size:12.5px;color:var(--tx)">'+f.t+'</div></div>'+
+ '<div class="fld"><label>接收状态</label><div style="font-size:12.5px">'+stTag+'</div></div>'+
+ '<div class="fld"><label>涉及金额</label><div style="font-size:12.5px;color:var(--tx)">'+f.amt+'</div></div>'+
+ '<div class="fld"><label>报备主体</label><div style="font-size:12.5px;color:var(--tx)">'+f.xq+'业委会 · 居委会协助</div></div></div>';
+ h+='<div class="fld"><label>事项背景</label><div style="font-size:12.5px;color:var(--tx);line-height:1.7">'+f.bg+'</div></div>';
+ h+='<div class="fld"><label>决策过程</label><div style="font-size:12.5px;color:var(--tx);line-height:1.8;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 12px">'+f.proc+'</div></div>';
+ h+='<div class="fld"><label>表决数据</label><div style="font-size:12.5px;color:var(--tx);line-height:1.7">'+f.vote+'</div></div>';
+ h+='<div class="fld"><label>公示情况</label><div style="font-size:12.5px;color:var(--tx);line-height:1.7">'+f.pub+'</div></div>';
+ h+='<div class="fld"><label>异议期 · 异议处理</label><div style="font-size:12.5px;color:var(--tx);line-height:1.7">'+f.obj+'</div></div>';
+ h+='<div class="fld"><label>留痕记录</label>'+logHTML(f.log)+'</div>';
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">关闭</button>'+(f.st==='待接收'?'<button class="btn g" onclick="closeAct();openAct(\'file\','+i+',\'recv\')">接收</button>':'')+'</div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function byName(){return VIEW==='street'?'文昌街道 · 处置岗':'文昌区 · 处置岗'}
+function logHTML(lg,full){
+ if(!lg||!lg.length)return '';
+ var rev=lg.slice().reverse();
+ if(!full)rev=rev.slice(0,3);
+ return '<div class="slog">'+rev.map(function(l){
+  var atts=l.files&&l.files.length?'<div class="attg">'+l.files.map(function(f){return f.type==='img'&&f.dataUrl?'<span class="att"><img src="'+f.dataUrl+'" onclick="showImg(this.src)" title="点击查看大图" style="width:44px;height:44px;object-fit:cover;border-radius:5px;cursor:pointer;display:block;margin:3px 0">'+f.name+'</span>':'<span class="att">'+fileIcon(f.name)+' '+f.name+'</span>'}).join('')+'</div>':'';
+  return '<div><span class="lt">'+l.t+'</span><b>'+l.by+'</b> '+l.act+(l.note?'：'+l.note:'')+atts+'</div>';
+ }).join('')+(lg.length>3&&!full?'<div style="color:var(--dim)">…共 '+lg.length+' 条留痕</div>':'')+'</div>';
+}
+function sigExec(i,act,note,dept,comm,files){
+ var a=SALERTS[i];if(!a)return;
+ if(a.done&&act!=='push'){toast('该信号已处理归档 · 无需重复操作');return}
+ if(act==='push'){a.st='已推送科室核实';a.log.push({t:now(),by:byName(),act:'推送科室核实',note:'推送至'+dept+(note?' · '+note:''),files:files&&files.length?files:null});toast('已推送至'+dept+' · 留痕已记录');}
+ if(act==='sendC'){var c=getCommunityOf(a.xq);a.comm=c;a.st='社区处理中';a.log.push({t:now(),by:byName(),act:'安排社区先行处理',note:c+' · '+note,files:files&&files.length?files:null});toast('已推送'+c+'先行处理 · 处理完毕后由街道确认闭环');}
+ if(act==='cClose'){a.st='已闭环';a.done=true;var oc=a.comm||getCommunityOf(a.xq);a.log.push({t:now(),by:byName(),act:'街道确认闭环',note:note,files:files&&files.length?files:null});GUIDES.unshift({t:now().slice(0,10),obj:oc,item:a.title+'（社区先行处理）',way:'社区处理',res:note,bg:'街道安排'+oc+'先行处理 · 社区处理完毕 · 街道确认闭环',log:[{t:now(),by:byName(),act:'街道确认闭环 · 社区处理详情',note:note,files:files&&files.length?files:null}]});toast('街道确认闭环 · 社区处理详情已记入指导台账');}
+ if(act==='cFail'){a.st='待响应';a.log.push({t:now(),by:byName(),act:'街道收回',note:note,files:files&&files.length?files:null});toast('事件已收回 · 可转街道直接处置或上报区级');}
+ if(act==='self'){a.st='自行处理中';a.log.push({t:now(),by:byName(),act:'街道直接处置',note:note,files:files&&files.length?files:null});toast('事件已转入「街道处理事件」');}
+ if(act==='mis'){a.st='已标记误报';a.done=true;a.log.push({t:now(),by:byName(),act:'标记误报',note:note,files:files&&files.length?files:null});toast('已标记误报 · 信号解除 · 看板回落');}
+ if(act==='pipe'){if(a.st!=='待响应'&&a.st!=='自行处理中'){toast('仅「待响应 / 自行处理中」状态可发起吹哨');return}if(!dept){toast('请选择吹哨部门');return}a.st='已吹哨';var idx=SALERTS.indexOf(a);PIPES.unshift({xq:a.xq,item:a.title+' · 吹哨'+dept,dept:dept,t:now().slice(0,10),st:'已响应',res:'待部门响应',bg:note||'',sIdx:idx,log:[{t:now(),by:byName(),act:'发起吹哨',note:'吹哨'+dept+'：'+(note||''),files:files&&files.length?files:null}]});a.log.push({t:now(),by:byName(),act:'发起吹哨',note:'吹哨'+dept+(note?' · '+note:''),files:files&&files.length?files:null});toast('已吹哨'+dept+' → 「条块协同」可见 · 部门响应后回传');}
+ if(act==='up'){if(a.st==='已上报区级'||a.st==='区级核查中'){toast('该信号已在区级处置流程中 · 请勿重复上报');return}a.st='已上报区级';a.log.push({t:now(),by:byName(),act:'上报区级',note:note,files:files&&files.length?files:null});DALERTS.unshift({xq:a.xq,st:STREET,title:a.title,trig:a.trig,src:a.src,adv:a.adv,t:a.t,st2:'待处置',sRef:i,log:[{t:now(),by:byName(),act:'街道上报',note:note,files:files&&files.length?files:null}]});toast('已上报区级预警中心 · 区级处置后同步');}
+ if(act==='close'){a.st='已闭环';a.done=true;a.log.push({t:now(),by:byName(),act:'标记闭环',note:note,files:files&&files.length?files:null});toast('处置完成 · 预警闭环 · 看板回落');}
+ if(act==='startF'){a.st='跟进中';a.log.push({t:now(),by:byName(),act:'开始跟进',note:note,files:files&&files.length?files:null});toast('已开始跟进 · 每次跟进可点「记录跟进」留痕');}
+ if(act==='follow'){a.log.push({t:now(),by:byName(),act:'记录跟进',note:note,files:files&&files.length?files:null});toast('跟进情况已留痕 · 状态保持跟进中');}
+ if(act==='release'){a.st='已解除关注';a.done=true;a.log.push({t:now(),by:byName(),act:'解除关注',note:note,files:files&&files.length?files:null});toast('关注已解除 · 信号归档');}
+ if(act==='ignore'){a.st='已忽略';a.done=true;a.log.push({t:now(),by:byName(),act:'忽略信号',note:note,files:files&&files.length?files:null});toast('已忽略 · 信号解除');}
+}
+function ddToggle(ev,el){
+ ev.stopPropagation();
+ var was=el.classList.contains('open');
+ document.querySelectorAll('.dd.open').forEach(function(d){d.classList.remove('open')});
+ if(!was)el.classList.add('open');
+}
+function expBtn(name){return '<button class="btn o sm expbtn" onclick="exportTable(this,\''+name+'\')">📥 导出</button>'}
+function exportTable(btn,name){
+ var card=btn.closest('.card');
+ var table=card?card.querySelector('table'):null;
+ if(!table){toast('未找到可导出的表格');return}
+ var rows=[];
+ table.querySelectorAll('tr').forEach(function(tr){
+  var cells=[];
+  tr.querySelectorAll('th,td').forEach(function(td){
+   if(td.classList.contains('noexp'))return;
+   if(td.tagName==='TH'&&td.textContent.trim()==='操作')return;
+   if(td.querySelector('button'))return;
+   var v=td.textContent.replace(/\s+/g,' ').trim().replace(/,/g,'，').replace(/"/g,'');
+   cells.push('"'+v+'"');
+  });
+  if(cells.length)rows.push(cells.join(','));
+ });
+ var csv='\ufeff'+rows.join(String.fromCharCode(13,10));
+ var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download=(name||'导出')+'_'+now().slice(0,10).replace(/-/g,'')+'.csv';
+ document.body.appendChild(a);a.click();a.remove();
+ toast('已导出 CSV：'+(name||'表格')+' · '+(rows.length-1)+' 条记录');
+}
+document.addEventListener('click',function(){document.querySelectorAll('.dd.open').forEach(function(d){d.classList.remove('open')})});
+function ddMenu(type,i,ops,label){
+ if(!ops||!ops.length)return '';
+ var items=ops.map(function(o){return '<a onclick="event.stopPropagation();this.closest(\'.dd\').classList.remove(\'open\');openAct(\''+type+'\','+i+',\''+o[1]+'\')">'+o[0]+'</a>'}).join('');
+ return '<div class="dd" onclick="ddToggle(event,this)"><button class="btn p sm">⚙ '+(label||'处置')+' ▾</button><div class="ddmenu">'+items+'</div></div>';
+}
+function sigOps(a,i){
+ var ops=[];
+ if(a.st==='待响应')ops=[['安排社区处理','sendC'],['街道直接处置','self'],['发起吹哨','pipe'],['标记误报','mis']];
+ if(a.st==='已吹哨')ops=[];
+ if(a.st==='社区处理中')ops=[['街道确认闭环','cClose'],['街道收回','cFail']];
+ if(a.st==='已上报区级'||a.st==='区级核查中')ops=[];
+ if(a.st==='待判断')ops=[['开始跟进','startF'],['忽略','ignore']];
+ if(a.st==='跟进中')ops=[['记录跟进','follow'],['解除关注','release'],['忽略','ignore']];
+ return ddMenu('sig',i,ops,'处置');
+}
+function needExec(i,act,note,p1,p2,files,dept){
+ var n=NEEDS[i];if(!n)return;
+ if((act==='ok'||act==='wait'||act==='no'||act==='accept'||act==='ret')&&VIEW!=='district'){toast('审批验收权限在区级 · 街道无权操作');return}
+ if((act==='recv'||act==='done')&&VIEW!=='street'){toast('承接实施由街道操作 · 区级不越位');return}
+ if(act==='ok'){if(n.st!=='待审批'){toast('该需求不在待审批状态');return}n.st='已调配';n.execDept=dept||n.execDept;n.log.push({t:now(),by:byName(),act:'审批通过 · 调配下达',note:(n.execDept?'推送科室：'+n.execDept+' · ':'')+(note||'同意调配'),files:files&&files.length?files:null});toast('已审批 · 资源调配下达街道承接');}
+ if(act==='recv'){if(n.st==='已派遣'){toast('该需求已承接派遣 · 无需重复操作');return}n.st='已派遣';n.p1=p1;n.p2=p2;n.log.push({t:now(),by:byName(),act:'承接 · 派遣',note:'派遣人员：'+p1+' · 时限：'+p2,files:files&&files.length?files:null});toast('已承接 · 资源下沉派遣');}
+ if(act==='wait'){if(n.st==='已暂缓'){toast('该需求已暂缓');return}n.st='已暂缓';n.log.push({t:now(),by:byName(),act:'暂缓',note:note,files:files&&files.length?files:null});if(n.dRef!==undefined&&DALERTS[n.dRef]&&!DALERTS[n.dRef].done){var dw=DALERTS[n.dRef];dw.st2='待处置';dw.log.push({t:now(),by:byName(),act:'资源统筹调配暂缓',note:'调配任务暂缓 · 预警退回待处置'})}toast('已暂缓 · 关联预警退回待处置');}
+ if(act==='no'){if(n.st==='不派遣'){toast('该需求已决定不派遣');return}n.st='不派遣';n.log.push({t:now(),by:byName(),act:'不派遣',note:note,files:files&&files.length?files:null});if(n.dRef!==undefined&&DALERTS[n.dRef]&&!DALERTS[n.dRef].done){var dnw=DALERTS[n.dRef];dnw.st2='待处置';dnw.log.push({t:now(),by:byName(),act:'资源统筹调配不派遣',note:'决定不派遣资源 · 预警退回待处置'})}toast('已决定不派遣 · 关联预警退回待处置');}
+ if(act==='done'){if(n.st==='待验收'){toast('该需求已标记完成 · 待区级验收');return}n.st='待验收';n.log.push({t:now(),by:byName(),act:'下沉实施完成 · 待区级验收',note:note,files:files&&files.length?files:null});GUIDES.unshift({t:now().slice(0,10),obj:n.xq+(n.suggest==='现场质询'?'业委会':'居委会'),item:n.suggest+'（资源下沉实施）',way:'上门',res:'资源已到位 · 实施完成 · 待区级验收归档'+(files&&files.length?' · 佐证材料'+files.length+'份':''),bg:'区级调配下达、街道承接实施后开展上门指导',log:[{t:now(),by:byName(),act:'开展指导',note:'上门 · '+n.suggest+'（资源下沉实施）'}]});toast('下沉实施完成 · 待区级验收通过后归档');}
+ if(act==='accept'){if(n.st!=='待验收'){toast('该需求不在待验收状态');return}n.st='已完成';n.done=true;n.log.push({t:now(),by:byName(),act:'区级验收通过 · 归档',note:note,files:files&&files.length?files:null});if(n.dRef!==undefined&&DALERTS[n.dRef]&&!DALERTS[n.dRef].done){var da=DALERTS[n.dRef];da.st2='已闭环';da.done=true;da.log.push({t:now(),by:byName(),act:'资源统筹调配闭环',note:note});if(da.sRef!==undefined){SALERTS[da.sRef].done=true;SALERTS[da.sRef].st='已闭环';SALERTS[da.sRef].log.push({t:now(),by:byName(),act:'资源统筹调配闭环',note:note})}}toast('区级验收通过 · 需求归档'+(n.dRef!==undefined?' · 关联预警同步闭环':''));}
+ if(act==='ret'){if(n.st!=='待验收'){toast('该需求不在待验收状态');return}n.st='已派遣';n.log.push({t:now(),by:byName(),act:'区级退回补充',note:note,files:files&&files.length?files:null});toast('已退回街道 · 补充实施后重新标记完成');}
+}
+function needOps(n,i){
+ if(VIEW==='district'){
+  if(n.st==='待审批')return ddMenu('need',i,[['审批 · 调配下达','ok'],['暂缓','wait'],['不派遣','no']],'操作');
+  if(n.st==='待验收')return ddMenu('need',i,[['验收通过 · 归档','accept'],['退回补充','ret']],'操作');
+  return '';
+ }
+ if(n.st==='已调配')return ddMenu('need',i,[['承接派遣','recv']],'操作');
+ if(n.st==='已派遣')return ddMenu('need',i,[['标记完成','done']],'操作');
+ return '';
+}
+function dAlertExec(i,act,note,files){
+ var a=DALERTS[i];if(!a)return;
+ if(a.done&&act!=='down'){toast('该预警已处理归档 · 无需重复操作');return}
+ if(act==='down'){if(a.st2==='已推送科室核实'){toast('该预警已推送科室核实 · 无需重复操作');return}a.st2='已推送科室核实';a.log.push({t:now(),by:byName(),act:'推送科室核实',note:'推送至'+dept+(note?' · '+note:''),files:files&&files.length?files:null});if(a.sRef!==undefined){SALERTS[a.sRef].st='区级核查中';SALERTS[a.sRef].log.push({t:now(),by:byName(),act:'区级推送科室核实',note:dept+(note?' · '+note:''),files:files&&files.length?files:null})}toast('已推送'+dept+'核实 · 部门权责不变');}
+ if(act==='mis'){a.st2='已标记误报';a.done=true;a.log.push({t:now(),by:byName(),act:'标记误报',note:note,files:files&&files.length?files:null});if(a.sRef!==undefined){SALERTS[a.sRef].done=true;SALERTS[a.sRef].st='已标记误报';SALERTS[a.sRef].log.push({t:now(),by:byName(),act:'区级标记误报',note:note,files:files&&files.length?files:null})}toast('已标记误报 · 街道同源信号与看板同步回落');}
+ if(act==='close'){a.st2='已闭环';a.done=true;a.log.push({t:now(),by:byName(),act:'核查闭环',note:note,files:files&&files.length?files:null});if(a.sRef!==undefined){SALERTS[a.sRef].done=true;SALERTS[a.sRef].st='已闭环';SALERTS[a.sRef].log.push({t:now(),by:byName(),act:'区级处置闭环',note:note,files:files&&files.length?files:null})}toast('核查处置闭环 · 街道同源信号同步');}
+}
+function dAlertOps(a,i){
+ if(a.done)return '';
+ if(a.st2==='待处置')return ddMenu('dalert',i,[['推送科室核实','down'],['标记误报','mis']],'处置');
+ if(a.st2==='已推送科室核实')return ddMenu('dalert',i,[['标记闭环','close'],['标记误报','mis']],'处置');
+ return '';
+}
+
+function vBoard(){
+ var h=guide(['社区治理活动自然沉淀','系统自动归集（实时/月度/事后）','本看板 L3/L4','态势研判 · 资源下沉'],'<b>本页无操作按钮</b>（报备清单除外）——看板只呈现、不操作、不排名。每张小区卡的信号灯（🟢🟡🔴🔵）与提示文字由<b>预警接收/资源下沉模块实时推导</b>：预警闭环或误报后小区自动回落常态。本页按归集机制完整呈现五类数据：小区信号卡、💰公共资金月度归集表（资金异常与预警联动）、📋自治决策报备清单（待接收可点「接收」）。<b>点击小区卡可查看该小区全量详情</b>（信号/需求/资金/报备/吹哨聚合）。点击右上角「📐 数据要求 L1-L4」查看分级与归集规则；顶部切换街道/区级视图。','不排名 · 不比较 · 不摊派；L1个人隐私与L2内部博弈在本端不可见。');
+ h+='<div class="sec-t">数据归集看板 <span class="sub">'+STREET+'辖区 · 17个小区 · 本页展示5个示例小区 · 数据自动归集</span></div>';
+ h+='<div class="notice g">📡 <b>数据自动归集 · 不排名 · 不比较 · 仅呈现</b> —— 治理数据自然沉淀（治产数用），非专项填报。L1个人隐私不出社区，本看板仅展示L3/L4级数据。小区信号灯与预警/需求模块实时联动。</div>';
+ h+='<div class="xqgrid">';
+ XQ.forEach(function(x,i){
+  var sg=xqSig(x);
+  var nt=xqNote(x);
+  var w=nt?'<div class="sigbar" style="color:'+(sg==='r'?'#b91c1c':sg==='y'?'#ad6800':'#1d4ed8')+'">'+nt+'</div>':'';
+  h+='<div class="xq" style="cursor:pointer;transition:.15s" onmouseover="this.style.borderColor=\'#c7d8f5\';this.style.boxShadow=\'0 2px 10px rgba(15,23,42,.08)\'" onmouseout="this.style.borderColor=\'\';this.style.boxShadow=\'\'" onclick="openXqDetail('+i+')"><h4>'+sigDot(sg)+' '+x.name+' <span style="margin-left:auto;font-size:10.5px;color:var(--dim)">'+x.type+'</span></h4>'+
+  '<div class="k"><span>本月工单 <span class="lv lv3">L3</span></span><b>'+x.wd+' 单</b></div>'+
+  '<div class="k"><span>按期闭环率</span><b>'+(x.close>=90?'<span style="color:#059669">':x.close>=85?'<span style="color:#ad6800">':'<span style="color:#b91c1c">')+x.close+'%</span></b></div>'+
+  '<div class="k"><span>业主满意度 <span class="lv lv4">L4</span></span><b>'+(x.sat>=4.0?'<span style="color:#059669">':'<span style="color:#b91c1c">')+x.sat.toFixed(1)+'</span></b></div>'+
+  '<div class="k"><span>公共收益公示</span><b>'+(x.pub==='已公示'?'<span style="color:#059669">'+x.pub+'</span>':'<span style="color:#b91c1c">'+x.pub+'</span>')+'</b></div>'+
+  '<div class="k"><span>物业履约评级 <span class="lv lv3">L3</span></span><b>'+x.rate+'</b></div>'+
+  w+'<div style="font-size:10px;color:var(--dim);margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)">🔍 点击查看小区全量详情</div></div>';
+ });
+ h+='</div>';
+ h+='<div class="card"><h3>💰 公共资金月度归集 <span class="lv lv3">L3</span> <span class="tag b">月度归集</span> <span class="tip">法定资金监管 · 与预警联动</span>'+expBtn('公共资金月度归集')+'</h3><table><tr><th>小区</th><th>本月公共收益收入</th><th>维修资金支出</th><th>交易笔数</th><th>公示状态</th><th>资金异常标记</th><th>操作</th></tr>';
+ FUNDS.forEach(function(f,i){
+  var anom=SALERTS.filter(function(s){return s.xq===f.xq&&!s.done&&/公共收益|资金|收入|支出/.test(s.title)})[0];
+  var anomTxt=anom?'<span style="color:#b91c1c">'+anom.title+'</span>':'<span style="color:var(--dim)">—</span>';
+  h+='<tr><td>'+f.xq+'</td><td>'+money(f.income)+'</td><td>'+(f.repair?money(f.repair):'<span style="color:var(--dim)">—</span>')+'</td><td>'+f.n+' 笔</td>'+
+  '<td>'+(f.pub==='已公示'?'<span style="color:#059669">已公示</span>':'<span style="color:#b91c1c">本月异常</span>')+'</td><td>'+anomTxt+'</td><td><button class="btn o sm" onclick="openFundDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table></div>';
+ h+='<div class="card"><h3>📋 社区自治决策报备 <span class="tag p">社区主动报备 · 事后</span> <span class="tip">街道"指导"职能的信息基础</span>'+expBtn('自治决策报备')+'</h3><table><tr><th>小区</th><th>决策事项</th><th>类型</th><th>报备时间</th><th>接收状态</th><th>操作</th></tr>';
+ FILINGS.forEach(function(f,i){
+  var op='<button class="btn o sm" onclick="openDetail('+i+')">详情</button> '+(f.st==='待接收'?'<button class="btn g sm" onclick="openAct(\'file\','+i+',\'recv\')">接收</button>':'<span style="font-size:11px;color:var(--dim)">—</span>');
+  h+='<tr><td>'+f.xq+'</td><td>'+f.item+'</td><td><span class="tag '+(f.type==='公示'?'p':f.type==='表决'?'b':'gr')+'">'+f.type+'</span></td><td class="mono">'+f.t+'</td>'+
+  '<td><span class="tag '+(f.st==='已接收'?'g':'y')+'">'+f.st+'</span>'+(f.note?'<div style="font-size:10.5px;color:var(--dim);margin-top:2px">'+f.note+'</div>':'')+'</td><td>'+op+'</td></tr>';
+ });
+ h+='</table></div>';
+ h+='<div class="card"><h3>归集机制 <span class="tip">数据从哪来 · 多久一次 · 用来干什么 · 在本端的体现位置</span>'+expBtn('归集机制')+'</h3><table><tr><th>数据类型</th><th>归集方式</th><th>频率</th><th>用途</th><th>本端体现位置</th></tr>'+
+ '<tr><td>治理运行统计（工单数/履约率/满意度均值）</td><td>系统自动归集</td><td><span class="tag g">实时</span></td><td>态势研判 · 资源下沉</td><td>本页小区信号卡 · 区级态势仪表盘</td></tr>'+
+ '<tr><td>异常事件标记（公共收益骤降/电梯逾期未检）</td><td>系统自动推送</td><td><span class="tag g">实时</span></td><td>法定监管预警</td><td>预警接收 🔴信号卡 · 区级预警中心</td></tr>'+
+ '<tr><td>信用记录（物业履约评级/供应商信用）</td><td>系统自动归集</td><td><span class="tag b">月度</span></td><td>信用监管 · 市场参考</td><td>信用管理中心 · 四维信用</td></tr>'+
+ '<tr><td>公共收益/维修资金使用记录</td><td>系统自动归集</td><td><span class="tag b">月度</span></td><td>法定资金监管</td><td><b>本页公共资金月度归集表</b></td></tr>'+
+ '<tr><td>社区自治决策记录（议事/表决/公示）</td><td>社区主动报备</td><td><span class="tag p">事后</span></td><td>街道"指导"职能的信息基础</td><td><b>本页决策报备清单</b>（可接收）</td></tr></table>'+
+ '<div class="notice m" style="margin-top:12px">⚙️ <b>归集条件</b>：① 数据已经社区内部确认（月度公示无异议即视为确认）② 个人隐私数据（L1）始终不出社区 ③ 内部博弈细节（L2）经脱敏后以统计形式归集 ④ 法定监管所需的最小必要数据集优先归集。</div></div>';
+ h+='<div class="notice b">📌 <b>归集不等于上缴数据主权</b>：居委会对街道是"协助"关系（《居委会组织法》第2条）——归集属于协助框架下的信息互通，街道据此向社区更精准地匹配资源。</div>';
+ return h;
+}
+
+function sigCard(a,i,arch){
+ var cls=a.lv==='r'?'r':a.lv==='y'?'y':'b';
+ var stTag=a.done?'gr':(a.lv==='r'?'r':'y');
+ var pp=PIPES.filter(function(p){return p.sIdx===i})[0];
+ var pipeRow=pp?'<br><b style="color:var(--sub)">条块协同：</b>📣 已吹哨 '+pp.dept+' · <span style="color:#ad6800">'+pp.st+'</span> · '+pp.res:'';
+ return '<div class="sigcard '+cls+(arch?' dimc':'')+'"><div class="dot" style="background:'+(a.lv==='r'?'var(--r)':a.lv==='y'?'var(--y)':'var(--b)')+'"></div><div class="gt">'+
+ '<b><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(a.lv==='r'?'var(--r)':a.lv==='y'?'var(--y)':'var(--b)')+';margin-right:7px"></span>'+a.xq+' · '+a.title+' <span class="tag '+stTag+'">'+a.st+'</span></b>'+
+ '<p><b style="color:var(--sub)">触发条件：</b>'+a.trig+'<br><b style="color:var(--sub)">数据来源：</b>'+a.src+' <span class="lv lv3">L3</span><br><b style="color:var(--sub)">系统建议：</b>'+a.adv+'<br><span style="color:var(--dim)">'+a.t+' · '+a.resp+(a.lv==='r'?' · 📱短信/APP已提醒':'')+'</span>'+pipeRow+'</p>'+
+ logHTML(a.log)+'</div><div class="ops"><button class="btn o sm" onclick="openSigDetail('+i+')">详情</button>'+(arch?'':sigOps(a,i))+'</div></div>';
+}
+function vAlerts(){
+ var h=guide(['异常事件（阈值/偏离）','系统自动推送（实时）','本页信号卡','社区先行处理 / 街道直接处置 / 吹哨','街道确认闭环 · 台账留痕 / 上报区级'],'点卡片右下角「<b>⚙ 处置</b>」下拉选择动作 → 弹出<b>执行窗口</b>——每步自动留痕（谁 · 何时 · 做了什么），卡片内时间线可查，每条信号可点「<b>详情</b>」。<br><b>🔴待响应</b>：<b>安排社区处理</b>（任务<b>转入指导台账</b>，由街道确认闭环）/ <b>发起吹哨</b>（街道无权限事项 → 条块协同，部门处置回传后系统自动闭环）/ 标记误报。<br><b>已吹哨</b>：等待部门响应处置（条块协同页可见）。<br><b>🟡待判断</b>：开始跟进 / 忽略。<br><b>🟡跟进中</b>：记录跟进（留痕、状态不变、可多次）/ 解除关注（指标恢复 · 闭环归档）/ 忽略。终态信号自动归档。','预警只是线索——平台传递信号，职能部门法定职责不变，不替代行政执法流程。');
+ h+='<div class="sec-t">异常预警接收 <span class="sub">🔴 24小时内响应 · 社区先行处理 · 街道直接处置 · 操作留痕</span></div>';
+ h+='<div class="notice r">🔴 <b>预警信号</b>：触发法定监管阈值时系统自动推送（短信/APP同步提醒）。处置路径：<b>①安排社区先行处理</b>——任务<b>转入指导台账</b>，社区处理完毕后由街道确认闭环，处理详情沉淀为台账记录；社区处理不了由街道收回。<b>②街道直接处置</b>——下达督办/限期整改通知、协调执法（法定职责由职能部门承担，街道不替物业花钱办事）——事件转入「街道处理事件」。<b>③处理不了上报区级</b>——进入区级预警中心。<b>预警只是线索，原有职能部门法定职责不变</b>。<b>待响应超过24小时自动升级上报区级。</b></div>';
+ SALERTS.forEach(function(a,i){
+  if(!a.done&&a.st!=='自行处理中'&&a.st!=='社区处理中'&&a.st!=='已吹哨')h+=sigCard(a,i,false);
+ });
+ var doneList=SALERTS.filter(function(a){return a.done&&!a.log.some(function(l){return l.act==='街道直接处置'||l.act==='街道调配资源 · 自行处理'})});
+ doneList.sort(function(a,b){var ta=a.log[a.log.length-1].t,tb=b.log[b.log.length-1].t;return ta<tb?1:ta>tb?-1:0});
+ if(doneList.length){
+  h+='<div class="card"><h3>已闭环归档 <span class="tag gr">'+doneList.length+' 条 · 处置留痕完整 · 点击详情查看全链路</span>'+expBtn('预警接收归档')+'</h3>';
+  h+='<table><tr><th>闭环时间</th><th>级别</th><th>小区</th><th>预警事项</th><th>闭环方式</th><th>处置结果</th><th>操作</th></tr>';
+  doneList.forEach(function(a){
+   var i=SALERTS.indexOf(a);
+   var closeL=a.log[a.log.length-1];
+   var wayM={'标记闭环':'确认闭环','标记误报':'误报排除','街道确认闭环':'社区处理完成 · 街道确认','忽略信号':'正常波动 · 忽略','解除关注':'指标恢复 · 解除关注','区级处置闭环':'区级处置闭环'};
+   var way=wayM[closeL.act]||closeL.act;
+   h+='<tr><td class="mono">'+closeL.t+'</td><td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+(a.lv==='r'?'var(--r)':'var(--y)')+'"></span></td><td>'+a.xq+'</td><td>'+a.title+'</td><td><span class="tag gr">'+way+'</span></td><td style="font-size:11.5px;color:var(--sub)">'+(closeL.note||'—')+'</td><td><button class="btn o sm" onclick="openSigDetail('+i+')">详情</button></td></tr>';
+  });
+  h+='</table></div>';
+ }
+ h+='<div class="notice y">🟡 <b>关注信号</b>：单项指标偏离正常范围时系统自动标记——<b>待判断</b>（管理者还没决定）→「开始跟进」变<b>跟进中</b>（每次跟进点「记录跟进」留痕，状态不变）→「解除关注」（指标恢复 · 归档）或「忽略」（正常波动 · 归档）。不给基层打电话催，也不发通报。<b>🟢 常态信号不进入本页</b>——系统自动更新仪表盘，无需人工干预。</div>';
+ return h;
+}
+function handleCard(a,i){
+ return '<div class="sigcard r"><div class="dot" style="background:var(--r)"></div><div class="gt">'+
+ '<b>🛠 '+a.xq+' · '+a.title+' <span class="tag r">'+a.st+'</span></b>'+
+ '<p><b style="color:var(--sub)">处置路径：</b>社区处理不了退回 → 街道直接处置（督办整改 / 协调执法）<br><b style="color:var(--sub)">数据来源：</b>'+a.src+' <span class="lv lv3">L3</span></p>'+
+ logHTML(a.log)+'</div><div class="ops"><button class="btn o sm" onclick="openSigDetail('+i+')">详情</button>'+handleOps(a,i)+'</div></div>';
+}
+function handleOps(a,i){
+ if(a.st==='自行处理中')return ddMenu('sig',i,[['处理完成','close'],['发起吹哨','pipe'],['上报区级','up']],'处置');
+ return '';
+}
+function vHandle(){
+ var h=guide(['社区处理不了 · 退回预警接收','街道直接处置','本页街道处理事件','处理完成闭环','沉淀为处置记录列表'],'<b>本页只放街道直接处置的事件</b>——从预警接收点「街道直接处置」转入。点「<b>⚙ 处置</b>」下拉选择：「处理完成」→ 填处置结果，预警闭环看板回落，<b>事件沉淀为下方处置记录列表</b>；「发起吹哨」→ 处置中发现超出街道权限的事项，吹哨区级职能部门联合处置（进入条块协同）；「上报区级」→ 填上报说明，进入区级预警中心。每步留痕可查，每条事件与记录均可点「<b>详情</b>」。','街道直接处置是督办与执法衔接，不是替物业包办花钱办事——处理不了就上报，不拖延不隐瞒；社区能处理的优先社区先行。');
+ h+='<div class="sec-t">街道处理事件 <span class="sub">🛠 街道直接处置（督办整改 / 协调执法）· 闭环后沉淀为处置记录</span></div>';
+ var list=SALERTS.filter(function(a){return a.st==='自行处理中'});
+ if(!list.length)h+='<div class="card"><div style="font-size:12.5px;color:var(--dim);padding:8px 0">暂无在途的街道直接处置事件。在「预警接收」中对已推送科室核实的信号点「街道直接处置」即可转入本页。</div></div>';
+ list.forEach(function(a){var i=SALERTS.indexOf(a);h+=handleCard(a,i)});
+ var doneList=SALERTS.filter(function(a){return a.done&&a.log.some(function(l){return l.act==='街道直接处置'||l.act==='街道调配资源 · 自行处理'})});
+ if(doneList.length){
+  h+='<div class="card"><h3>处置记录列表 <span class="tag gr">'+doneList.length+' 条 · 处置留痕完整</span>'+expBtn('街道处置记录')+'</h3>';
+  h+='<table><tr><th>闭环时间</th><th>小区</th><th>事件事项</th><th>处置方式</th><th>处置结果</th><th>操作</th></tr>';
+  doneList.forEach(function(a){
+   var i=SALERTS.indexOf(a);
+   var closeL=a.log.filter(function(l){return l.act==='标记闭环'}).pop();
+   h+='<tr><td class="mono">'+(closeL?closeL.t:a.t)+'</td><td>'+a.xq+'</td><td>'+a.title+'</td><td>街道自行处理</td><td>'+(closeL?closeL.note:'—')+'</td><td><button class="btn o sm" onclick="openSigDetail('+i+')">详情</button></td></tr>';
+  });
+  h+='</table></div>';
+ }
+ return h;
+}
+
+function vNeeds(){
+ var h=guide(['治理指标偏离（履约/议事/投诉）','系统识别需求','区级审批 · 调配下达','街道承接 · 派遣','实施完成 · 区级验收归档'],'<b>职权链：区级审批调配，街道承接实施</b>——「待审批」由区级处理（本页显示"待区级审批"）；「已调配」由街道点「⚙ 操作」下拉选「承接派遣」填人员与时限；「已派遣」后下拉选「标记完成」填效果说明并<b>上传佐证材料</b>（图片/文档，最多5个）。<b>标记完成后进入「待验收」——由区级验收通过后最终归档</b>（可退回补充）。每步自动留痕（谁 · 何时 · 做了什么），卡片内时间线可查。每条需求可点「<b>详情</b>」。','资源下沉基于真实数据信号，不是"会哭的孩子有奶吃"。');
+ h+='<div class="sec-t">资源下沉 <span class="sub">🔵 系统识别需求 → 区级调配下达 → 街道承接实施 → 完成 → 区级验收归档</span></div>';
+ h+='<div class="notice b">🔵 <b>需求信号</b>：系统识别出某社区需要特定资源支持（现场质询、调研、培训、政策辅导）后自动建议。区级审批通过后<b>调配下达街道</b>；街道是"管道"——承接区级调配的资源并实施下沉，不是过滤指令，而是输送资源。任务链：待审批（区级）→ 已调配（街道承接）→ 已派遣（记录人员/时限）→ 标记完成（记录效果）→ <b>待验收（区级审批通过后归档）</b>。</div>';
+ NEEDS.forEach(function(n,i){
+  if(n.st==='已完成'||n.st==='不派遣'||n.st==='已暂缓')return;
+  var stTag=(n.st==='待审批'||n.st==='待验收')?'y':'b';
+  h+='<div class="sigcard b"><div class="dot" style="background:var(--b)"></div><div class="gt"><b>🔵 '+n.xq+' <span class="tag '+stTag+'">'+n.st+'</span></b>'+
+  '<p>'+n.reason+'<br><b style="color:#1d4ed8">建议资源：'+n.suggest+'</b>'+(n.execDept?'<br><span style="color:var(--sub)">承办科室：'+n.execDept+'</span>':'')+(n.st==='已派遣'&&n.p1?'<br><span style="color:var(--sub)">派遣：'+n.p1+' · 时限：'+n.p2+'</span>':'')+'</p>'+
+  logHTML(n.log)+'</div><div class="ops"><button class="btn o sm" onclick="openNeedDetail('+i+')">详情</button>'+needOps(n,i)+(n.st==='待审批'?'<span style="font-size:11px;color:var(--dim)">待区级审批</span>':n.st==='待验收'?'<span style="font-size:11px;color:var(--dim)">待区级验收</span>':'')+'</div></div>';
+ });
+ var doneN=NEEDS.filter(function(n){return n.st==='已完成'||n.st==='不派遣'||n.st==='已暂缓'});
+ if(doneN.length){
+  h+='<div class="card"><h3>已处理归档 <span class="tag gr">'+doneN.length+' 条 · 决策留痕完整</span>'+expBtn('资源下沉归档')+'</h3>';
+  h+='<table><tr><th>时间</th><th>小区</th><th>建议资源</th><th>终态</th><th>决策说明</th><th>操作</th></tr>';
+  doneN.forEach(function(n){
+   var i=NEEDS.indexOf(n);
+   var last=n.log[n.log.length-1];
+   h+='<tr><td class="mono">'+(last?last.t:'')+'</td><td>'+n.xq+'</td><td>'+n.suggest+'</td><td><span class="tag '+(n.st==='已完成'?'g':'gr')+'">'+n.st+'</span></td><td>'+(last&&last.note?last.note:'—')+'</td><td><button class="btn o sm" onclick="openNeedDetail('+i+')">详情</button></td></tr>';
+  });
+  h+='</table></div>';
+ }
+ h+='<div class="notice g">✅ <b>资源下沉原则</b>：资源下沉基于系统识别的真实数据信号，而非"会哭的孩子有奶吃"。哪个社区需要什么，数据说了算。下沉效果纳入考核。</div>';
+ return h;
+}
+
+function commCard(a,i){
+ return '<div class="sigcard r"><div class="dot" style="background:var(--r)"></div><div class="gt">'+
+ '<b>🏘 '+a.xq+' · '+a.title+' <span class="tag r">社区处理中</span><span class="tag p" style="margin-left:6px">'+(a.comm||getCommunityOf(a.xq))+'</span></b>'+
+ '<p><b style="color:var(--sub)">触发条件：</b>'+a.trig+'<br><b style="color:var(--sub)">数据来源：</b>'+a.src+' <span class="lv lv3">L3</span></p>'+
+ logHTML(a.log)+'</div><div class="ops"><button class="btn o sm" onclick="openSigDetail('+i+')">详情</button>'+ddMenu('sig',i,[['街道确认闭环','cClose'],['街道收回','cFail']],'处置')+'</div></div>';
+}
+function vGuide(){
+ var h=guide(['预警接收 · 安排社区先行处理','任务转入本页','社区处理中','街道确认闭环 / 街道收回','处理详情沉淀为台账记录'],'<b>社区处理任务在本页流转</b>——点「<b>⚙ 处置</b>」下拉选择：「街道确认闭环」→ 社区处理详情记入下方台账；「街道收回」→ 任务退回预警接收。下方台账是街道履行指导职能的工作记录（对象/事项/方式/结果），按时间倒序留存，每条可点「<b>详情</b>」。','对居委会是"指导"不是"领导"：不下达行政命令、不替代业主大会决策、不把"协助"变"指标摊派"。');
+ h+='<div class="sec-t">指导工作台账 <span class="sub">社区处理任务流转 + 指导工作记录 · 指导职能的自我管理</span></div>';
+ h+='<div class="notice m">⚖️ <b>法定关系</b>：政府对居委会是"指导、支持和帮助"——不是"领导"，不是"管理"（《居委会组织法》第2条）。本台账是街道履行指导职能的工作记录，不向社区摊派。</div>';
+ var tasks=SALERTS.filter(function(a){return a.st==='社区处理中'});
+ if(tasks.length){
+  h+='<div class="card"><h3>🏘 社区处理任务 · 在途 <span class="tag b">'+tasks.length+' 条</span> <span class="tip">预警接收「安排社区处理」后转入本页</span></h3>';
+  tasks.forEach(function(a){var i=SALERTS.indexOf(a);h+=commCard(a,i)});
+  h+='</div>';
+ }
+ h+='<div class="card"><h3>📒 指导工作台账 <span class="tag gr">'+GUIDES.length+' 条</span>'+expBtn('指导工作台账')+'</h3><table><tr><th>时间</th><th>对象</th><th>指导事项</th><th>方式</th><th>结果</th><th>操作</th></tr>';
+ GUIDES.forEach(function(g,i){
+  h+='<tr><td class="mono">'+g.t+'</td><td>'+g.obj+'</td><td>'+g.item+'</td><td>'+g.way+'</td><td>'+g.res+'</td><td><button class="btn o sm" onclick="openGuideDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table></div>';
+ h+='<div class="notice b">📌 街道可做的：指导业委会成立与运作、协调资源下沉、矛盾化解兜底。街道不可做的：向居委会下达行政命令、替代业主大会决策、把"协助"变成"指标摊派"。</div>';
+ return h;
+}
+
+function vPipe(){
+ var h=guide(['社区问题（消防/设备/资金）','街道无法解决','吹哨区级职能部门','部门响应处置','结果回传 · 系统自动闭环'],'本页<b>无手动操作</b>——街道发起吹哨后等待部门响应；<b>部门处置完成回传结果，系统自动闭环</b>（关联的预警信号同步闭环）。每条事项可点「<b>详情</b>」查看事项背景、关联在途预警与完整留痕。','平台传递信号，部门法定职责与处置流程不变——避免"吹哨容易报到难"。闭环由部门回传触发，街道不替部门做闭环判断。');
+ h+='<div class="sec-t">条块协同 · 吹哨 <span class="sub">街道无法解决的事项 → 吹哨区级职能部门 → 部门响应回传 → 系统自动闭环</span></div>';
+ h+='<div class="notice b">📣 <b>吹哨机制</b>：社区问题需要区级职能部门介入时（消防、特种设备、维修资金监管等），街道发起"吹哨"，协调部门响应。<b>部门处置完成后回传结果，系统自动闭环</b>——街道不手动标记，关联的预警信号同步闭环。</div>';
+ h+='<div class="card"><h3>📣 条块协同事项 <span class="tag gr">'+PIPES.length+' 条</span>'+expBtn('条块协同事项')+'</h3><table><tr><th>事项</th><th>响应部门</th><th>发起时间</th><th>响应状态</th><th>关联预警</th><th>处置结果</th><th>操作</th></tr>';
+ PIPES.forEach(function(p,i){
+  var st=p.st==='已响应'?'y':'g';
+  var stTxt=p.st==='已响应'?'部门处置中 · 回传后自动闭环':p.st;
+  var linkA=(p.sIdx!==undefined&&SALERTS[p.sIdx])?SALERTS[p.sIdx]:null;
+  var op='<button class="btn o sm" onclick="openPipeDetail('+i+')">详情</button>';
+  h+='<tr><td>'+p.item+'</td><td>'+p.dept+'</td><td class="mono">'+p.t+'</td><td><span class="tag '+st+'">'+stTxt+'</span></td>'+
+  '<td style="font-size:11.5px;color:var(--sub)">'+(linkA?linkA.xq+' · '+linkA.title+'<br><span class="tag '+(linkA.done?'gr':'r')+'">'+linkA.st+'</span>':'—')+'</td><td>'+(p.st==='已响应'?'⏳ 等待部门回传…':p.res)+'</td><td>'+op+'</td></tr>';
+ });
+ h+='</table></div>';
+ return h;
+}
+
+function vDash(){
+ var h=guide(['各街道归集数据','全区汇总统计（L4）','态势仪表盘','态势研判 · 政策制定'],'<b>本页无操作按钮</b>——纯呈现。顶部四张统计卡为全区信号分布，随预警中心/资源统筹调配的操作实时联动；<b>每张卡下方标注构成口径</b>：🔴=区级预警中心在途+街道处置中；🔵=资源统筹调配在途；🟡=文昌街道关注在途+明湖/临江基线。按街道分布表定位信号集中的街道；趋势图看全区近6月走向。','不做无法律依据的排名、评比、摊派——分布图仅呈现，不排序不通报。');
+ h+='<div class="sec-t">全区态势仪表盘 <span class="sub">'+DIST+' · 3街道 · '+(DSTAT.g+DSTAT.y+DSTAT.r+DSTAT.b)+'个小区 · 数据自动归集</span></div>';
+ h+='<div class="g4">'+
+ '<div class="stat"><div class="n" style="color:var(--g)">'+DSTAT.g+'</div><div class="l">🟢 常态小区</div><div class="m">无在途信号</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--y)">'+DSTAT.y+'</div><div class="l">🟡 关注小区</div><div class="m">文昌街道在途 '+DSTAT.streetY+' · 明湖/临江 '+DSTAT.baseY+'</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--r)">'+DSTAT.r+'</div><div class="l">🔴 预警小区</div><div class="m">区级预警中心 '+DSTAT.dR+' · 街道处置中 '+DSTAT.streetR+'</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--b)">'+DSTAT.b+'</div><div class="l">🔵 需求小区</div><div class="m">资源统筹调配在途 '+DSTAT.b+' 条</div></div></div>';
+ h+='<div class="card"><h3>按街道分布 <span class="tip">点击行查看街道详情</span>'+expBtn('街道分布')+'</h3><table><tr><th>街道</th><th>小区总数</th><th>🟢</th><th>🟡</th><th>🔴</th><th>🔵</th><th>分布</th><th>操作</th></tr>';
+ STREETS.forEach(function(s,i){
+  var bar='';var tot=Math.max(s.total,1);
+  [['g','var(--g)',s.g],['y','var(--y)',s.y],['r','var(--r)',s.r],['b','var(--b)',s.b]].forEach(function(seg){
+   if(seg[2]>0)bar+='<i style="width:'+(seg[2]/tot*100)+'%;background:'+seg[1]+';display:inline-block;height:100%"></i>';
+  });
+  h+='<tr style="cursor:pointer" onmouseover="this.style.background=\'#f8fafc\'" onmouseout="this.style.background=\'\'" onclick="openStreetDetail('+i+')"><td>'+s.name+'</td><td>'+s.total+'</td><td>'+s.g+'</td><td>'+s.y+'</td><td>'+s.r+'</td><td>'+s.b+'</td><td><div class="bar" style="width:100%;display:flex">'+bar+'</div></td><td><button class="btn o sm" onclick="event.stopPropagation();openStreetDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table></div>';
+ h+='<div class="g2"><div class="card"><h3>全区按期闭环率趋势 <span class="lv lv4">L4</span> <span class="tip">近6月</span></h3><div class="chart">';
+ TREND.forEach(function(t){
+  h+='<div class="c"><div class="barbox"><i style="height:'+(t.close-75)+'%;background:linear-gradient(180deg,#3b82f6,#1d4ed8)"></i></div><span>'+t.m+'<br>'+t.close+'%</span></div>';
+ });
+ h+='</div></div><div class="card"><h3>全区业主满意度均值 <span class="lv lv4">L4</span> <span class="tip">近6月</span></h3><div class="chart">';
+ TREND.forEach(function(t){
+  h+='<div class="c"><div class="barbox"><i style="height:'+((t.sat-3)*100)+'%;background:linear-gradient(180deg,#faad14,#ad6800)"></i></div><span>'+t.m+'<br>'+t.sat.toFixed(1)+'</span></div>';
+ });
+ h+='</div></div></div>';
+ h+='<div class="notice g">✅ <b>管理者的依据是信号，不是报表</b>：不催报表（数据自动归集）、不看台账（指标自动计算）、不打电话催进度（系统自动提醒）、不写汇报材料（<b>态势报告由系统基于实时数据自动生成</b>）。管理者做四件事：判断预警、审批资源统筹调配、关注趋势、制定政策。</div>';
+ return h;
+}
+
+function dalertCard(a,i,arch){
+ var ln=(a.st2==='已转入资源统筹调配'&&!a.done)?NEEDS.filter(function(n){return n.dRef===i&&['待审批','已调配','已派遣','待验收'].indexOf(n.st)>=0})[0]:null;
+ return '<div class="sigcard r'+(arch?' dimc':'')+'"><div class="dot" style="background:var(--r)"></div><div class="gt"><b>🔴 '+a.st+' · '+a.xq+' · '+a.title+' <span class="tag '+(a.done?'gr':'r')+'">'+a.st2+'</span></b>'+
+ '<p><b style="color:var(--sub)">触发条件：</b>'+a.trig+'<br><b style="color:var(--sub)">数据来源：</b>'+a.src+' <span class="lv lv3">L3</span><br><b style="color:var(--sub)">系统建议：</b>'+a.adv+'<br><span style="color:var(--dim)">'+a.t+' · 24小时内响应 · 📱短信/APP已提醒</span></p>'+
+ (ln?'<div style="margin:6px 0 2px;padding:7px 10px;border:1px solid rgba(37,99,235,.25);border-radius:7px;background:rgba(37,99,235,.06)"><span style="font-size:11.5px;color:#1d4ed8">🔗 关联调配任务：'+(ln.suggest||'—')+' · '+ln.st+(ln.execDept?' · 承办 '+ln.execDept:'')+'</span></div>':'')+
+ logHTML(a.log)+'</div><div class="ops"><button class="btn o sm" onclick="openDAlerDetail('+i+')">详情</button></div></div>';
+}
+function vAlertc(){
+ var h=guide(['街道上报 / 系统推送','区级预警中心','转入资源统筹调配','区级审批 · 调配下达','街道实施闭环 · 关联预警同步闭环'],'本页<b>无处置按钮</b>——预警进入中心后，区级的处置方式是<b>在「资源统筹调配」页点「➕ 发起资源统筹调配」</b>，选择预警创建调配任务；任务经审批、下达、街道实施闭环后，<b>关联预警同步闭环</b>。每条预警可点「<b>详情</b>」查看完整留痕。','预警≠执法：平台生成信号，职能部门依法处置，原有权责清单与处置流程不变。');
+ h+='<div class="sec-t">预警中心 <span class="sub">🔴 触发法定监管阈值 · 24小时内响应 · 处置经资源统筹调配闭环</span></div>';
+ DALERTS.forEach(function(a,i){
+  if(!a.done)h+=dalertCard(a,i,false);
+ });
+ var doneD=DALERTS.filter(function(a){return a.done});
+ if(doneD.length){
+  h+='<div class="card"><h3>已处理归档 <span class="tag gr">'+doneD.length+' 条 · 处置留痕完整</span>'+expBtn('区级预警归档')+'</h3>';
+  h+='<table><tr><th>时间</th><th>来源街道</th><th>小区</th><th>预警事项</th><th>终态</th><th>处置结果</th><th>操作</th></tr>';
+  doneD.forEach(function(a){
+   var i=DALERTS.indexOf(a);
+   var last=a.log[a.log.length-1];
+   h+='<tr><td class="mono">'+(last?last.t:a.t)+'</td><td>'+a.st+'</td><td>'+a.xq+'</td><td>'+a.title+'</td><td><span class="tag gr">'+a.st2+'</span></td><td>'+(last&&last.note?last.note:'—')+'</td><td><button class="btn o sm" onclick="openDAlerDetail('+i+')">详情</button></td></tr>';
+  });
+  h+='</table></div>';
+ }
+ h+='<div class="notice y">⚠ <b>预警≠执法</b>：平台生成预警信号，职能部门依法处置——原有权责清单与处置流程不变。区级处置路径：在「资源统筹调配」页发起调配转化，街道实施闭环后关联预警同步闭环。街道上报的预警实时进入本中心。</div>';
+ return h;
+}
+
+var RESC_PICKS=[];
+function pickAlert(i){
+ var el=document.getElementById('rp_'+i);if(!el)return;
+ var pos=RESC_PICKS.indexOf(i);
+ if(pos>=0){RESC_PICKS.splice(pos,1);el.classList.remove('sel')}
+ else{RESC_PICKS.push(i);el.classList.add('sel')}
+}
+function openRescPicker(){
+ RESC_PICKS=[];
+ var ad=DALERTS.filter(function(a,i){return !a.done&&!NEEDS.some(function(n){return n.dRef===i&&['待审批','已调配','已派遣','待验收'].indexOf(n.st)>=0})});
+ if(!ad.length){toast('预警中心暂无在途预警');return}
+ var rows=ad.map(function(a){var i=DALERTS.indexOf(a);return '<div class="rpick" id="rp_'+i+'" onclick="pickAlert('+i+')"><span class="dot"></span><div><b>'+a.xq+' · '+a.title+'</b><br><span style="color:var(--dim)">'+a.st+' · '+a.t+' · '+a.st2+'</span></div></div>'}).join('');
+ var h='<button class="close" onclick="closeAct()">✕</button><h2>➕ 发起资源统筹调配</h2><div class="sub">从预警中心在途预警中选择（可多选）· 每项预警生成一条调配任务 · 多科室联合承办</div>';
+ h+='<div class="fld"><label>选择预警（'+ad.length+' 条在途 · 点击多选）</label><div style="border:1px solid var(--line);border-radius:8px;max-height:220px;overflow-y:auto">'+rows+'</div></div>';
+ h+='<div class="fld"><label>推送科室 <span style="font-weight:400;color:var(--dim)">（可多选 · 联合承办）</span></label><div id="rf_depts" style="display:flex;flex-wrap:wrap;gap:6px">'+['区住建局','区市场监管局','区消防救援大队','区城管执法局','区公安分局','区卫健委','区生态环境局','区应急管理局'].map(function(s){return '<span class="staff-chip" data-n="'+s+'" onclick="toggleStaff(this)">'+s+'</span>'}).join('')+'</div><div style="font-size:11px;color:var(--dim);margin-top:5px">调配任务由所选科室承办 · 审批下达后随任务流转</div></div>';
+ h+='<div class="fld"><label>调配资源类型</label><select id="rf_type"><option>现场质询</option><option>调研走访</option><option>业务培训</option><option>政策辅导</option><option>专业核查</option><option>法律援助</option><option>矛盾调解</option><option>设施评估</option><option>其他</option></select></div>';
+ h+='<div class="fld"><label>调配理由</label><textarea id="rf_note" placeholder="如：涉资金问题，需区级专业力量现场核查（可留空）"></textarea></div>';
+ h+='<div class="actfoot"><button class="btn o" onclick="closeAct()">取消</button><button class="btn p" onclick="confirmRescFrom()">确认发起</button></div>';
+ var pn=document.getElementById('actPanel');
+ pn.innerHTML=h;
+ document.getElementById('actMask').classList.add('show');
+ pn.classList.add('show');
+}
+function confirmRescFrom(){
+ if(!RESC_PICKS.length){toast('请先选择在途预警（可多选）');return}
+ var tp=document.getElementById('rf_type').value;
+ var deptEls=document.querySelectorAll('#rf_depts .staff-chip.sel');
+ var depts=Array.prototype.map.call(deptEls,function(e){return e.getAttribute('data-n')});
+ if(!depts.length){toast('请选择推送科室（可多选）');return}
+ var note=document.getElementById('rf_note').value.trim();
+ var n=0;
+ RESC_PICKS.forEach(function(idx){
+  var a=DALERTS[idx];if(!a)return;
+  NEEDS.unshift({xq:a.xq,reason:'预警中心转入：'+a.title,suggest:tp,execDept:depts.join('、'),st:'待审批',from:'alertc',dRef:idx,log:[{t:now(),by:byName(),act:'从预警中心转入 · 发起资源统筹调配',note:'推送科室：'+depts.join('、')+(note?' · '+note:'')}]});
+  a.st2='已转入资源统筹调配';
+  a.log.push({t:now(),by:byName(),act:'转入资源统筹调配',note:'推送科室：'+depts.join('、')+' · '+tp+(note?' · '+note:'')});
+  n++;
+ });
+ closeAct();render();
+ toast('已发起 '+n+' 项资源统筹调配 · 进入待审批');
+}
+function vResc(){
+ var h=guide(['治理数据信号 / 预警中心转入','系统建议资源','区级审批 · 调配下达','街道承接实施','街道标记完成 · 区级验收归档'],'<b>职权链：区级审批调配，街道承接实施</b>——「待审批」由区级点「⚙ 操作」下拉选「审批 · 调配下达」（可选推送科室/审批意见，可上传佐证）/「暂缓」/「不派遣」；下达后由街道承接派遣；「待验收」由区级点「验收通过 · 归档」或「退回补充」。区级在街道实施阶段不越位操作。与街道视图同一批需求数据，任一视图操作两边同步。<br><b>从预警中心发起</b>：点下方「➕ 发起资源统筹调配」按钮 → 弹出窗口选择预警中心在途预警 → 选推送科室与资源类型 → 创建调配任务进入待审批——街道实施闭环并经区级验收后，关联预警同步闭环。','考核"向社区精准匹配资源的次数与效果"，替代"材料报送完整率"。');
+ h+='<div class="sec-t">资源统筹调配 <span class="sub">🔵 系统建议 / 预警中心转入 → 区级审批调配 → 下达街道承接 → 效果回收</span></div>';
+ var ad=DALERTS.filter(function(a){return !a.done});
+ h+='<div class="card"><h3>⚠ 从预警中心发起资源统筹调配 <span class="tip">区级将处置不了的预警转化为资源调配</span></h3><div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn b" onclick="openRescPicker()">➕ 发起资源统筹调配</button></div></div>';
+ h+='<div class="notice b">🔵 哪个小区需要什么资源——系统基于真实数据精准定位：履约持续下滑、议事频率骤降、投诉异常上升。区级是<b>调配者</b>：审批决定资源是否下达、下达到哪个街道；街道是<b>承接实施者</b>：派遣人员、落实下沉、报告效果。效果纳入考核：<b>向社区精准匹配资源的次数与效果</b>，替代"材料报送完整率"。</div>';
+ NEEDS.forEach(function(n,i){
+  if(n.st==='已完成'||n.st==='不派遣'||n.st==='已暂缓')return;
+  var stTag=(n.st==='待审批'||n.st==='待验收')?'y':'b';
+  h+='<div class="sigcard b"><div class="dot" style="background:var(--b)"></div><div class="gt"><b>🔵 '+n.xq+' <span class="tag '+stTag+'">'+n.st+'</span></b><p>'+n.reason+'<br><b style="color:#1d4ed8">建议资源：'+n.suggest+'</b>'+(n.execDept?'<br><span style="color:var(--sub)">承办科室：'+n.execDept+'</span>':'')+(n.st==='已派遣'&&n.p1?'<br><span style="color:var(--sub)">派遣：'+n.p1+' · 时限：'+n.p2+'</span>':'')+'</p>'+logHTML(n.log)+'</div><div class="ops"><button class="btn o sm" onclick="openNeedDetail('+i+')\">详情</button>'+needOps(n,i)+(VIEW==='district'&&n.st==='已调配'?'<span style="font-size:11px;color:var(--dim)">待街道承接</span>':'')+'</div></div>';
+ });
+ var doneR=NEEDS.filter(function(n){return n.st==='已完成'||n.st==='不派遣'||n.st==='已暂缓'});
+ if(doneR.length){
+  h+='<div class="card"><h3>已处理归档 <span class="tag gr">'+doneR.length+' 条 · 决策留痕完整</span>'+expBtn('资源统筹调配归档')+'</h3>';
+  h+='<table><tr><th>时间</th><th>小区</th><th>调配资源</th><th>终态</th><th>决策说明</th><th>操作</th></tr>';
+  doneR.forEach(function(n){
+   var i=NEEDS.indexOf(n);
+   var last=n.log[n.log.length-1];
+   h+='<tr><td class="mono">'+(last?last.t:'')+'</td><td>'+n.xq+'</td><td>'+n.suggest+'</td><td><span class="tag '+(n.st==='已完成'?'g':'gr')+'">'+n.st+'</span></td><td>'+(last&&last.note?last.note:'—')+'</td><td><button class="btn o sm" onclick="openNeedDetail('+i+')">详情</button></td></tr>';
+  });
+  h+='</table></div>';
+ }
+ return h;
+}
+
+function sigLayer(t){
+ if(/消防|电梯|坠物|住人|检验|违建|占道|年检|安全/.test(t))return 1;
+ if(/公共收益|维修资金|履约|评级|公示|资金|合同/.test(t))return 2;
+ if(/满意度|投诉|体验|便利/.test(t))return 3;
+ return 4;
+}
+function togDone(el,l){
+ var rows=document.querySelectorAll('.sigdone-'+l);
+ var open=rows.length&&rows[0].style.display!=='none';
+ for(var i=0;i<rows.length;i++)rows[i].style.display=open?'none':'';
+ el.innerHTML=(open?'🟢 已闭环 '+rows.length+' 条 ▸':'🟢 已闭环 '+rows.length+' 条 ▾');
+}
+function vSig(){
+ var SIGS=[];
+ SALERTS.forEach(function(a){SIGS.push({l:sigLayer(a.title),dot:a.done?'g':(a.lv==='r'?'r':'y'),t:a.title,xq:a.xq,st:a.st,src:'街道预警接收'})});
+ DALERTS.forEach(function(a){SIGS.push({l:sigLayer(a.title),dot:a.done?'g':'r',t:a.title,xq:a.xq,st:a.done?'已闭环':a.st2,src:'区级预警中心'})});
+ FUNDS.forEach(function(f){if(f.abn)SIGS.push({l:2,dot:'r',t:f.abn,xq:f.xq,st:'资金异常',src:'公共资金月度归集'})});
+ XQ.forEach(function(x){if(x.rate&&/^[CD]/.test(x.rate))SIGS.push({l:2,dot:'r',t:'物业履约评级 '+x.rate+'（低于辖区基线）',xq:x.name,st:'履约风险',src:'履约评级月度归集'});if(x.sat&&x.sat<3.8)SIGS.push({l:3,dot:'y',t:'业主满意度 '+x.sat+'（低于辖区均值）',xq:x.name,st:'关注',src:'满意度月度归集'})});
+ FILINGS.forEach(function(f){SIGS.push({l:4,dot:f.st==='待接收'?'y':'g',t:f.item+'（'+f.type+'）',xq:f.xq,st:f.st,src:'自治决策报备'})});
+ NEEDS.forEach(function(n){if(/议事/.test(n.reason))SIGS.push({l:4,dot:'y',t:'业委会议事频率下降（本月仅1次）',xq:n.xq,st:'关注',src:'议事频率归集'})});
+ var h=guide(['社区治理活动自然沉淀','系统自动归集','五层模型归类','区级信号总览'],'<b>本页无操作按钮</b>——政府端全部数据按<b>五层模型</b>呈现：前四层为<b>在途信号</b>（①合规运行 ②权益责任 ③体验优化 ④协商共治），已闭环信号折叠在每层底部；第五层为<b>信用记录</b>——前四层信号的处置闭环沉淀为过程信用（信源于事实 · 非人工打分），含四维信用、分层共享与正向激励。处置在预警中心/资源统筹调配进行，信用详情可点「详情」。','不排名 · 不比较——信号按性质归类，不分优劣；先分层、再判断，避免风险与治理手段错配；居民个人信用不出社区。');
+ h+='<div class="sec-t">区级信号 · 五层模型 <span class="sub">四层信号 + 一层信用 · 共有功能治理视角</span></div>';
+ var L4CFG=[
+  {c:'#dc2626',bg:'rgba(220,38,38,.08)',name:'① 共有功能合规运行',q:'能不能这样用',def:'规则解释 · 使用指导 · 合规校验——确保共有空间、设施和行为处于可成立的规则边界内'},
+  {c:'#b45309',bg:'rgba(180,83,9,.08)',name:'② 共有权益维护与责任治理',q:'谁受损、谁负责',def:'责任识别 · 证据组织 · 程序推进——把权益受损与责任失衡拉回权利、证据、程序的轨道'},
+  {c:'#0d9488',bg:'rgba(13,148,136,.08)',name:'③ 共有功能体验优化',q:'怎么才能更好用',def:'感受反馈 · 优化闭环——在合法可用基础上更便捷、更舒适、更安全、更节能'},
+  {c:'#7c3aed',bg:'rgba(124,58,237,.08)',name:'④ 共有事务协商共治',q:'如何持续接受这套秩序',def:'协商 · 表决 · 公示 · 复盘——多元主体的权责、成本、风险与感受的程序化平衡'}];
+ L4CFG.forEach(function(cfg,l){
+  var list=SIGS.filter(function(s){return s.l===l+1});
+  var act=list.filter(function(s){return s.dot!=='g'});
+  var done=list.filter(function(s){return s.dot==='g'});
+  var row=function(s,cls){return '<tr'+(cls?' class="'+cls+'" style="display:none"':'')+'><td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--'+(s.dot==='g'?'g':s.dot==='y'?'y':'r')+');margin-right:8px"></span>'+s.t+'</td><td>'+s.xq+'</td><td><span class="tag '+(s.dot==='g'?'gr':s.dot==='y'?'y':'r')+'">'+s.st+'</span></td><td style="font-size:11px;color:var(--dim)">'+s.src+'</td></tr>'};
+  h+='<div class="card" style="border-left:4px solid '+cfg.c+'"><h3 style="color:'+cfg.c+'">'+cfg.name+' <span class="tag" style="background:'+cfg.bg+';color:'+cfg.c+'">在途 '+act.length+'</span><span class="tip">'+cfg.q+'</span></h3>'+
+  '<div style="font-size:11.5px;color:var(--sub);margin:2px 0 8px">'+cfg.def+'</div>'+
+  '<table><tr><th>信号</th><th>小区</th><th>状态</th><th>来源</th></tr>'+(act.length?act.map(function(s){return row(s)}).join(''):'<tr><td colspan="4" style="color:var(--dim);text-align:center;padding:10px">该层当前无在途信号</td></tr>')+
+  (done.length?'<tr><td colspan="4" style="padding:6px 10px;cursor:pointer;font-size:11.5px;color:var(--dim)" onclick="togDone(this,'+l+')">🟢 已闭环 '+done.length+' 条 ▸</td></tr>'+done.map(function(s){return row(s,'sigdone-'+l)}).join(''):'')+'</table></div>';
+ });
+ h+='<div class="card" style="border-left:4px solid #334155"><h3 style="color:#334155">⑤ 信用记录 · 分层共享 <span class="tag" style="background:rgba(51,65,85,.08);color:#334155">信源于事实</span><span class="tip">由人事物派生 · 非人工打分</span></h3>'+
+ '<div style="font-size:11.5px;color:var(--sub);margin:2px 0 10px">前四层信号的处置闭环沉淀为过程信用记录——<b>无承诺不评价 · 无证据不判断 · 无复核不生效 · 修复通道永久开放</b>。信用等级变更可追溯：触发条件、谁确认的、何时生效。</div>'+
+ '<div class="g4" style="margin-bottom:10px">'+
+ '<div class="stat"><div class="n" style="color:var(--b)">'+CREDITS.length+'</div><div class="l">物业服务信用 · 履约评级</div><div class="m">四维评价：过程/结果/协同/感知质量</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--g)">'+YCRED.length+'</div><div class="l">业委会履职信用</div><div class="m">议事留痕 + 公示完整度 + 采购合规率</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--y)">'+VCRED.length+'</div><div class="l">供应商服务信用</div><div class="m">自采购端/供应链端归集</div></div>'+
+ '<div class="stat"><div class="n" style="color:var(--r)">不出社区</div><div class="l">居民守约信用</div><div class="m">L1/L2级数据 · 仅脱敏统计呈现</div></div></div>'+
+ '<table><tr><th>主体</th><th>类型</th><th>信用水平</th><th>关键指标</th><th>状态</th><th>操作</th></tr>'+
+ CREDITS.map(function(c,i){var rateTag=c.rate.charAt(0)==='A'?'g':c.rate.charAt(0)==='B'?'y':'r';var wd=credWatch(c);return '<tr><td>'+c.name+'</td><td>物业服务</td><td><span class="tag '+rateTag+'">'+c.rate+'</span></td><td>响应率 '+c.resp+'% · 闭环率 '+c.close+'% · 评价 '+c.sat.toFixed(1)+'/5</td><td>'+(wd?'<span style="color:#ad6800">'+wd+'</span>':'<span style="color:var(--dim)">—</span>')+'</td><td><button class="btn o sm" onclick="openCredDetail('+i+')">详情</button></td></tr>'}).join('')+
+ YCRED.map(function(y,i){return '<tr><td>'+y.xq+'业委会</td><td>业委会履职</td><td><span class="tag '+(y.st==='正常'?'g':'y')+'">'+y.st+'</span></td><td>议事留痕 '+y.mtg+' · 公示 '+y.pub+' · 采购合规 '+y.pur+'</td><td>'+(y.watch?'<span style="color:#ad6800">'+y.watch+'</span>':'<span style="color:var(--dim)">—</span>')+'</td><td><button class="btn o sm" onclick="openYcrDetail('+i+')">详情</button></td></tr>'}).join('')+
+ VCRED.map(function(v,i){return '<tr><td>'+v.name+'</td><td>供应商</td><td><div class="bar"><i style="width:'+v.score+'%;background:'+(v.score>=80?'var(--g)':v.score>=70?'var(--y)':'var(--r)')+'"></i></div><span class="mono">'+v.score+'</span></td><td>'+v.note+'</td><td><span style="color:var(--dim)">—</span></td><td><button class="btn o sm" onclick="openVcrDetail('+i+')">详情</button></td></tr>'}).join('')+
+ '</table>'+
+ '<div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.9">失信后果（层级递进）：物业——提醒 → 约谈 → 限期整改 → 信用降级 → 合同终止；业委会——业主质询 → 整改要求 → 罢免程序；供应商——信用降级 → 减少派单 → 一票否决；居民守约（社区内部）——提醒 → 公示 → 限制权益 → 法律追索。<b>正向激励优先</b>：守信者获得续聘优先/评优推荐/派单倾斜，信用的核心价值是让守信者获得正向反馈。</div>'+
+ '<div style="margin-top:12px"><b style="font-size:12.5px">信用分层共享</b><table style="margin-top:6px"><tr><th>层级</th><th>可获取的信用信息</th><th>用途</th></tr>'+
+ '<tr><td>小区内部</td><td>全部信用记录（含细节）</td><td>选聘/续聘物业 · 邻里互信</td></tr>'+
+ '<tr><td>社区层面</td><td>脱敏统计的信用评级</td><td>治理态势把握</td></tr>'+
+ '<tr><td><b>街道层面</b></td><td>信用评级 + 关键异常标记</td><td>指导监督 · 资源调配 · 预警</td></tr>'+
+ '<tr><td><b>区/市层面（依法）</b></td><td>纳入统一信用平台的格式化记录（目录清单管理）</td><td>行业监管 · 市场参考 · 政策制定</td></tr></table></div>'+
+ '<div class="notice r" style="margin-top:10px">🚫 <b>共享红线</b>：居民个人信用信息不出社区（法律明确规定情形除外）；信用评级不用于无法律依据的社会性惩戒；信用记录保存期限、删除条件符合《征信业管理条例》。</div></div>';
+ return h;
+}
+function vCredit(){
+ var h=guide(['治理活动自然数据（工单/验收/议事/比价）','系统自动计算（月度归集）','四维信用','分层共享（街道：评级+异常标记 / 区级：格式化记录）','行业监管 · 市场参考 · 政策制定'],'<b>本页为展示与规则说明</b>——无操作按钮（详情除外）。①②③④四个维度卡片各自展示指标、数据来源与失信后果递进链条；正向激励表为守信者画像；底部为分层共享规则与共享红线。<b>每条数据可点「详情」</b>查看四维评价、信用变更追溯与申诉机制。','居民个人信用不出社区；信用评级不用于无法律依据的社会性惩戒；保存期限依《征信业管理条例》（不良信息5年）。');
+ h+='<div class="sec-t">信用管理中心 <span class="sub">四维信用 · 自动记录非人为打分 · 分层共享 · 正反馈优先</span></div>';
+ h+='<div class="notice m">🛡 <b>信用机制</b>：信用记录由系统基于治理活动自然产生的数据<b>自动计算</b>——不存在人工打分。被评价方有权对不利记录提出异议申诉，异议成立则修正。信用等级变更可追溯：触发条件、谁确认的、何时生效。</div>';
+ h+='<div class="card"><h3>① 物业服务信用 <span class="tag b">月度归集</span> <span class="tip">四维评价：过程质量/结果质量/协同质量/感知质量</span>'+expBtn('物业服务信用')+'</h3><table><tr><th>物业公司</th><th>服务小区数</th><th>服务小区示例</th><th>履约等级</th><th>按期响应率</th><th>按期闭环率</th><th>业主评价均分</th><th>关键异常标记</th><th>正向激励</th><th>操作</th></tr>';
+ CREDITS.forEach(function(c,i){
+  var rateTag=c.rate.charAt(0)==='A'?'g':c.rate.charAt(0)==='B'?'y':'r';
+  var wd=credWatch(c);
+  h+='<tr><td>'+c.name+'</td><td>'+c.xq+'</td><td style="font-size:11.5px;color:var(--sub)">'+c.serv+'</td><td><span class="tag '+rateTag+'">'+c.rate+'</span></td><td>'+c.resp+'%</td><td>'+c.close+'%</td><td>'+c.sat.toFixed(1)+'/5</td>'+
+  '<td>'+(wd?'<span style="color:#ad6800">'+wd+'</span>':'<span style="color:var(--dim)">—</span>')+'</td>'+
+  '<td>'+(c.good?'<span class="tag g">红榜·续聘优先推荐</span>':'<span style="color:var(--dim)">—</span>')+'</td><td><button class="btn o sm" onclick="openCredDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table><div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.8">失信后果（层级递进）：提醒 → 约谈 → 限期整改 → 信用降级 → 合同终止</div></div>';
+ h+='<div class="card"><h3>② 业委会履职信用 <span class="tag b">月度归集</span> <span class="tip">议事留痕 + 公示完整度 + 采购合规率</span>'+expBtn('业委会履职信用')+'</h3><table><tr><th>小区</th><th>议事留痕</th><th>公示完整度</th><th>采购合规率</th><th>状态</th><th>关键异常标记</th><th>操作</th></tr>';
+ YCRED.forEach(function(y,i){
+  h+='<tr><td>'+y.xq+'</td><td>'+y.mtg+'</td><td>'+y.pub+'</td><td>'+y.pur+'</td><td><span class="tag '+(y.st==='正常'?'g':'y')+'">'+y.st+'</span></td>'+
+  '<td>'+(y.watch?'<span style="color:#ad6800">'+y.watch+'</span>':'<span style="color:var(--dim)">—</span>')+'</td><td><button class="btn o sm" onclick="openYcrDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table><div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.8">失信后果（层级递进）：社区居委会/业主质询 → 整改要求 → 罢免程序。监督链：业主大会授权 + 忠实勤勉义务</div></div>';
+ h+='<div class="card"><h3>③ 供应商服务信用 <span class="tip">自采购端/供应链端归集</span> <span class="tag b">月度归集</span>'+expBtn('供应商服务信用')+'</h3><table><tr><th>供应商</th><th>类型</th><th>信用分</th><th>近期表现</th><th>操作</th></tr>';
+ VCRED.forEach(function(v,i){
+  h+='<tr><td>'+v.name+'</td><td>'+v.type+'</td><td><div class="bar"><i style="width:'+v.score+'%;background:'+(v.score>=80?'var(--g)':v.score>=70?'var(--y)':'var(--r)')+'"></i></div><span class="mono">'+v.score+'</span></td><td>'+v.note+'</td><td><button class="btn o sm" onclick="openVcrDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table><div style="font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.8">失信后果（层级递进）：信用降级 → 减少派单 → 一票否决。数据来源：验收记录 + 比价留痕 + 投诉闭环率</div></div>';
+ h+='<div class="card"><h3>④ 居民守约信用 <span class="tag r">不出社区</span> <span class="tip">L1/L2级数据</span></h3>';
+ h+='<div style="font-size:12px;color:var(--sub);line-height:1.9">居民守约信用（缴费记录/公约遵守/参与记录）属<b style="color:#b91c1c">L1/L2级数据，不出社区</b>——政府端不可见，仅以<b>脱敏统计形式</b>呈现（如社区整体缴费率趋势，经月度公示确认后归集）。<br>失信后果（社区内部层级递进）：提醒 → 公示 → 限制权益 → 法律追索。民事纠纷未经调解、仲裁、司法确认前，不作为负面信用记录依据。</div></div>';
+ h+='<div class="card"><h3>正向激励机制 <span class="tag g">正反馈优先</span> <span class="tip">信用的核心价值是让守信者获得正向反馈，不是惩罚失信者</span>'+expBtn('正向激励机制')+'</h3><table><tr><th>正向激励</th><th>适用对象</th><th>触发条件</th><th>操作</th></tr>';
+ INCENT.forEach(function(ic,i){
+  h+='<tr><td><b>'+ic[0]+'</b></td><td>'+ic[1]+'</td><td>'+ic[2]+'</td><td><button class="btn o sm" onclick="openIncentDetail('+i+')">详情</button></td></tr>';
+ });
+ h+='</table></div>';
+ h+='<div class="card"><h3>信用分层共享'+expBtn('信用分层共享')+'</h3><table><tr><th>层级</th><th>可获取的信用信息</th><th>用途</th></tr>'+
+ '<tr><td>小区内部</td><td>全部信用记录（含细节）</td><td>选聘/续聘物业 · 邻里互信</td></tr>'+
+ '<tr><td>社区层面</td><td>脱敏统计的信用评级</td><td>治理态势把握</td></tr>'+
+ '<tr><td><b>街道层面</b></td><td>信用评级 + 关键异常标记</td><td>指导监督 · 资源调配 · 预警</td></tr>'+
+ '<tr><td><b>区/市层面（依法）</b></td><td>纳入统一信用平台的格式化记录（目录清单管理）</td><td>行业监管 · 市场参考 · 政策制定</td></tr></table></div>';
+ h+='<div class="notice r">🚫 <b>共享红线</b>：居民个人信用信息不出社区（法律明确规定情形除外）；信用评级不用于无法律依据的社会性惩戒（"信用差不能坐高铁"是法院限高令范畴，社区信用不能越位）；信用记录保存期限、删除条件符合《征信业管理条例》。</div>';
+ return h;
+}
+
+function vExam(){
+ var st=examStats();
+ var h=guide(['系统自动记录（响应率/闭环率/下沉效果/决策改善）','考核对照表','考核管理端','不考核基层填报'],'<b>本页无操作按钮</b>——顶部统计卡从<b>预警接收、预警中心、资源统筹调配（区级）与资源下沉（街道）的实际操作实时计算</b>；对照表：左列传统指标（已被替代）、中间问题、右列重构后指标（本端各模块已落地对应）。','区级、街道不得利用系统开展无法律依据的排名、评比、摊派；考核不考核基层"填报"，考核管理端"响应与匹配"。');
+ h+='<div class="sec-t">考核机制重构 <span class="sub">从"要报表"到"收信号" · 考核跟着治理逻辑走</span></div>';
+ h+='<div class="g4">'+
+ '<div class="stat" style="cursor:pointer" onclick="openStatDetail(0)"><div class="n" style="color:var(--b)">'+st.respS+'/'+st.totS+'</div><div class="l">街道预警响应率（实时）🔍</div></div>'+
+ '<div class="stat" style="cursor:pointer" onclick="openStatDetail(1)"><div class="n" style="color:var(--g)">'+st.closeS+'</div><div class="l">街道预警已闭环 🔍</div></div>'+
+ '<div class="stat" style="cursor:pointer" onclick="openStatDetail(2)"><div class="n" style="color:var(--r)">'+st.mis+'</div><div class="l">误报解除数（含区级）🔍</div></div>'+
+ '<div class="stat" style="cursor:pointer" onclick="openStatDetail(3)"><div class="n" style="color:var(--b)">'+st.resDone+'</div><div class="l">资源统筹调配已完成'+(st.resPend?'（'+st.resPend+'在途）':'')+' 🔍</div></div></div>';
+ h+='<div class="notice g" style="margin-top:14px">📈 <b>统计实时联动</b>：以上数字从各模块实际操作实时计算——考核看的是系统里真实发生的响应与闭环，不是填报材料。去预警接收/预警中心/资源统筹调配·资源下沉操作一条，回来数字就会变。<b>点击统计卡查看统计口径。</b></div>';
+ h+='<div class="card"><h3>考核指标重构对照 <span class="tip">管理考核机制与"信号驱动"同步重构 · 点击行查看指标落地详情</span></h3><table><tr><th>传统考核指标</th><th>问题</th><th>重构后的考核指标</th><th>操作</th></tr>'+
+ '<tr><td>数据报送及时率</td><td>鼓励催报，不关心数据质量</td><td><b style="color:#059669">治理数据自动归集覆盖率</b></td><td><button class="btn o sm" onclick="openExamDetail(0)">详情</button></td></tr>'+
+ '<tr><td>巡查检查次数</td><td>鼓励扰民，制造形式主义留痕</td><td><b style="color:#059669">预警信号响应率与闭环率</b></td><td><button class="btn o sm" onclick="openExamDetail(1)">详情</button></td></tr>'+
+ '<tr><td>排名通报次数</td><td>鼓励"找茬"，破坏基层信任</td><td><b style="color:#059669">向社区精准匹配资源的次数与效果</b></td><td><button class="btn o sm" onclick="openExamDetail(2)">详情</button></td></tr>'+
+ '<tr><td>材料报送完整率</td><td>鼓励多要材料、多填表格</td><td><b style="color:#059669">基于数据的决策改善率</b></td><td><button class="btn o sm" onclick="openExamDetail(3)">详情</button></td></tr></table></div>';
+ h+='<div class="notice r">🚫 <b>考核约束</b>：区级、街道不得利用系统开展无法律依据的排名、评比、摊派。考核不考核基层"填报"——考核管理端"响应与匹配"。基层的负担是考核的敌人，不是考核的指标。</div>';
+ h+='<div class="notice g">✅ <b>本端已落地的考核对应</b>：预警中心——响应率与闭环率实时可见；资源统筹调配——区级审批→调配下达→街道承接→完成全流程留痕；态势仪表盘——数据自动归集覆盖率即本页呈现。</div>';
+ return h;
+}
+
+function render(){
+ syncDistrict();
+ var map=VIEW==='street'?{board:vBoard,alerts:vAlerts,handle:vHandle,needs:vNeeds,guide:vGuide,pipe:vPipe}:{dash:vDash,alertc:vAlertc,resc:vResc,sig:vSig};
+ var f=map[VIEW==='street'?STAB:DTAB];
+ if(!f)return;
+ document.getElementById('main').innerHTML=f();
+}
+buildNav();render();
+</script>
+</body>
+</html>

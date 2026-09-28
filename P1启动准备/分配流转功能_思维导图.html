@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分配流转功能 · 思维导图</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;--orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;overflow:auto}
+svg{width:100%;height:auto;display:block}
+.node text{font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+.edge{stroke:var(--border);stroke-width:1.5;fill:none}
+.edge.green{stroke:rgba(16,185,129,.4)}
+.edge.purple{stroke:rgba(139,92,246,.4)}
+.edge.amber{stroke:rgba(245,158,11,.4)}
+.edge.blue{stroke:rgba(59,130,246,.4)}
+.edge.orange{stroke:rgba(249,115,22,.4)}
+.edge.dim{stroke:rgba(100,116,139,.28);stroke-dasharray:3 5}
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 1020" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <linearGradient id="g0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+
+<!-- ====== ROOT ====== -->
+<rect x="660" y="24" width="280" height="64" rx="14" fill="url(#g0)" filter="url(#glow)"/>
+<text x="800" y="48" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">🔄 分配流转功能</text>
+<text x="800" y="70" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.75)">四池自动流转 · 每周两次轮换 · 意向池唯一留人通道</text>
+
+<line x1="700" y1="88" x2="160" y2="140" class="edge green"/>
+<line x1="730" y1="88" x2="480" y2="140" class="edge purple"/>
+<line x1="800" y1="88" x2="800" y2="140" class="edge amber"/>
+<line x1="870" y1="88" x2="1120" y2="140" class="edge blue"/>
+<line x1="900" y1="88" x2="1440" y2="140" class="edge orange"/>
+
+<!-- ====== 1. 四池架构 ====== -->
+<g transform="translate(20,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#10b981" font-weight="700">🏊 四池架构</text>
+  <line x1="140" y1="45" x2="85" y2="60" class="edge green"/>
+  <line x1="140" y1="45" x2="215" y2="60" class="edge green"/>
+  <line x1="140" y1="45" x2="85" y2="158" class="edge green"/>
+  <line x1="140" y1="45" x2="215" y2="158" class="edge green"/>
+
+  <rect x="0" y="60" width="130" height="88" rx="8" fill="#131d33" stroke="#475569" stroke-width="1"/>
+  <text x="65" y="84" text-anchor="middle" font-size="13" fill="#cbd5e1" font-weight="700">🏊 主池</text>
+  <text x="65" y="102" text-anchor="middle" font-size="9" fill="#64748b">5000户·号码仓库</text>
+  <text x="65" y="116" text-anchor="middle" font-size="9" fill="#64748b">纯金额排序</text>
+  <text x="65" y="130" text-anchor="middle" font-size="9" fill="#64748b">F排除·E排底</text>
+
+  <rect x="140" y="60" width="130" height="88" rx="8" fill="#131d33" stroke="#64748b" stroke-width="1"/>
+  <text x="205" y="84" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="700">🔄 流动池</text>
+  <text x="205" y="102" text-anchor="middle" font-size="9" fill="#64748b">中转站·已触达</text>
+  <text x="205" y="116" text-anchor="middle" font-size="9" fill="#64748b">AI接通·未接回收</text>
+  <text x="205" y="130" text-anchor="middle" font-size="9" fill="#64748b">等下次重发</text>
+
+  <rect x="0" y="158" width="130" height="88" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1"/>
+  <text x="65" y="182" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">✅ 个人池</text>
+  <text x="65" y="200" text-anchor="middle" font-size="9" fill="#64748b">250户/轮·系统发</text>
+  <text x="65" y="214" text-anchor="middle" font-size="9" fill="#64748b">按金额从大到小打</text>
+  <text x="65" y="228" text-anchor="middle" font-size="9" fill="#64748b">周三回收重分</text>
+
+  <rect x="140" y="158" width="130" height="88" rx="8" fill="#131d33" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="205" y="182" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="700">⭐ 意向池</text>
+  <text x="205" y="200" text-anchor="middle" font-size="9" fill="#64748b">≤50户·自己圈</text>
+  <text x="205" y="214" text-anchor="middle" font-size="9" fill="#64748b">永不回收·跟人走</text>
+  <text x="205" y="228" text-anchor="middle" font-size="9" fill="#64748b">回款自动移出</text>
+
+  <line x1="65" y1="148" x2="65" y2="158" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="130" y1="180" x2="140" y2="152" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <text x="140" y="276" text-anchor="middle" font-size="10" fill="#64748b">流转方向：主池 → 个人池(打) → 未接通 →</text>
+  <text x="140" y="292" text-anchor="middle" font-size="10" fill="#64748b">流动池 → 下次重新发（周三/下周一）</text>
+</g>
+
+<!-- ====== 2. 号码去向 ====== -->
+<g transform="translate(340,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#8b5cf6" font-weight="700">🧭 号码去向 · 四类结果</text>
+  <line x1="140" y1="45" x2="65" y2="60" class="edge purple"/>
+  <line x1="140" y1="45" x2="205" y2="60" class="edge purple"/>
+  <line x1="140" y1="45" x2="65" y2="168" class="edge purple"/>
+  <line x1="140" y1="45" x2="205" y2="168" class="edge purple"/>
+
+  <rect x="0" y="60" width="130" height="98" rx="8" fill="#132033" stroke="rgba(16,185,129,.5)" stroke-width="1"/>
+  <text x="65" y="84" text-anchor="middle" font-size="12" fill="#10b981" font-weight="700">① 拉入意向池 → 留下</text>
+  <text x="65" y="104" text-anchor="middle" font-size="9" fill="#94a3b8">唯一留人通道</text>
+  <text x="65" y="120" text-anchor="middle" font-size="9" fill="#94a3b8">无门槛 · 挂断后拉</text>
+  <text x="65" y="136" text-anchor="middle" font-size="9" fill="#94a3b8">不拉的下轮换人</text>
+
+  <rect x="140" y="60" width="130" height="98" rx="8" fill="#132015" stroke="rgba(245,158,11,.4)" stroke-width="1"/>
+  <text x="205" y="84" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="700">② 收走接力</text>
+  <text x="205" y="104" text-anchor="middle" font-size="9" fill="#94a3b8">没接通 → 回收</text>
+  <text x="205" y="120" text-anchor="middle" font-size="9" fill="#94a3b8">周三换人再打</text>
+  <text x="205" y="136" text-anchor="middle" font-size="9" fill="#94a3b8">我也收别人的</text>
+
+  <rect x="0" y="168" width="130" height="98" rx="8" fill="#1a0f0f" stroke="rgba(239,68,68,.45)" stroke-width="1"/>
+  <text x="65" y="192" text-anchor="middle" font-size="12" fill="#ef4444" font-weight="700">③ 回仓库</text>
+  <text x="65" y="212" text-anchor="middle" font-size="9" fill="#94a3b8">E类·骂人拒接3+</text>
+  <text x="65" y="228" text-anchor="middle" font-size="9" fill="#94a3b8">不保留·释放</text>
+  <text x="65" y="244" text-anchor="middle" font-size="9" fill="#94a3b8">60天后系统再看</text>
+
+  <rect x="140" y="168" width="130" height="98" rx="8" fill="#151a20" stroke="#334155" stroke-width="1"/>
+  <text x="205" y="192" text-anchor="middle" font-size="12" fill="#94a3b8" font-weight="700">④ 移出名单</text>
+  <text x="205" y="212" text-anchor="middle" font-size="9" fill="#94a3b8">F类·空号停机</text>
+  <text x="205" y="228" text-anchor="middle" font-size="9" fill="#94a3b8">搬家·产权变更</text>
+  <text x="205" y="244" text-anchor="middle" font-size="9" fill="#94a3b8">不再进任何名单</text>
+
+  <rect x="0" y="276" width="280" height="62" rx="8" fill="#131d33" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
+  <text x="140" y="296" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600">🔒 意向池 = 唯一留人通道</text>
+  <text x="140" y="314" text-anchor="middle" font-size="9" fill="#94a3b8">拉入即锁定 · 全局不流转</text>
+  <text x="140" y="330" text-anchor="middle" font-size="9" fill="#94a3b8">不拉的接通户 · 下轮回收给别人</text>
+</g>
+
+<!-- ====== 3. 每周节奏 ====== -->
+<g transform="translate(660,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">📅 每周节奏 · 两次流转</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge amber"/>
+
+  <rect x="0" y="60" width="280" height="108" rx="10" fill="#131d33" stroke="rgba(16,185,129,.45)" stroke-width="1"/>
+  <text x="140" y="84" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">上半周 · 周一 8:30 发名单</text>
+  <text x="140" y="106" text-anchor="middle" font-size="10" fill="#94a3b8">250户进个人池 · 意向池置顶</text>
+  <text x="140" y="124" text-anchor="middle" font-size="10" fill="#94a3b8">9:10开工 · 拨打节奏自行安排</text>
+  <text x="140" y="142" text-anchor="middle" font-size="10" fill="#94a3b8">日拨125通 · 周三11:15上半轮结束</text>
+
+  <rect x="0" y="178" width="280" height="42" rx="10" fill="#f59e0b"/>
+  <text x="140" y="204" text-anchor="middle" font-size="12" fill="#0b1120" font-weight="700">周三12:00~12:30 自动轮换 · 你什么都不用做</text>
+
+  <rect x="0" y="230" width="280" height="108" rx="10" fill="#131d33" stroke="rgba(245,158,11,.45)" stroke-width="1"/>
+  <text x="140" y="254" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="700">下半周 · 周三 13:45 新名单</text>
+  <text x="140" y="276" text-anchor="middle" font-size="10" fill="#94a3b8">未接被收走 · 新号补进来</text>
+  <text x="140" y="294" text-anchor="middle" font-size="10" fill="#94a3b8">继续先紫后绿 · 按名单顺序打</text>
+  <text x="140" y="312" text-anchor="middle" font-size="10" fill="#94a3b8">打到周五17:00 · 周末双休</text>
+
+  <text x="140" y="360" text-anchor="middle" font-size="9" fill="#64748b">周一=周三同一套规则 · 保留连续累计 · 名单变了不是出错</text>
+</g>
+
+<!-- ====== 4. 三Tab ====== -->
+<g transform="translate(980,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#3b82f6" font-weight="700">🖥️ 你的三个Tab</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge blue"/>
+
+  <rect x="0" y="60" width="280" height="82" rx="10" fill="#131d33" stroke="rgba(139,92,246,.55)" stroke-width="1.5"/>
+  <text x="140" y="86" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="700">🟣 意向池Tab（紫）</text>
+  <text x="140" y="108" text-anchor="middle" font-size="10" fill="#94a3b8">≤50户 · 自己圈的重点户 · 节奏自定</text>
+  <text x="140" y="126" text-anchor="middle" font-size="10" fill="#94a3b8">周三轮换不动它 · 永远跟我走</text>
+
+  <rect x="0" y="152" width="280" height="82" rx="10" fill="#131d33" stroke="rgba(16,185,129,.55)" stroke-width="1.5"/>
+  <text x="140" y="178" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">🟢 个人池Tab（绿）</text>
+  <text x="140" y="200" text-anchor="middle" font-size="10" fill="#94a3b8">250户 · 系统发的本轮名单 · 金额从大到小</text>
+  <text x="140" y="218" text-anchor="middle" font-size="10" fill="#94a3b8">周三中午系统刷新：收走未接 · 补进新号</text>
+
+  <rect x="0" y="244" width="280" height="82" rx="10" fill="#131d33" stroke="#475569" stroke-width="1.5"/>
+  <text x="140" y="270" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="700">⚪ 流动池Tab（灰）</text>
+  <text x="140" y="292" text-anchor="middle" font-size="10" fill="#94a3b8">中转站 · 号码进出在这里排队</text>
+  <text x="140" y="310" text-anchor="middle" font-size="10" fill="#94a3b8">只看不操作 · "我打的号呢"看它</text>
+</g>
+
+<!-- ====== 5. 客服动作 ====== -->
+<g transform="translate(1300,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f97316" font-weight="700">🎧 客服每天</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge orange"/>
+
+  <rect x="0" y="60" width="280" height="100" rx="10" fill="#131d33" stroke="rgba(16,185,129,.55)" stroke-width="1.5"/>
+  <text x="140" y="86" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">✅ 你只做三件事</text>
+  <text x="140" y="110" text-anchor="middle" font-size="10" fill="#94a3b8">① 点击拨号</text>
+  <text x="140" y="128" text-anchor="middle" font-size="10" fill="#94a3b8">② 挂断后选感受分 1~5</text>
+  <text x="140" y="146" text-anchor="middle" font-size="10" fill="#8b5cf6">③ 想留的拉进意向池</text>
+
+  <rect x="0" y="170" width="280" height="100" rx="10" fill="#131d33" stroke="rgba(59,130,246,.5)" stroke-width="1"/>
+  <text x="140" y="196" text-anchor="middle" font-size="13" fill="#3b82f6" font-weight="700">⚙️ 系统全自动</text>
+  <text x="140" y="220" text-anchor="middle" font-size="10" fill="#94a3b8">rs记录 · nt转文字</text>
+  <text x="140" y="238" text-anchor="middle" font-size="10" fill="#94a3b8">标签 · AI评分</text>
+  <text x="140" y="256" text-anchor="middle" font-size="10" fill="#94a3b8">分配 · 轮换 · 回款移出</text>
+
+  <rect x="0" y="280" width="280" height="70" rx="10" fill="#131d33" stroke="rgba(245,158,11,.5)" stroke-width="1"/>
+  <text x="140" y="304" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="700">⏰ 日节奏</text>
+  <text x="140" y="326" text-anchor="middle" font-size="10" fill="#94a3b8">9:10开工 · 11:15停 · 午休</text>
+  <text x="140" y="342" text-anchor="middle" font-size="10" fill="#94a3b8">13:45继续 · 17:00收工</text>
+</g>
+
+<!-- ====== 行间连接线 ====== -->
+<line x1="160" y1="440" x2="160" y2="560" class="edge dim"/>
+<line x1="480" y1="478" x2="480" y2="560" class="edge dim"/>
+<line x1="800" y1="500" x2="800" y2="560" class="edge dim"/>
+<line x1="1120" y1="466" x2="1120" y2="560" class="edge dim"/>
+<line x1="1440" y1="490" x2="1440" y2="560" class="edge dim"/>
+
+<!-- ====== 6. 四周覆盖 ====== -->
+<g transform="translate(20,560)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#10b981" font-weight="700">📈 四周覆盖节奏</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge green"/>
+
+  <rect x="0" y="60" width="280" height="172" rx="10" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="88" text-anchor="middle" font-size="11" fill="#94a3b8">第1周 · 1250新户 → 触达 25%</text>
+  <line x1="14" y1="100" x2="266" y2="100" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="126" text-anchor="middle" font-size="11" fill="#94a3b8">第2周 · 累计 2500户 → 50%</text>
+  <line x1="14" y1="138" x2="266" y2="138" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="164" text-anchor="middle" font-size="11" fill="#94a3b8">第3周 · 累计 3750户 → 75%</text>
+  <line x1="14" y1="176" x2="266" y2="176" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="202" text-anchor="middle" font-size="11" fill="#94a3b8">第4周 · 累计 5000户 → 100%</text>
+  <text x="140" y="224" text-anchor="middle" font-size="9" fill="#10b981">第5轮起复打未接通 · 新导入户补位</text>
+</g>
+
+<!-- ====== 7. 意向池规则 ====== -->
+<g transform="translate(340,560)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#8b5cf6" font-weight="700">⭐ 意向池规则</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge purple"/>
+
+  <rect x="0" y="60" width="280" height="262" rx="10" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="86" text-anchor="middle" font-size="10" fill="#e2e8f0">上限50 · 只数三态：催收中/暂停/部分还款</text>
+  <text x="140" y="106" text-anchor="middle" font-size="10" fill="#94a3b8">其他状态一律不占名额 · 超额单独显示</text>
+  <text x="140" y="126" text-anchor="middle" font-size="10" fill="#8b5cf6">拉入无门槛 · 挂断后操作 · 移入归我</text>
+  <text x="140" y="146" text-anchor="middle" font-size="10" fill="#8b5cf6">回款又取消 → 管理员标记放回 · 标签不变</text>
+  <text x="140" y="166" text-anchor="middle" font-size="10" fill="#e2e8f0">不计上限可超50 · 部分还款1分也算</text>
+  <text x="140" y="186" text-anchor="middle" font-size="10" fill="#e2e8f0">暂停管理员触发 · 回款以物业报数为准</text>
+  <text x="140" y="206" text-anchor="middle" font-size="10" fill="#e2e8f0">踢出/移出 → 回流动池 · 下次给别人</text>
+  <text x="140" y="226" text-anchor="middle" font-size="10" fill="#e2e8f0">周三轮换永不回收 · 永远跟我</text>
+  <text x="140" y="246" text-anchor="middle" font-size="10" fill="#f59e0b">无自动移出 · 离职管理员回收 · 结案终止</text>
+</g>
+
+<!-- ====== 8. 系统自动化 ====== -->
+<g transform="translate(660,560)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#3b82f6" font-weight="700">🤖 系统自动化</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge blue"/>
+
+  <rect x="2" y="60" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="46" y="86" text-anchor="middle" font-size="9" fill="#94a3b8">rs 呼叫状态</text>
+  <rect x="98" y="60" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="142" y="86" text-anchor="middle" font-size="9" fill="#94a3b8">nt 通话转文字</text>
+  <rect x="194" y="60" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="238" y="86" text-anchor="middle" font-size="9" fill="#94a3b8">AI 六类标签</text>
+
+  <rect x="2" y="112" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="46" y="138" text-anchor="middle" font-size="9" fill="#94a3b8">AI评分 1-100</text>
+  <rect x="98" y="112" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="142" y="138" text-anchor="middle" font-size="9" fill="#94a3b8">两次自动分配</text>
+  <rect x="194" y="112" width="88" height="42" rx="7" fill="#131d33" stroke="rgba(59,130,246,.35)" stroke-width="1"/>
+  <text x="238" y="138" text-anchor="middle" font-size="9" fill="#94a3b8">回款自动移出</text>
+
+  <text x="140" y="178" text-anchor="middle" font-size="10" fill="#f59e0b">客服全程只做两次点击：拨号 + 感受分</text>
+  <text x="140" y="198" text-anchor="middle" font-size="9" fill="#64748b">AI评分仅接通时产生 · 拒接不评 · 感受分与AI独立</text>
+</g>
+
+<!-- ====== 9. 感受分五档 ====== -->
+<g transform="translate(980,560)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f97316" font-weight="700">🎯 感受分五档（1~5）</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge orange"/>
+
+  <rect x="0" y="60" width="52" height="122" rx="8" fill="#1a0f0f" stroke="rgba(239,68,68,.5)" stroke-width="1"/>
+  <text x="26" y="88" text-anchor="middle" font-size="22" fill="#ef4444" font-weight="800">1</text>
+  <text x="26" y="110" text-anchor="middle" font-size="8" fill="#94a3b8">辱骂威胁</text>
+  <text x="26" y="124" text-anchor="middle" font-size="8" fill="#94a3b8">直接挂断</text>
+  <text x="26" y="138" text-anchor="middle" font-size="8" fill="#64748b">"再打报警"</text>
+
+  <rect x="57" y="60" width="52" height="122" rx="8" fill="#1a1208" stroke="rgba(249,115,22,.5)" stroke-width="1"/>
+  <text x="83" y="88" text-anchor="middle" font-size="22" fill="#f97316" font-weight="800">2</text>
+  <text x="83" y="110" text-anchor="middle" font-size="8" fill="#94a3b8">冷淡敷衍</text>
+  <text x="83" y="124" text-anchor="middle" font-size="8" fill="#94a3b8">"再说吧"</text>
+  <text x="83" y="138" text-anchor="middle" font-size="8" fill="#64748b">"不方便"</text>
+
+  <rect x="114" y="60" width="52" height="122" rx="8" fill="#1a1408" stroke="rgba(245,158,11,.5)" stroke-width="1"/>
+  <text x="140" y="88" text-anchor="middle" font-size="22" fill="#f59e0b" font-weight="800">3</text>
+  <text x="140" y="110" text-anchor="middle" font-size="8" fill="#94a3b8">愿意听</text>
+  <text x="140" y="124" text-anchor="middle" font-size="8" fill="#94a3b8">没表态</text>
+  <text x="140" y="138" text-anchor="middle" font-size="8" fill="#64748b">"你继续说"</text>
+
+  <rect x="171" y="60" width="52" height="122" rx="8" fill="#0f1720" stroke="rgba(59,130,246,.5)" stroke-width="1"/>
+  <text x="197" y="88" text-anchor="middle" font-size="22" fill="#3b82f6" font-weight="800">4</text>
+  <text x="197" y="110" text-anchor="middle" font-size="8" fill="#94a3b8">提供信息</text>
+  <text x="197" y="124" text-anchor="middle" font-size="8" fill="#94a3b8">接受建议</text>
+  <text x="197" y="138" text-anchor="middle" font-size="8" fill="#64748b">"好的我看看"</text>
+
+  <rect x="228" y="60" width="52" height="122" rx="8" fill="#0f1a12" stroke="rgba(16,185,129,.5)" stroke-width="1"/>
+  <text x="254" y="88" text-anchor="middle" font-size="22" fill="#10b981" font-weight="800">5</text>
+  <text x="254" y="110" text-anchor="middle" font-size="8" fill="#94a3b8">主动配合</text>
+  <text x="254" y="124" text-anchor="middle" font-size="8" fill="#94a3b8">表达谢意</text>
+  <text x="254" y="138" text-anchor="middle" font-size="8" fill="#64748b">"谢谢你提醒"</text>
+
+  <text x="140" y="204" text-anchor="middle" font-size="9" fill="#64748b">必选 · 当日24:00前可改 · 与AI评分独立 · 影响排序</text>
+</g>
+
+<!-- ====== 10. 关键问答 ====== -->
+<g transform="translate(1300,560)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">❓ 关键问答</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge amber"/>
+
+  <rect x="0" y="60" width="280" height="172" rx="10" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="90" text-anchor="middle" font-size="11" fill="#e2e8f0" font-weight="700">名单为什么变了？</text>
+  <text x="140" y="110" text-anchor="middle" font-size="10" fill="#94a3b8">周三轮换 · 正常现象</text>
+  <line x1="14" y1="124" x2="266" y2="124" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="152" text-anchor="middle" font-size="11" fill="#e2e8f0" font-weight="700">我打的号去哪了？</text>
+  <text x="140" y="172" text-anchor="middle" font-size="10" fill="#94a3b8">四类去向 · 看左上图</text>
+  <line x1="14" y1="186" x2="266" y2="186" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="212" text-anchor="middle" font-size="11" fill="#e2e8f0" font-weight="700">意向池会被抢吗？</text>
+  <text x="140" y="230" text-anchor="middle" font-size="10" fill="#94a3b8">不会 · 永远跟我走</text>
+</g>
+
+<!-- ====== 底部：口诀 ====== -->
+<rect x="40" y="830" width="1520" height="78" rx="14" fill="#0f172a" stroke="rgba(16,185,129,.6)" stroke-width="2"/>
+<text x="800" y="862" text-anchor="middle" font-size="19" fill="#10b981" font-weight="700">打开系统 → 拨号 → 选感受分 → 想留的拉进意向池</text>
+<text x="800" y="890" text-anchor="middle" font-size="13" fill="#94a3b8">分号是系统的事 · 打电话是我的事 · 回款是我们的事</text>
+
+<!-- ====== 图例 ====== -->
+<g transform="translate(40,928)">
+  <rect width="1520" height="40" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="18" y="25" font-size="11" fill="#64748b">图例:</text>
+  <rect x="70" y="13" width="14" height="14" rx="3" fill="#10b981" opacity=".3"/>
+  <text x="90" y="25" font-size="10" fill="#64748b">四池·覆盖</text>
+  <rect x="175" y="13" width="14" height="14" rx="3" fill="#8b5cf6" opacity=".3"/>
+  <text x="195" y="25" font-size="10" fill="#64748b">去向·意向池</text>
+  <rect x="290" y="13" width="14" height="14" rx="3" fill="#f59e0b" opacity=".3"/>
+  <text x="310" y="25" font-size="10" fill="#64748b">节奏·轮换</text>
+  <rect x="395" y="13" width="14" height="14" rx="3" fill="#3b82f6" opacity=".3"/>
+  <text x="415" y="25" font-size="10" fill="#64748b">三Tab·自动化</text>
+  <rect x="520" y="13" width="14" height="14" rx="3" fill="#f97316" opacity=".3"/>
+  <text x="540" y="25" font-size="10" fill="#64748b">客服动作·感受分</text>
+  <rect x="655" y="13" width="14" height="14" rx="3" fill="#ef4444" opacity=".3"/>
+  <text x="675" y="25" font-size="10" fill="#64748b">释放·回仓库</text>
+  <text x="1510" y="25" text-anchor="end" font-size="9" fill="#475569">口径：分配逻辑_最终(8/12) · 圆桌会议④(8/12) · 标签体系V9(8/5)</text>
+</g>
+
+</svg>
+</body>
+</html>

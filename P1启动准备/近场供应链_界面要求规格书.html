@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · 近场供应链界面要求规格书</title>
+<style>
+:root{--bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--orange:#f97316;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;padding:40px 24px}
+.container{max-width:1000px;margin:0 auto}
+h1{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:8px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--muted);font-size:0.9rem;margin-bottom:40px}
+h2{font-size:1.2rem;font-weight:700;margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+h2 .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+h3{font-size:0.95rem;font-weight:700;margin:20px 0 8px;color:var(--cyan)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.card h4{font-size:0.9rem;font-weight:700;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:0.82rem;margin:12px 0}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.72rem}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.t-c{background:rgba(6,182,212,0.12);color:var(--cyan)}.t-g{background:rgba(16,185,129,0.12);color:var(--green)}.t-r{background:rgba(239,68,68,0.12);color:var(--red)}.t-o{background:rgba(249,115,22,0.12);color:var(--orange)}.t-p{background:rgba(139,92,246,0.12);color:var(--purple)}.t-b{background:rgba(59,130,246,0.12);color:var(--blue)}
+ul,ol{padding-left:20px;font-size:0.85rem;color:var(--text)}
+li{margin-bottom:6px}
+.note{font-size:0.78rem;color:var(--muted);padding:8px 14px;border-left:3px solid var(--border);margin:12px 0}
+.principle{background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.15);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:0.85rem}
+.principle strong{color:var(--cyan)}
+.summary-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0}
+.s-item{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.s-item .sn{font-size:1.2rem;font-weight:700}
+.s-item .sl{font-size:0.7rem;color:var(--muted);margin-top:4px}
+.arch-diagram{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin:16px 0;text-align:center;font-size:0.82rem;line-height:2.2}
+.arch-diagram .layer{margin:4px 0}
+.arch-diagram .arrow{color:var(--cyan)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>近场供应链 · 界面要求规格书</h1>
+<p class="subtitle">以角色为中心——每个端口只做该角色需要做的事</p>
+
+<!-- ═══════ 设计原则 ═══════ -->
+<div class="principle">
+  <strong>核心原则：</strong>一个角色一个端口。采购功能不集中在某个"供应链端"，而是分散到各角色的日常工作界面中。<br>
+  <strong>服务商不能直接进小区——必须先过T1平台审核（数治理方供应链），才能被邀请/申请进入T2（小区供应链）。</strong>
+</div>
+
+<!-- ═══════ 架构图 ═══════ -->
+<div class="arch-diagram">
+  <div class="layer">🏢 <strong>服务商</strong></div>
+  <div class="arrow">↓ 申请入驻</div>
+  <div class="layer" style="border:1px solid rgba(249,115,22,0.3);border-radius:6px;padding:8px;display:inline-block">
+    <strong style="color:var(--orange)">T1 数治理方平台供应链</strong><br>
+    <span style="font-size:0.72rem;color:var(--muted)">运营端管理 · API审核 · 信用监控</span>
+  </div>
+  <div class="arrow">↓ 通过后可被邀请/申请</div>
+  <div class="layer" style="border:1px solid rgba(6,182,212,0.3);border-radius:6px;padding:8px;display:inline-block">
+    <strong style="color:var(--cyan)">T2 小区供应链</strong><br>
+    <span style="font-size:0.72rem;color:var(--muted)">业委会管理 · 物业使用 · 社区监督</span>
+  </div>
+  <div class="arrow">↓ 履约服务</div>
+  <div class="layer">🏠 <strong>业主</strong>（评价·投诉）</div>
+</div>
+
+<!-- ═══════ 五端口总览 ═══════ -->
+<div class="summary-row">
+  <div class="s-item"><div class="sn" style="color:var(--orange)">服务商端</div><div class="sl">入驻·接单·履约</div></div>
+  <div class="s-item"><div class="sn" style="color:var(--blue)">物业端·采购</div><div class="sl">快捷采购·验收</div></div>
+  <div class="s-item"><div class="sn" style="color:var(--purple)">业委会端·采购</div><div class="sl">审批·管理</div></div>
+  <div class="s-item"><div class="sn" style="color:var(--cyan)">运营端·供应链</div><div class="sl">T1中枢</div></div>
+  <div class="s-item"><div class="sn" style="color:var(--green)">社区端·采购</div><div class="sl">备案·监督</div></div>
+</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--orange)"></span>一、服务商端</h2>
+
+<div class="card"><h4>使用者</h4><p>供应商/服务商——企业法人、业务负责人</p></div>
+
+<div class="card"><h4>核心任务</h4>
+<ol>
+  <li>申请加入数治理方平台供应链（T1）</li>
+  <li>通过T1后，申请加入具体小区供应链（T2）</li>
+  <li>接收来自已加入小区的询价并报价</li>
+  <li>查看和管理已接订单</li>
+  <li>上报履约进度</li>
+  <li>查看自身信用分和绩效数据</li>
+</ol>
+</div>
+
+<div class="card"><h4>界面Tab结构</h4>
+<table>
+<tr><th>Tab</th><th>内容</th><th>关键信息</th></tr>
+<tr><td>🏠 工作台</td><td>两级供应链状态卡片 · 关键数据统计 · 最近询价</td><td>T1/T2状态一目了然</td></tr>
+<tr><td>🏢 平台入驻（T1）</td><td>入驻进度（提交→API审核→人工复核→通过） · 入驻申请表单（企业信息/资质/品类/案例） · 入驻须知</td><td><span class="tag t-r">关键</span> T1是T2的前提</td></tr>
+<tr><td>🏘️ 小区供应链（T2）</td><td>已加入小区列表 · 可申请小区列表 · 申请状态跟踪</td><td><span class="tag t-r">关键</span> 未过T1锁住不可申请</td></tr>
+<tr><td>📩 询价通知</td><td>待报价列表 · 已报价记录 · 报价表单</td><td>按截止日期排序</td></tr>
+<tr><td>📦 我的订单</td><td>历史订单列表（编号/小区/项目/金额/状态/评分）</td><td>已完成/履约中/已取消</td></tr>
+<tr><td>📍 服务范围</td><td>地理范围设置（半径/优先区域） · 服务品类清单（主营/提供/不提供）</td><td>AI匹配参考</td></tr>
+<tr><td>📅 产能档期</td><td>当前产能状态 · 近两周档期表（上午/下午/已安排）</td><td>防止超负荷接单</td></tr>
+<tr><td>📝 报价模板</td><td>预设报价模板（品类/计价/人工/材料/工期）</td><td>快速响应询价</td></tr>
+<tr><td>📊 履约上报</td><td>进行中订单施工进度（5阶段：接单→到场→施工→自检→待验收） · 进度更新入口</td><td>物业/业委会可见</td></tr>
+<tr><td>📈 绩效仪表板</td><td>信用分趋势 · 各小区评价对比 · 同行对比</td><td>自我优化参考</td></tr>
+<tr><td>📋 企业档案</td><td>基本信息 · T1/T2层级状态 · 资质证件</td><td>信息维护</td></tr>
+</table>
+</div>
+
+<div class="note">⚠️ 服务商端不包含"采购管理"——服务商不采购，只接单。</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--blue)"></span>二、物业端·采购模块</h2>
+
+<div class="card"><h4>使用者</h4><p>物业经理、物业工程主管——日常采购执行者</p></div>
+
+<div class="card"><h4>核心任务</h4>
+<ol>
+  <li>对≤2000元的小额采购直接下单</li>
+  <li>对>2000元的采购提交申请，推送业委会审批</li>
+  <li>查看本小区T2供应商池，选择供应商</li>
+  <li>对比多个供应商报价</li>
+  <li>验收服务/货物，并对供应商评分评价</li>
+</ol>
+</div>
+
+<div class="card"><h4>界面Tab结构</h4>
+<table>
+<tr><th>Tab</th><th>内容</th><th>关键信息</th></tr>
+<tr><td>⚡ 快捷采购</td><td>≤2000元直采表单（项目/品类/供应商/金额/说明） · 超2000自动拦截提示 · 采购记录列表</td><td><span class="tag t-r">关键</span> 金额实时检测</td></tr>
+<tr><td>🏢 小区供应商</td><td>本小区T2供应商列表（名称/品类/信用分/评分/联系人）</td><td>只能选T2池内的</td></tr>
+<tr><td>📝 采购申请</td><td>>2000元采购表单 · 实时审批路径预览（金额联动） · 紧急通道 · 推荐供应商下拉</td><td><span class="tag t-r">关键</span> 审批链实时展示</td></tr>
+<tr><td>📊 比价看板</td><td>同一采购需求·多供应商报价横向对比（信用/评分/价格/工期/质保/备注） · 系统推荐标注</td><td>辅助决策</td></tr>
+<tr><td>⭐ 验收评价</td><td>待验收列表 · 确认验收按钮 · 五星评分 · 评价文字</td><td>计入供应商信用分</td></tr>
+</table>
+</div>
+
+<div class="note">⚠️ 物业端不包含"审批"和"供应商管理"——那是业委会的职责。</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--purple)"></span>三、业委会端·采购模块</h2>
+
+<div class="card"><h4>使用者</h4><p>业委会采购委员、业委会主任——采购决策与监管者</p></div>
+
+<div class="card"><h4>核心任务</h4>
+<ol>
+  <li>审批物业提交的采购申请</li>
+  <li>管理本小区T2供应商池（邀请/移除/审核服务商申请）</li>
+  <li>查看年度预算和各科目使用情况</li>
+  <li>管理采购合同</li>
+  <li>合规审查——每笔采购过五道闸门</li>
+</ol>
+</div>
+
+<div class="card"><h4>界面Tab结构</h4>
+<table>
+<tr><th>Tab</th><th>内容</th><th>关键信息</th></tr>
+<tr><td>📋 采购审批</td><td>统计卡片 · 待审批队列（每单显示：供应商/金额/品类/发起人/审批链/合规闸门状态） · 通过/拒绝操作</td><td><span class="tag t-r">核心</span> 五道闸门逐项标记</td></tr>
+<tr><td>🏢 供应商管理</td><td>本小区T2池（名称/品类/信用/状态/加入日期） · 批准/拒绝T2申请 · 从T1平台库邀请新供应商 · 移出不合格供应商</td><td><span class="tag t-r">核心</span> T2守门人</td></tr>
+<tr><td>💰 预算总览</td><td>年度预算统计 · 各科目明细（分配/已用/剩余/使用率进度条） · 绿/黄/红预警</td><td>财务管控</td></tr>
+<tr><td>📄 合同管理</td><td>合同列表（编号/供应商/类型/起止/金额/状态） · 审批通过自动生成</td><td>存档备查</td></tr>
+<tr><td>🔍 合规审查</td><td>五道闸门（预算/审批/比价/拆单/利益冲突）逐项状态 · 异常项高亮</td><td>审计视角</td></tr>
+</table>
+</div>
+
+<div class="note">⚠️ 业委会端不包含"发起采购"和"验收"——那是物业的职责。</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--cyan)"></span>四、运营端·供应链模块</h2>
+
+<div class="card"><h4>使用者</h4><p>数治理方平台运营方（杭州个信数治/宁波个信）——T1平台供应链管理者</p></div>
+
+<div class="card"><h4>核心任务</h4>
+<ol>
+  <li>审核T1入驻申请（API自动审核 + 人工复核）</li>
+  <li>管理T1供应商池（查看/冻结/解冻）</li>
+  <li>监控T1→T2转化漏斗——多少供应商被小区邀请</li>
+  <li>处理API扫描预警和供应商异常</li>
+  <li>管理跨小区黑名单</li>
+  <li>查看API扫描日志</li>
+</ol>
+</div>
+
+<div class="card"><h4>界面Tab结构</h4>
+<table>
+<tr><th>Tab</th><th>内容</th><th>关键信息</th></tr>
+<tr><td>📊 总览</td><td>T1供应商总数/已通过/待审核/已冻结/已入T2/未处理预警 · T1→T2转化漏斗图 · 最近API扫描日志</td><td>平台健康度一屏概览</td></tr>
+<tr><td>🔍 T1入驻审核</td><td>待审核队列 · 通过/拒绝/补充资料操作 · 审核标准说明</td><td><span class="tag t-r">核心</span> 人工复核入口</td></tr>
+<tr><td>🏢 T1供应商池</td><td>全量T1供应商列表（编号/名称/品类/信用分/状态/T2覆盖小区数） · 冻结/解冻操作</td><td>平台资产管理</td></tr>
+<tr><td>📈 T1→T2转化</td><td>每个T1供应商被多少个小区邀请 · 高转化/已转化/未转化标签 · 转化率统计</td><td>平台价值指标</td></tr>
+<tr><td>⚠️ 风险预警</td><td>API扫描触发的预警列表（信用下降/新增失信/经营异常） · 已处理/未处理状态</td><td>风险前置</td></tr>
+<tr><td>🚫 黑名单管理</td><td>黑名单列表（名称/原因/列入日期） · 永久标记</td><td>跨小区共享</td></tr>
+</table>
+</div>
+
+<div class="note">⚠️ 运营端不涉及任何具体小区的采购操作——它只管T1平台层。</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--green)"></span>五、社区端·采购监督模块</h2>
+
+<div class="card"><h4>使用者</h4><p>街道/网格员/社区工作者——政府监督方</p></div>
+
+<div class="card"><h4>核心任务</h4>
+<ol>
+  <li>查阅辖区内各小区大额采购备案（>20000元）</li>
+  <li>监督各小区维修基金使用情况</li>
+  <li>受理业主对供应商的投诉</li>
+  <li>发现跨小区供应商问题（在A小区出问题但B小区不知情）</li>
+</ol>
+</div>
+
+<div class="card"><h4>界面Tab结构</h4>
+<table>
+<tr><th>Tab</th><th>内容</th><th>关键信息</th></tr>
+<tr><td>📊 辖区总览</td><td>辖区小区数/大额备案数/维修基金总额/待处理投诉/跨小区预警 · 待备案提醒</td><td>一屏掌握</td></tr>
+<tr><td>📋 大额备案</td><td>>20000元采购备案列表（小区/项目/供应商/金额/日期/备案状态） · 确认备案操作</td><td>法定监督</td></tr>
+<tr><td>💰 维修基金</td><td>各小区维修基金使用情况（总额/已用/使用率进度条/最近使用记录） · 正常/关注/预警状态</td><td>基金安全</td></tr>
+<tr><td>📩 投诉受理</td><td>业主投诉列表（小区/供应商/内容/状态） · 受理操作</td><td>民生通道</td></tr>
+<tr><td>🔍 跨小区预警</td><td>同一供应商在多个小区出现问题的聚合预警 · 建议处理措施</td><td><span class="tag t-r">独特价值</span> 只有社区端能看到跨小区视角</td></tr>
+</table>
+</div>
+
+<div class="note">⚠️ 社区端只监督不操作——不能代业委会审批、不能代物业采购。</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--purple)"></span>六、辅助界面</h2>
+
+<div class="card"><h4>AI端·供应链智能</h4>
+<p>使用者：AI系统（展示给运营/业委会查看）。核心内容：异常报价识别 · 信用趋势预测 · 智能采购匹配 · 隐性拆单检测 · 多源风险评分聚合。</p>
+</div>
+
+<div class="card"><h4>业主端·供应商评价</h4>
+<p>使用者：小区业主。核心内容：查看本小区服务商列表及信用分 · 对服务过的供应商评分评价 · 提交服务投诉。</p>
+</div>
+
+<div class="card"><h4>工具集（非端口）</h4>
+<p>API五层漏斗模拟器 + 通知中心。辅助开发和演示用途，不放在主导航。</p>
+</div>
+
+<!-- ═══════════════════════ -->
+<h2><span class="dot" style="background:var(--text)"></span>七、设计约束</h2>
+
+<div class="card">
+<ol>
+  <li><strong>一个角色一个文件</strong>——物业端采购功能放在物业端.html内部，不拆独立文件</li>
+  <li><strong>采购功能是模块不是独立端口</strong>——物业/业委会/社区/运营的采购界面作为各自端口内的一个Tab或模块存在</li>
+  <li><strong>只有服务商端是独立端口</strong>——因为服务商不登录物业端/业委会端</li>
+  <li><strong>辅助工具不放入口</strong>——API模拟器、通知中心不放在index导航</li>
+  <li><strong>统一命名</strong>——物业端内叫"采购管理"、业委会端内叫"采购监管"、运营端内叫"供应链"、社区端内叫"采购监督"</li>
+  <li><strong>颜色体系</strong>——服务商橙/物业蓝/业委会紫/运营青/社区绿，每个端口的采购模块继承主色调</li>
+</ol>
+</div>
+
+</div>
+</body>
+</html>

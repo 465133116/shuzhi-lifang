@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 秘书版 · 权限体系设计</title>
+<style>
+:root {
+  --bg: #0b1120; --card: #0f172a; --card2: #111c34; --border: #1e293b;
+  --text: #e2e8f0; --muted: #94a3b8;
+  --blue: #3b82f6; --purple: #8b5cf6; --red: #ef4444; --amber: #f59e0b;
+  --green: #10b981; --orange: #f97316; --gray: #64748b; --cyan: #06b6d4; --pink: #ec4899;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  line-height: 1.6; padding: 1.5rem;
+}
+.container { max-width: 1500px; margin:0 auto; }
+
+.header {
+  text-align: center; padding: 2rem 1rem; border-bottom:1px solid var(--border); margin-bottom:2rem;
+}
+.header h1 { font-size:1.8rem; background:linear-gradient(135deg,var(--blue),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header .sub { color:var(--muted); font-size:0.9rem; margin-top:0.3rem; }
+.header .legal {
+  margin-top:1rem; padding:0.5rem 1rem; background:rgba(16,185,129,0.08);
+  border:1px solid rgba(16,185,129,0.25); border-radius:20px; display:inline-block;
+  font-size:0.8rem; color:var(--green);
+}
+
+.section { margin-bottom:2.5rem; }
+.section-title {
+  font-size:1.2rem; font-weight:700; margin-bottom:1rem; padding-left:0.8rem;
+  border-left:3px solid var(--blue); display:flex; align-items:center; gap:0.5rem;
+}
+.section-title .num { color:var(--blue); font-size:0.85rem; }
+
+/* ===== 7角色卡片 ===== */
+.role-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:0.8rem; margin-bottom:1rem; }
+.role-card {
+  background:var(--card2); border:1px solid var(--border); border-radius:10px;
+  padding:1rem 1.1rem; position:relative; overflow:hidden;
+}
+.role-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+.role-card.r-sec::before { background:var(--purple); }
+.role-card.r-dir::before { background:var(--amber); }
+.role-card.r-mem::before { background:var(--cyan); }
+.role-card.r-prop::before { background:var(--green); }
+.role-card.r-nhd::before { background:var(--blue); }
+.role-card.r-st::before { background:var(--red); }
+.role-card.r-owner::before { background:var(--gray); }
+.role-card h4 { font-size:0.95rem; margin-bottom:0.3rem; }
+.role-card .policy { font-size:0.72rem; color:var(--muted); }
+.role-card .tag { font-size:0.68rem; display:inline-block; padding:1px 7px; border-radius:10px; margin-top:0.4rem; }
+.tag-ext { background:rgba(139,92,246,0.2); color:var(--purple); }
+.tag-int { background:rgba(16,185,129,0.2); color:var(--green); }
+.tag-sup { background:rgba(59,130,246,0.2); color:var(--blue); }
+.tag-ext2 { background:rgba(245,158,11,0.2); color:var(--amber); }
+
+/* ===== 权限矩阵表 ===== */
+.matrix-wrap { overflow-x:auto; }
+.matrix { border-collapse:collapse; font-size:0.78rem; width:100%; min-width:1200px; }
+.matrix th, .matrix td { padding:0.5rem 0.5rem; border:1px solid var(--border); text-align:center; }
+.matrix thead th { background:var(--card2); font-weight:700; position:sticky; top:0; z-index:2; }
+.matrix .col-mod { text-align:left; font-weight:600; min-width:80px; background:var(--card); }
+.matrix .col-act { text-align:left; min-width:120px; font-size:0.72rem; color:var(--muted); }
+.matrix .col-policy { min-width:50px; font-size:0.68rem; color:var(--muted); }
+.matrix tbody tr:hover td { background:rgba(59,130,246,0.04); }
+
+/* 权限标识 */
+.perm { display:inline-block; padding:2px 6px; border-radius:4px; font-weight:700; font-size:0.68rem; min-width:28px; }
+.perm-none { background:rgba(100,116,139,0.15); color:var(--gray); }
+.perm-view { background:rgba(59,130,246,0.15); color:var(--blue); }
+.perm-create { background:rgba(16,185,129,0.15); color:var(--green); }
+.perm-edit { background:rgba(245,158,11,0.15); color:var(--amber); }
+.perm-approve { background:rgba(239,68,68,0.15); color:var(--red); }
+.perm-manage { background:rgba(139,92,246,0.15); color:var(--purple); }
+
+.legend { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; font-size:0.78rem; }
+.legend-item { display:flex; align-items:center; gap:0.3rem; }
+
+/* ===== Tab切换 ===== */
+.tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+.tab {
+  padding:0.5rem 1rem; border-radius:8px 8px 0 0; cursor:pointer;
+  border:1px solid var(--border); background:var(--card); color:var(--muted);
+  font-size:0.85rem; font-weight:600; transition:0.15s;
+}
+.tab:hover { border-color:var(--blue); color:var(--text); }
+.tab.active { background:var(--card2); border-bottom-color:var(--card2); color:var(--blue); border-color:var(--blue); }
+
+.mode-label { font-size:0.72rem; padding:2px 8px; border-radius:10px; margin-left:0.5rem; }
+.mode-full { background:rgba(16,185,129,0.15); color:var(--green); }
+.mode-dual { background:rgba(245,158,11,0.15); color:var(--amber); }
+.mode-p1 { background:rgba(59,130,246,0.15); color:var(--blue); }
+
+/* ===== 模式差异表 ===== */
+.diff-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+.diff-table th { background:var(--card2); padding:0.6rem 1rem; text-align:left; border-bottom:2px solid var(--border); }
+.diff-table td { padding:0.5rem 1rem; border-bottom:1px solid var(--border); }
+.diff-table .frozen { color:var(--red); }
+.diff-table .active { color:var(--green); }
+
+.highlight-box {
+  background:rgba(139,92,246,0.06); border:1px solid rgba(139,92,246,0.2);
+  border-radius:10px; padding:1.2rem; margin-top:1rem;
+}
+
+@media (max-width:768px) {
+  body { padding:0.8rem; }
+  .role-grid { grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ========== HEADER ========== -->
+<div class="header">
+  <h1>数治理方 · 秘书版 · 权限体系</h1>
+  <div class="sub">基于沪房物业〔2026〕36号 + 沪住建建议复〔2018〕23号</div>
+  <div class="legal">⚖ 第4条：委员须"业主担任" | 第6条：秘书可"配备"（不必是业主）| 第16条：秘书负责接待</div>
+</div>
+
+<!-- ========== 角色总览 ========== -->
+<div class="section">
+  <div class="section-title"><span class="num">01</span> 七角色定义</div>
+  <div class="role-grid">
+    <div class="role-card r-sec">
+      <h4>👩‍💼 秘书</h4>
+      <div class="policy">政策：第6条"配备"<br>沪住建〔2018〕23号"聘请"</div>
+      <span class="tag tag-ext">外部聘请</span><span class="tag tag-ext2">可多小区</span>
+    </div>
+    <div class="role-card r-dir">
+      <h4>👤 业委会主任</h4>
+      <div class="policy">政策：第1/7条<br>业主大会选举产生</div>
+      <span class="tag tag-int">业主</span><span class="tag tag-sup">决策者</span>
+    </div>
+    <div class="role-card r-mem">
+      <h4>👥 业委会委员</h4>
+      <div class="policy">政策：第4条"业主担任"<br>第7条印章分持</div>
+      <span class="tag tag-int">业主</span>
+    </div>
+    <div class="role-card r-prop">
+      <h4>🏢 物业人员</h4>
+      <div class="policy">政策：第6条 被监督方<br>第16条 联席会议参与方</div>
+      <span class="tag tag-ext">外部</span><span class="tag tag-sup">被监督</span>
+    </div>
+    <div class="role-card r-nhd">
+      <h4>🏘 居委人员</h4>
+      <div class="policy">政策：第15条 指导监督<br>第16条 列席会议</div>
+      <span class="tag tag-sup">监督方</span>
+    </div>
+    <div class="role-card r-st">
+      <h4>🏛 街镇人员</h4>
+      <div class="policy">政策：第3/15/17/18条<br>备案/约谈/补位</div>
+      <span class="tag tag-sup">监管方</span>
+    </div>
+    <div class="role-card r-owner">
+      <h4>🏠 业主</h4>
+      <div class="policy">政策：第8条 查询权<br>第16条 投诉/建议权</div>
+      <span class="tag tag-int">服务对象</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 权限等级说明 ========== -->
+<div class="section">
+  <div class="section-title"><span class="num">02</span> 五级权限 · 政策溯源规则</div>
+  <div class="legend">
+    <div class="legend-item"><span class="perm perm-none">—</span> 无权限</div>
+    <div class="legend-item"><span class="perm perm-view">V</span> 查看（第8条"接受查询"）</div>
+    <div class="legend-item"><span class="perm perm-create">C</span> 创建（第6条"协助履行职责"）</div>
+    <div class="legend-item"><span class="perm perm-edit">E</span> 编辑（第16条"协调解决"）</div>
+    <div class="legend-item"><span class="perm perm-approve">A</span> 审批（第7条"印章审批"）</div>
+    <div class="legend-item"><span class="perm perm-manage">M</span> 管理（第2条"业主大会决定"→授权）</div>
+  </div>
+  <p style="font-size:0.78rem; color:var(--muted);">
+    <b>权限溯源原则</b>：每一项权限都标注了政策依据。秘书权限的上限是"执行"（C/E），不能越权到"审批"（A）或"管理"（M）——审批权属于业委会委员/主任，管理权来自业主大会授权。
+  </p>
+</div>
+
+<!-- ========== 权限矩阵 ========== -->
+<div class="section">
+  <div class="section-title"><span class="num">03</span> 完整权限矩阵（在管模式）</div>
+
+  <div class="matrix-wrap">
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th rowspan="2" style="min-width:80px;">模块</th>
+        <th rowspan="2" style="min-width:140px;">操作</th>
+        <th rowspan="2" style="min-width:45px;">政策</th>
+        <th>👩‍💼<br>秘书</th>
+        <th>👤<br>主任</th>
+        <th>👥<br>委员</th>
+        <th>🏢<br>物业</th>
+        <th>🏘<br>居委</th>
+        <th>🏛<br>街镇</th>
+        <th>🏠<br>业主</th>
+      </tr>
+    </thead>
+    <tbody>
+
+<!-- 业主接待 -->
+<tr><td class="col-mod" rowspan="5" style="color:var(--purple);">📋 业主接待</td>
+  <td class="col-act">查看业主信息卡片</td><td class="col-policy">第16条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">创建接待记录（咨询/投诉/建议）</td><td class="col-policy">第16条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-create">C</span></td></tr>
+<tr><td class="col-act">标注通话结果</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">管理回访队列</td><td class="col-policy">第16条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">满意度评价查看</td><td class="col-policy">第16条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 工单协同 -->
+<tr><td class="col-mod" rowspan="6" style="color:var(--green);">🔧 工单协同</td>
+  <td class="col-act">查看工单（全部）</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">查看自己提交的工单</td><td class="col-policy">第16条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">创建工单</td><td class="col-policy">第6/16条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-create">C</span></td></tr>
+<tr><td class="col-act">接单/处理/回单</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-edit">E</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">闭环确认</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-edit">E</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-edit">E</span></td></tr>
+<tr><td class="col-act">配置SLA/升级链</td><td class="col-policy">第2条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 催缴辅助 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--orange);">💰 催缴辅助</td>
+  <td class="col-act">查看欠费名单/缴费率看板</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">记录催缴行为（通话/短信/上门）</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">查看本人缴费状态</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td></tr>
+
+<!-- 短信发送 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--cyan);">📨 短信发送</td>
+  <td class="col-act">选择模板手动发送</td><td class="col-policy">第6/16条</td>
+  <td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">查看发送日志</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">配置自动触发规则</td><td class="col-policy">第2条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 会议管理 -->
+<tr><td class="col-mod" rowspan="5" style="color:var(--blue);">🗳 会议管理</td>
+  <td class="col-act">查看会议/决议</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">发起会议/征集议题/发送通知</td><td class="col-policy">第6条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">记录会议纪要</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-edit">E</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">表决投票（投出自己的票）</td><td class="col-policy">第2条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-create">C</span></td></tr>
+<tr><td class="col-act">决议公示发布</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 信息公开 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--cyan);">📢 信息公开</td>
+  <td class="col-act">查看公示信息</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">发布/更新公示</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">查询本人维修资金/缴费</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td></tr>
+
+<!-- 档案管理 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--blue);">📁 档案管理</td>
+  <td class="col-act">分类检索档案</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-edit">E</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">归档/更新档案</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">借阅登记</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 印章管理 -->
+<tr><td class="col-mod" rowspan="4" style="color:var(--pink);">🖊 印章管理</td>
+  <td class="col-act">查看用印记录</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">提交用印申请</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">审批用印（保管人）</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">最终审批（主任）</td><td class="col-policy">第7条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 选举辅助 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--red);">🏗 选举辅助</td>
+  <td class="col-act">查看选举信息/候选人</td><td class="col-policy">第4条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">管理候选人库/资格审查</td><td class="col-policy">第3/4条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">投票/计票</td><td class="col-policy">第4条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-create">C</span></td></tr>
+
+<!-- 财务辅助 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--amber);">📊 财务辅助</td>
+  <td class="col-act">查看财务公示数据</td><td class="col-policy">第8条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">录入/更新台账</td><td class="col-policy">第11/12条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-edit">E</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">审批预算/支出</td><td class="col-policy">第13条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-approve">A</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 培训管理 -->
+<tr><td class="col-mod" rowspan="2" style="color:var(--gray);">🎓 培训管理</td>
+  <td class="col-act">查看培训排期/参训记录</td><td class="col-policy">第15条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">管理培训排期/报名</td><td class="col-policy">第15条</td>
+  <td><span class="perm perm-create">C</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+<!-- 合规引擎 -->
+<tr><td class="col-mod" rowspan="3" style="color:var(--gray);">⚙ 合规引擎</td>
+  <td class="col-act">查看法规知识库/SOP</td><td class="col-policy">全部18条</td>
+  <td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td><td><span class="perm perm-view">V</span></td></tr>
+<tr><td class="col-act">配置规则引擎参数</td><td class="col-policy">第2条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+<tr><td class="col-act">约谈/发函记录（监管方专用）</td><td class="col-policy">第17条</td>
+  <td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-manage">M</span></td><td><span class="perm perm-none">—</span></td></tr>
+
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ========== 三种模式差异 ========== -->
+<div class="section">
+  <div class="section-title"><span class="num">04</span> 三种部署模式 · 模块开关</div>
+  <table class="diff-table">
+    <thead>
+      <tr><th>模块</th><th style="text-align:center;">🟢 在管模式<br><span style="font-size:0.72rem;opacity:0.7;">业委会正常</span></th><th style="text-align:center;">🟡 双轨模式<br><span style="font-size:0.72rem;opacity:0.7;">换届交接</span></th><th style="text-align:center;">🔵 P1模式<br><span style="font-size:0.72rem;opacity:0.7;">业委会缺位</span></th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>📋 业主接待</td><td class="active">✅ 全功能</td><td class="active">✅ 全功能</td><td class="active">✅ 基础功能</td><td>P1不含排班/自助查询</td></tr>
+      <tr><td>🔧 工单协同</td><td class="active">✅ 全功能</td><td class="active">✅ 全功能</td><td class="active">✅ 基础功能</td><td>P1无维修资金关联</td></tr>
+      <tr><td>💰 催缴辅助</td><td class="active">✅ 全功能</td><td class="active">✅ 基础</td><td class="active">✅ 基础</td><td>双轨/P1无分期/合规校验</td></tr>
+      <tr><td>📨 短信发送</td><td class="active">✅ 全功能</td><td class="active">✅ 全功能</td><td class="active">✅ 全功能</td><td>P1已有11条模板</td></tr>
+      <tr><td>🗳 会议管理</td><td class="active">✅ 全功能</td><td class="active">✅ 联席会</td><td class="frozen">❌ 冻结</td><td>双轨仅保留联席会</td></tr>
+      <tr><td>📢 信息公开</td><td class="active">✅ 全功能</td><td class="active">✅ 基础</td><td class="frozen">❌ 冻结</td><td></td></tr>
+      <tr><td>📁 档案管理</td><td class="active">✅ 全功能</td><td class="active">✅ 基础</td><td class="frozen">❌ 冻结</td><td></td></tr>
+      <tr><td>🖊 印章管理</td><td class="active">✅ 全功能</td><td class="frozen">❌ 冻结</td><td class="frozen">❌ 冻结</td><td>无业委会=无印章</td></tr>
+      <tr><td>🏗 选举辅助</td><td class="active">✅ 全功能</td><td class="active">✅ 换届</td><td class="frozen">❌ 冻结</td><td>双轨聚焦换届</td></tr>
+      <tr><td>📊 财务辅助</td><td class="active">✅ 全功能</td><td class="frozen">❌ 冻结</td><td class="frozen">❌ 冻结</td><td>P3功能</td></tr>
+      <tr><td>🎓 培训管理</td><td class="active">✅ 全功能</td><td class="frozen">❌ 冻结</td><td class="frozen">❌ 冻结</td><td>P3功能</td></tr>
+      <tr><td>⚙ 合规引擎</td><td class="active">✅ 全功能</td><td class="active">✅ 全功能</td><td class="active">✅ 基础</td><td>P1仅规则库+SOP</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 设计原则 ========== -->
+<div class="section">
+  <div class="section-title"><span class="num">05</span> 权限设计原则</div>
+  <div class="highlight-box">
+    <p style="font-size:0.88rem; line-height:1.9;">
+      <b style="color:var(--purple);">原则1：秘书不决策。</b>秘书权限上限为"创建/编辑"（C/E），不得越权审批（A）或管理（M）。审批权归业委会委员/主任，管理权来自业主大会授权。<br><br>
+      <b style="color:var(--green);">原则2：政策溯源。</b>矩阵中每项权限均标注政策条款，确保权限不能超出法定授权范围。<br><br>
+      <b style="color:var(--amber);">原则3：模式级隔离。</b>三种部署模式不是三个系统，而是同一套代码+不同的模块开关。P1模式只开4模块（接待+工单+催缴+短信），权限矩阵其余行全冻结。<br><br>
+      <b style="color:var(--blue);">原则4：多小区隔离。</b>秘书可同时服务多个小区，数据通过 community_id 隔离。切换小区=切换数据租户=权限仍然受同一套矩阵约束。<br><br>
+      <b style="color:var(--red);">原则5：审批链不可绕过。</b>印章审批须经保管人→主任，街镇约谈仅街镇角色可操作。权限矩阵中的"A"权限不存在单人批准——必须走审批链。
+    </p>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

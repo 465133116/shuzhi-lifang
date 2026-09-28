@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 采购端</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px;gap:12px}
+.tn span{font-weight:700;font-size:15px}.tn .info{font-size:11px;opacity:0.7;margin-left:auto}
+.ct{max-width:1400px;margin:0 auto;padding:16px}
+.side{width:200px;background:var(--c);border-radius:var(--r);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.side a{display:block;padding:10px 20px;font-size:13px;color:var(--t);text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:.15s}
+.side a:hover,.side a.on{background:#eff6ff;color:var(--p);border-left-color:var(--p);font-weight:600}
+.main{flex:1;min-width:0}
+.card{background:var(--c);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.stat{text-align:center;padding:12px}.stat .n{font-size:24px;font-weight:700}.stat .l{font-size:11px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-r{background:#fef2f2;color:var(--d)}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}.tag-b{background:#eff6ff;color:var(--p)}
+.btn{display:inline-block;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;transition:.15s}.btn:hover{opacity:.85}.btn-p{background:var(--p);color:#fff}.btn-d{background:var(--d);color:#fff}.btn-o{background:transparent;border:1px solid var(--b);color:var(--t)}
+.flex{display:flex;gap:16px}
+.steps{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.step{width:28px;height:28px;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:600}.step.on{background:var(--p);color:#fff}.step.done{background:var(--s);color:#fff}.step.rej{background:var(--d);color:#fff}.step.wait{background:var(--b);color:var(--sub)}
+.sl{flex:1;height:2px;background:var(--b)}.sl.done{background:var(--s)}.sl.rej{background:var(--d)}
+.alertbox{padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px}.alertbox-y{background:#fffbeb;color:var(--w);border:1px solid #fde68a}.alertbox-r{background:#fef2f2;color:var(--d);border:1px solid #fecaca}
+</style></head><body>
+<div class="tn"><span>数治理方 · 采购端</span><span class="info">阳光花园 | 张经理</span></div>
+<div class="ct"><div class="flex">
+<div class="side">
+<a onclick="st('list')" class="on" id="st-list">采购列表</a>
+<a onclick="st('vendors')" id="st-vendors">供应商</a>
+<a onclick="st('apply')" id="st-apply">发起采购</a>
+<a onclick="st('contracts')" id="st-contracts">合同管理</a>
+<a onclick="st('split')" id="st-split">拆单检测</a>
+</div>
+<div class="main" id="main"></div>
+</div></div>
+<script>
+
+var D={orders:[
+{id:'PO001',item:'电梯钢丝绳',vendor:'通力电梯',amount:28000,step:2,status:'审批中',split:false,date:'2026-06-20',steps:[1,'done'],[2,'on'],[3,'wait']},
+{id:'PO002',item:'楼道LED灯泡x50',vendor:'飞利浦照明',amount:3500,step:3,status:'已完成',split:false,date:'2026-06-18',steps:[1,'done'],[2,'done'],[3,'done']},
+{id:'PO003',item:'水管接头+密封圈',vendor:'日丰管业',amount:1200,step:1,status:'审批中',split:false,date:'2026-06-25',steps:[1,'on'],[2,'wait'],[3,'wait']},
+{id:'PO004',item:'保安制服x10套',vendor:'安保用品商城',amount:4800,step:2,status:'已拒绝',split:true,date:'2026-06-22',steps:[1,'done'],[2,'rej'],[3,'wait']},
+{id:'PO005',item:'门禁读卡器x5',vendor:'安保用品商城',amount:4500,step:0,status:'拆单拦截',split:true,date:'2026-06-25',steps:[]}
+],
+vendors:[
+{id:'V001',name:'通力电梯',type:'电梯维保',rating:4.5,orders:12,status:'合作中'},
+{id:'V002',name:'飞利浦照明',type:'照明设备',rating:4.8,orders:8,status:'合作中'},
+{id:'V003',name:'日丰管业',type:'管道材料',rating:4.2,orders:5,status:'合作中'},
+{id:'V004',name:'安保用品商城',type:'制服装备',rating:3.5,orders:3,status:'待评估'}
+],
+contracts:[
+{id:'C001',vendor:'通力电梯',type:'年度维保',start:'2026-01-01',end:'2026-12-31',amount:96000,status:'生效中'},
+{id:'C002',vendor:'飞利浦照明',type:'框架协议',start:'2026-03-01',end:'2027-02-28',amount:50000,status:'生效中'},
+{id:'C003',vendor:'日丰管业',type:'单次合同',start:'2026-06-01',end:'2026-06-30',amount:1200,status:'即将到期'}
+],
+splitAlerts:[
+{id:'SP001',vendor:'安保用品商城',items:'PO004(保安制服)+PO005(门禁读卡器)',date:'2026-06-25',reason:'同一供应商、同日、同类目，疑似拆分规避审批',action:'已拦截'}
+]
+};
+
+function st(t){
+document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('on')});
+document.getElementById('st-'+t).classList.add('on');
+if(t==='list')sl();else if(t==='vendors')sv();else if(t==='apply')sa();else if(t==='contracts')sc();else if(t==='split')ss();
+}
+
+function sl(){
+var h='<h2 style="margin-bottom:16px">采购列表</h2><div class="g4" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+D.orders.length+'</div><div class="l">总采购单</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">'+D.orders.filter(function(o){return o.status==='审批中'}).length+'</div><div class="l">审批中</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.splitAlerts.length+'</div><div class="l">拆单预警</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--s)">'+D.orders.filter(function(o){return o.status==='已完成'}).length+'</div><div class="l">已完成</div></div></div>'+
+'<div class="card"><table><tr><th>编号</th><th>采购项目</th><th>供应商</th><th>金额</th><th>审批进度</th><th>状态</th></tr>';
+D.orders.forEach(function(o){
+var sts='<div class="steps">';
+sts+='<span class="step '+(o.step>=1?o.status==='已拒绝'&&o.step===2?'rej':'done':o.step===0?'wait':'on')+'">1</span><span class="sl '+(o.step>=2?'done':'')+'"></span>';
+sts+='<span class="step '+(o.step>=2?o.status==='已拒绝'?'rej':'done':o.step===1?'on':'wait')+'">2</span><span class="sl '+(o.step>=3?'done':'')+'"></span>';
+sts+='<span class="step '+(o.step>=3?'done':'wait')+'">3</span></div>';
+var ss=o.status==='审批中'?'tag-y':o.status==='已完成'?'tag-g':o.status==='已拒绝'?'tag-r':'tag-r';
+h+='<tr><td>'+o.id+'</td><td>'+o.item+(o.split?' <span class="tag tag-r">拆单预警</span>':'')+'</td><td>'+o.vendor+'</td><td>¥'+o.amount+'</td><td>'+sts+'</td><td><span class="tag '+ss+'">'+o.status+'</span></td></tr>';
+});
+h+='</table><div style="font-size:11px;color:var(--sub);margin-top:8px">三级审批：①物业初审 → ②业委会复核 → ③社区备案</div></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sv(){
+var h='<h2 style="margin-bottom:16px">供应商管理</h2><div class="card"><table><tr><th>编号</th><th>供应商</th><th>类型</th><th>评分</th><th>合作次数</th><th>状态</th></tr>';
+D.vendors.forEach(function(v){
+h+='<tr><td>'+v.id+'</td><td>'+v.name+'</td><td>'+v.type+'</td><td>'+'★'.repeat(Math.floor(v.rating))+' '+v.rating+'</td><td>'+v.orders+'次</td><td><span class="tag '+(v.status==='合作中'?'tag-g':'tag-y')+'">'+v.status+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sa(){
+var h='<h2 style="margin-bottom:16px">发起采购</h2><div class="card">'+
+'<div class="steps"><span class="step on">1</span><span class="sl"></span><span class="step wait">2</span><span class="sl"></span><span class="step wait">3</span></div>'+
+'<div style="font-size:11px;color:var(--sub);margin-bottom:16px">物业初审 → 业委会复核 → 社区备案</div>'+
+'<label>采购项目</label><input placeholder="如：电梯钢丝绳"><label>供应商</label><select><option>通力电梯</option><option>飞利浦照明</option><option>日丰管业</option></select><label>金额(元)</label><input type="number" placeholder="0"><label>说明</label><textarea placeholder="采购原因及用途"></textarea>'+
+'<div class="alertbox alertbox-y">⚠ 系统自动检测拆单行为。同一供应商、同日、同类目多次提交将被拦截。阈值：同日同供应商累计金额>5000元触发预警。</div>'+
+'<button class="btn btn-p" onclick="alert('采购申请已提交，进入三级审批流程')" style="width:100%;padding:12px;font-size:15px">提交审批</button></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sc(){
+var h='<h2 style="margin-bottom:16px">合同管理</h2><div class="card"><table><tr><th>编号</th><th>供应商</th><th>类型</th><th>起始</th><th>截止</th><th>金额</th><th>状态</th></tr>';
+D.contracts.forEach(function(c){
+h+='<tr><td>'+c.id+'</td><td>'+c.vendor+'</td><td>'+c.type+'</td><td>'+c.start+'</td><td>'+c.end+'</td><td>¥'+c.amount+'</td><td><span class="tag '+(c.status==='生效中'?'tag-g':'tag-y')+'">'+c.status+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function ss(){
+var h='<h2 style="margin-bottom:16px">拆单检测</h2>'+
+'<div class="alertbox alertbox-y" style="margin-bottom:16px">检测规则：同一供应商 + 同一日期 + 同类目 + 累计金额>5000元 → 触发拆单预警</div>'+
+'<div class="card"><h3 style="margin-bottom:8px">预警记录</h3><table><tr><th>编号</th><th>供应商</th><th>涉及采购</th><th>日期</th><th>原因</th><th>处理</th></tr>';
+D.splitAlerts.forEach(function(s){
+h+='<tr><td>'+s.id+'</td><td>'+s.vendor+'</td><td>'+s.items+'</td><td>'+s.date+'</td><td style="font-size:11px;color:var(--sub)">'+s.reason+'</td><td><span class="tag tag-r">'+s.action+'</span></td></tr>';
+});
+h+='</table></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">拆单规则配置</h3><table><tr><td>检测窗口</td><td>24小时</td></tr><tr><td>累计金额阈值</td><td>5000元</td></tr><tr><td>同类目判定</td><td>按供应商主营类型匹配</td></tr><tr><td>拦截策略</td><td>合并为单一审批单</td></tr></table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+sl();
+
+</script></body></html>

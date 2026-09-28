@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业主分类决策树 · 数治理方 P1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:40px 20px}
+h1{text-align:center;font-size:22px;margin-bottom:4px;letter-spacing:1px}
+.sub{text-align:center;font-size:12px;color:#64748b;margin-bottom:32px}
+
+/* Main flow */
+.flow{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:0;position:relative}
+
+/* Node */
+.node{position:relative;border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;transition:all .2s;cursor:default}
+.node:hover{filter:brightness(1.1);transform:translateX(4px)}
+
+.node-title{font-weight:700;font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.node-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:700;flex-shrink:0}
+.node-cond{font-size:12px;opacity:.75;margin-bottom:2px}
+.node-result{font-size:13px;font-weight:600}
+.node-arrow{position:absolute;bottom:-18px;left:30px;font-size:18px;color:#475569;z-index:1}
+
+/* Colors by category */
+.node.f{border-left:4px solid #8b5cf6;background:linear-gradient(135deg,#1e1b4b,#1e1b4b)}
+.node.f .node-num{background:#8b5cf6;color:#fff}
+
+.node.e{border-left:4px solid #ef4444;background:linear-gradient(135deg,#1e1118,#1e1118)}
+.node.e .node-num{background:#ef4444;color:#fff}
+
+.node.a{border-left:4px solid #f59e0b;background:linear-gradient(135deg,#1e180a,#1e180a)}
+.node.a .node-num{background:#f59e0b;color:#0f172a}
+
+.node.b{border-left:4px solid #10b981;background:linear-gradient(135deg,#0a1e16,#0a1e16)}
+.node.b .node-num{background:#10b981;color:#0f172a}
+
+.node.d{border-left:4px solid #f97316;background:linear-gradient(135deg,#1e1208,#1e1208)}
+.node.d .node-num{background:#f97316;color:#fff}
+
+.node.c{border-left:4px solid #94a3b8;background:linear-gradient(135deg,#15181c,#15181c)}
+.node.c .node-num{background:#94a3b8;color:#0f172a}
+
+/* Substages: open/close */
+.sub-toggle{cursor:pointer;font-size:11px;color:#64748b;margin-top:6px;display:inline-flex;align-items:center;gap:4px;user-select:none}
+.sub-toggle:hover{color:#94a3b8}
+.sub-toggle .arrow{transition:transform .2s;display:inline-block}
+.sub-toggle.open .arrow{transform:rotate(90deg)}
+
+.sub-detail{display:none;margin-top:10px;border-top:1px solid rgba(255,255,255,.06);padding-top:10px}
+.sub-detail.show{display:block}
+
+.sub-table{width:100%;border-collapse:collapse;font-size:11px}
+.sub-table th{text-align:left;padding:4px 8px;color:#94a3b8;font-weight:600;border-bottom:1px solid rgba(255,255,255,.08)}
+.sub-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.sub-table tr:hover td{background:rgba(255,255,255,.03)}
+
+.sub-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600}
+.badge-c1{background:#f1f5f9;color:#475569}
+.badge-c2{background:#e2e8f0;color:#475569}
+.badge-c3{background:#cbd5e1;color:#334155}
+.badge-c4{background:#94a3b8;color:#fff}
+.badge-d1{background:#ffedd5;color:#9a3412}
+.badge-d2{background:#fed7aa;color:#9a3412}
+.badge-d3{background:#f97316;color:#fff}
+.badge-e1{background:#fee2e2;color:#991b1b}
+.badge-e2{background:#fecaca;color:#7f1d1d}
+
+/* Legend */
+.legend{max-width:1100px;margin:40px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;padding:6px 12px;border-radius:6px;background:rgba(255,255,255,.04)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* Connector lines */
+.connector{width:2px;height:16px;background:#334155;margin:0 auto 0 42px}
+
+/* Summary strip */
+.summary-strip{max-width:1100px;margin:30px auto 0;display:flex;gap:10px}
+.summary-card{flex:1;border-radius:8px;padding:12px;text-align:center;font-size:11px}
+.summary-card .big{font-size:28px;font-weight:800;line-height:1}
+.summary-card .label{font-size:10px;color:#64748b;margin-top:2px}
+
+/* Section title */
+.section-title{max-width:1100px;margin:40px auto 16px;font-size:15px;font-weight:700;color:#94a3b8;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:#1e293b}
+
+/* Footer rules */
+.rules-box{max-width:1100px;margin:30px auto;background:rgba(255,255,255,.02);border-radius:10px;padding:20px;font-size:12px;line-height:2}
+.rules-box h3{font-size:14px;margin-bottom:8px}
+.rule-row{display:flex;gap:12px;align-items:baseline;padding:3px 0}
+.rule-icon{width:18px;text-align:center;flex-shrink:0;font-size:13px}
+</style>
+</head>
+<body>
+
+<h1>🏷️ 业主分类决策树</h1>
+<div class="sub">数治理方 P1 · V8.0 · 从上到下，命中即停</div>
+
+<!-- Flow -->
+<div class="flow">
+
+<!-- Step 1: F -->
+<div class="node f" style="margin-left:0">
+  <div class="node-title"><span class="node-num">1</span> F · 历史复杂</div>
+  <div class="node-cond">条件：lb含"已搬家""产权变更""出租""继承"等关键词 或 号码无效/未覆盖</div>
+  <div class="node-result">→ 主分类 = F（独立通道，不参与A-E竞争）</div>
+  <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="arrow">▶</span> 展开子类型（5种）
+  </div>
+  <div class="sub-detail">
+    <table class="sub-table">
+      <tr><th>子类型</th><th>lb关键词</th><th>处置</th></tr>
+      <tr><td>F·号码无效</td><td>空号/停机/错号</td><td>标记+找其他联系方式</td></tr>
+      <tr><td>F·未覆盖</td><td>非服务范围</td><td>标记+不处理</td></tr>
+      <tr><td>F·产权变更</td><td>"已搬家""已出售""产权变更"</td><td>确认新业主→更新系统</td></tr>
+      <tr><td>F·继承纠纷</td><td>"继承""遗产""过户中"</td><td>暂不催收+定期跟进</td></tr>
+      <tr><td>F·出租</td><td>"出租""租客""不在这住"</td><td>联系租客+联系业主</td></tr>
+    </table>
+  </div>
+</div>
+<div class="connector"></div>
+
+<!-- Step 2: E -->
+<div class="node e" style="margin-left:20px">
+  <div class="node-title"><span class="node-num">2</span> E · 对抗态度</div>
+  <div class="node-cond">条件：拒接≥3次 / 攻击性投诉 / 明确拒缴 / 态度差评≥3次（且无F信号）</div>
+  <div class="node-result">→ 主分类 = E（对抗优先处理，不解决态度其他无从谈起）</div>
+  <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="arrow">▶</span> 展开子类型（4型）
+  </div>
+  <div class="sub-detail">
+    <table class="sub-table">
+      <tr><th>子类型</th><th>触发</th><th>处置方向</th><th>降级条件</th></tr>
+      <tr><td><span class="sub-badge badge-e1">E1·拒接型</span></td><td>拒接≥3，无攻击/拒缴</td><td>换时段/短信，不持续拨号</td><td>接通软化→A或C5</td></tr>
+      <tr><td><span class="sub-badge badge-e2">E2·攻击型</span></td><td>攻击投诉/群内攻击</td><td>升级主管，不正面冲突</td><td>60天无攻击→C5</td></tr>
+      <tr><td><span class="sub-badge" style="background:#fecaca;color:#7f1d1d">E3·拒缴型</span></td><td>明确说"不交"</td><td>了解原因→法律途径</td><td>原因解决→A或C</td></tr>
+      <tr><td><span class="sub-badge" style="background:#fef2f2;color:#991b1b">E4·差评累积型</span></td><td>态度差评≥3次</td><td>先做服务，不提争议</td><td>3次闭环好评→C5</td></tr>
+    </table>
+    <div style="margin-top:8px;font-size:11px;color:#94a3b8">
+      通用降级：连续60天无新攻击+拒接归零 → C5 · 已解决<br>
+      拒接修正：有效拒接 = 拒接次数 − min(拒接次数, 小程序工单数)
+    </div>
+  </div>
+</div>
+<div class="connector"></div>
+
+<!-- Step 3: A -->
+<div class="node a" style="margin-left:40px">
+  <div class="node-title"><span class="node-num">3</span> A · 有具体争议</div>
+  <div class="node-cond">条件：有未闭环报修/投诉工单（含客服草稿）（且无F、E信号）</div>
+  <div class="node-result">→ 主分类 = A（先解决问题，解决问题本身就是最好的沟通）</div>
+  <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="arrow">▶</span> 展开子类型（6种）
+  </div>
+  <div class="sub-detail">
+    <table class="sub-table">
+      <tr><th>子类型</th><th>条件</th><th>动作</th><th>新增?</th></tr>
+      <tr><td>A·报修型</td><td>报修≥1，投诉=0</td><td>等物业处理，待验收回访</td><td>保留</td></tr>
+      <tr><td>A·投诉型</td><td>投诉≥1，报修=0</td><td>联系业主了解投诉内容</td><td>保留</td></tr>
+      <tr><td>A·混合型</td><td>报修≥1，投诉≥1</td><td>确认投诉后等物业处理</td><td>保留</td></tr>
+      <tr><td>A·反复型</td><td>同问题≥3次</td><td>回访问是否彻底解决</td><td>保留</td></tr>
+      <tr><td><b>A·高优先级</b></td><td>未闭环≥3 或 超SLA≥7天</td><td>🔴 24h响应 R0</td><td>V8.0新增</td></tr>
+      <tr><td><b>A·首次型</b></td><td>首次产生A信号</td><td>🟡 黄金窗口 24h响应</td><td>V8.0新增</td></tr>
+    </table>
+    <div style="margin-top:8px;font-size:11px;color:#94a3b8">
+      A消除条件：修后照片+结果+满意度≥3星 → A消除<br>
+      差评非"问题没解决"：A消除但产生副作用（态度差评+1 / D计数+1）
+    </div>
+  </div>
+</div>
+<div class="connector"></div>
+
+<!-- Step 4-5: B/D -->
+<div style="display:flex;gap:16px;margin-left:60px">
+  <div class="node b" style="flex:1">
+    <div class="node-title"><span class="node-num">4</span> B · 经济困难</div>
+    <div class="node-cond">条件：通话含困难关键词，且有B2/B3级证据（同时有B和D信号时B优先）</div>
+    <div class="node-result">→ 主分类 = B</div>
+    <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+      <span class="arrow">▶</span> 展开
+    </div>
+    <div class="sub-detail">
+      <table class="sub-table" style="font-size:10px">
+        <tr><th>等级</th><th>证据</th><th>独立做主分类</th></tr>
+        <tr><td>B1·自述</td><td>通话说过一次困难</td><td>否，仅辅助</td></tr>
+        <tr><td>B2·反复</td><td>≥2次困难表达</td><td>是</td></tr>
+        <tr><td>B3·可验证</td><td>提供证明文件</td><td>是</td></tr>
+      </table>
+      <div style="margin-top:6px;font-size:10px;color:#64748b">
+        持续性×协商意愿：临时困难+有协商→分期 | 长期困难+拒协商→社区帮扶
+      </div>
+    </div>
+  </div>
+  <div style="width:2px;background:#1e293b;align-self:stretch;margin:10px 0"></div>
+  <div class="node d" style="flex:1">
+    <div class="node-title"><span class="node-num">5</span> D · 惯性失约</div>
+    <div class="node-cond">条件：无争议承诺有效计数≥2次（且无F/E/A/B信号）</div>
+    <div class="node-result">→ 主分类 = D</div>
+    <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+      <span class="arrow">▶</span> 展开
+    </div>
+    <div class="sub-detail">
+      <table class="sub-table" style="font-size:10px">
+        <tr><th>等级</th><th>计数</th><th>处置</th></tr>
+        <tr><td><span class="sub-badge badge-d1">D1·轻度</span></td><td>1-2次</td><td>温和提醒+设期限</td></tr>
+        <tr><td><span class="sub-badge badge-d2">D2·中度</span></td><td>3-4次</td><td>留痕+短信确认</td></tr>
+        <tr><td><span class="sub-badge badge-d3">D3·重度</span></td><td>≥5次</td><td>发函+抄送业委会</td></tr>
+        <tr><td>D4·沉默型</td><td>D≥D2+拒接≥2</td><td>不电话，改上门</td></tr>
+      </table>
+      <div style="margin-top:6px;font-size:10px;color:#64748b">
+        衰减：7天无新承诺→计数-1 | 28天归零 | 登录小程序→降一级
+      </div>
+    </div>
+  </div>
+</div>
+<div class="connector"></div>
+
+<!-- Step 6-7: C -->
+<div class="node c" style="margin-left:80px">
+  <div class="node-title"><span class="node-num">6-7</span> C · 无明确信号（兜底）</div>
+  <div class="node-cond">条件：无A/B/D/E/F信号 → 走C类流水线判定具体子类型</div>
+  <div class="node-result">
+    <span style="color:#e2e8f0">C1从众</span> ·
+    <span style="color:#cbd5e1">C2拖延</span> ·
+    <span style="color:#94a3b8">C3对比</span> ·
+    <span style="color:#94a3b8">C4信任缺失</span> ·
+    <span style="color:#64748b">C5已解决</span> ·
+    <span style="color:#475569">C6信息不足</span>
+  </div>
+  <div class="sub-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+    <span class="arrow">▶</span> 展开 C类判定流水线
+  </div>
+  <div class="sub-detail">
+    <table class="sub-table">
+      <tr><th>步</th><th>条件</th><th>→ 子类型</th><th>触发示例</th></tr>
+      <tr><td>1</td><td>有A消除记录 AND 无B/D/E/F</td><td><b>C5·已解决</b></td><td>A工单闭环≥3星</td></tr>
+      <tr><td>2</td><td>通话含从众关键词</td><td><b>C1·从众观望</b></td><td>"别人交我就交""大家都交了吗"</td></tr>
+      <tr><td>3</td><td>通话含拖延关键词</td><td><b>C2·拖延观望</b></td><td>"不急""再看吧""到时候再说"</td></tr>
+      <tr><td>4</td><td>通话含对比关键词</td><td><b>C3·对比观望</b></td><td>"隔壁小区""凭什么我们"</td></tr>
+      <tr><td>5</td><td>满意度<3星 OR 含不满词 AND 无投诉工单</td><td><b>C4·信任缺失</b></td><td>说"物业不管"但没投诉</td></tr>
+      <tr><td>6</td><td>无任何信号(无工单+无通话+无标签)</td><td><b>C6·信息不足</b></td><td>纯新业主</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /flow -->
+
+<!-- Key rules summary -->
+<div class="section-title">📋 关键规则速查</div>
+
+<div class="rules-box">
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <tr style="border-bottom:1px solid rgba(255,255,255,.06)">
+      <th style="text-align:left;padding:6px 8px;color:#94a3b8;width:100px">规则</th>
+      <th style="text-align:left;padding:6px 8px;color:#94a3b8">内容</th>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">判定优先级</td>
+      <td style="padding:6px 8px"><b>F > E > A > B > D > C</b>。从上到下，命中即停。取最高优先级有信号者为主分类</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">辅助信号</td>
+      <td style="padding:6px 8px">业主身上所有被检测到的信号，排除主分类后作为辅助。辅助不决定主策略，但调整话术软硬（有E偏硬，有B偏软）</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">独立开关</td>
+      <td style="padding:6px 8px">每个信号独立产生/消除，独立时间衰减（工单类30天半衰、通话类14天半衰）。A消除≠D消除≠E消除</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">重算时机</td>
+      <td style="padding:6px 8px">新工单 · 新通话记录 · 工单闭环 · 客服修改lb · 业主登录小程序 → 任一事件触发全部信号重算</td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">响应级别</td>
+      <td style="padding:6px 8px">
+        <span style="color:#ef4444">R0紧急</span> 24h ·
+        <span style="color:#f97316">R1优先</span> 48h ·
+        <span style="color:#f59e0b">R2常规</span> 本周 ·
+        <span style="color:#10b981">R3观察</span> 延后 ·
+        <span style="color:#94a3b8">R4静默</span> 不主动
+      </td>
+    </tr>
+    <tr style="border-bottom:1px solid rgba(255,255,255,.04)">
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">交叉模式</td>
+      <td style="padding:6px 8px">争议+困难 · 争议+惯性 · 对抗+困难 · 对抗+惯性 · 困难+惯性 · 恶化中 · 好转中 · 首次信号</td>
+    </tr>
+    <tr>
+      <td style="padding:6px 8px;color:#8b5cf6;font-weight:600">强度等级</td>
+      <td style="padding:6px 8px">
+        <span style="color:#64748b">○ 0·无</span> →
+        <span style="color:#94a3b8">◐ 1·弱</span> →
+        <span style="color:#cbd5e1">◑ 2·中</span> →
+        <span style="color:#f59e0b">● 3·强</span> →
+        <span style="color:#ef4444">⬤ 4·极强</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> F·历史复杂</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> E·对抗</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> A·争议</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> B·困难</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> D·惯性</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div> C·无信号</div>
+</div>
+
+<!-- Summary cards -->
+<div class="summary-strip">
+  <div class="summary-card" style="background:linear-gradient(135deg,#1e1b4b,#1e1118)">
+    <div class="big">6</div><div class="label">主分类</div>
+  </div>
+  <div class="summary-card" style="background:linear-gradient(135deg,#1e180a,#1e1118)">
+    <div class="big">29</div><div class="label">子类型</div>
+  </div>
+  <div class="summary-card" style="background:linear-gradient(135deg,#0a1e16,#15181c)">
+    <div class="big">8</div><div class="label">交叉模式</div>
+  </div>
+  <div class="summary-card" style="background:linear-gradient(135deg,#1e1208,#1e180a)">
+    <div class="big">5</div><div class="label">响应级别</div>
+  </div>
+  <div class="summary-card" style="background:linear-gradient(135deg,#15181c,#1e1b4b)">
+    <div class="big">5</div><div class="label">强度等级</div>
+  </div>
+</div>
+
+</body>
+</html>

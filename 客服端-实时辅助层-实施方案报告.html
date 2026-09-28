@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 客服端实时辅助层实施方案</title>
+<style>
+:root {
+  --bg: #0b1120;
+  --surface: #111827;
+  --surface2: #1e293b;
+  --border: #334155;
+  --text: #e2e8f0;
+  --sub: #94a3b8;
+  --muted: #64748b;
+  --p: #2563eb;
+  --s: #10b981;
+  --w: #f59e0b;
+  --d: #ef4444;
+  --o: #f97316;
+  --v: #8b5cf6;
+  --c: #64748b;
+  --radius: 8px;
+  --font: "PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px;
+  line-height: 1.6;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #93c5fd, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 32px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  color: #f1f5f9;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  color: #e2e8f0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--sub);
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card2 {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* Feature Matrix */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.fcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color .2s, transform .15s;
+}
+
+.fcard:hover {
+  transform: translateY(-2px);
+}
+
+.fcard.active {
+  border-color: var(--p);
+  box-shadow: 0 0 20px rgba(37,99,235,.15);
+}
+
+.fcard .num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--p);
+  opacity: .3;
+  margin-bottom: 4px;
+}
+
+.fcard .title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.fcard .oneliner {
+  font-size: 11px;
+  color: var(--sub);
+  line-height: 1.5;
+}
+
+.fcard .prio {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.prio-p0 { background: #fee2e2; color: #991b1b; }
+.prio-p1 { background: #fef3c7; color: #92400e; }
+.prio-p2 { background: #dbeafe; color: #1e40af; }
+
+/* Flow diagrams */
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.flow-h {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.flow-node {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.flow-arrow {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.flow-yes { background: #064e3b; color: #6ee7b7; }
+.flow-no  { background: #7f1d1d; color: #fca5a5; }
+.flow-trigger { background: #1e3a5f; color: #93c5fd; border: 1px solid #2563eb; }
+.flow-check { background: #422006; color: #fbbf24; border: 1px solid #f59e0b; }
+.flow-action { background: #2d1b69; color: #c4b5fd; border: 1px solid #8b5cf6; }
+.flow-result { background: #0f172a; color: #94a3b8; border: 1px dashed #334155; }
+
+/* Alert mockup */
+.alert-mock {
+  background: #1e293b;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 12px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,.4); }
+  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+
+.alert-mock.warn { border-color: #f59e0b; animation: pulse-w 1.5s ease-in-out infinite; }
+@keyframes pulse-w {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,.4); }
+  50% { box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+}
+
+.alert-mock.info { border-color: #3b82f6; animation: pulse-b 1.5s ease-in-out infinite; }
+@keyframes pulse-b {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,.4); }
+  50% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+}
+
+.alert-mock.safe { border-color: #10b981; animation: none; }
+
+.alert-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--surface2);
+  font-weight: 600;
+  color: var(--sub);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tag-r { background: #fee2e2; color: #991b1b; }
+.tag-y { background: #fef3c7; color: #92400e; }
+.tag-g { background: #d1fae5; color: #065f46; }
+.tag-b { background: #dbeafe; color: #1e40af; }
+.tag-v { background: #ede9fe; color: #5b21b6; }
+.tag-o { background: #ffedd5; color: #9a3412; }
+.tag-gray { background: #f1f5f9; color: #64748b; }
+
+/* Code block */
+pre {
+  background: #0f172a;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 12px 0;
+  color: #e2e8f0;
+}
+
+pre .kw { color: #93c5fd; }
+pre .str { color: #6ee7b7; }
+pre .fn { color: #c4b5fd; }
+pre .num { color: #fbbf24; }
+pre .cm { color: #64748b; }
+
+/* Two column */
+.g2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.g3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* Phase timeline */
+.phase-bar {
+  display: flex;
+  gap: 0;
+  margin: 16px 0;
+}
+
+.phase-step {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  position: relative;
+}
+
+.phase-step:first-child { border-radius: 8px 0 0 8px; }
+.phase-step:last-child { border-radius: 0 8px 8px 0; }
+
+.phase-step .label { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.phase-step .time { font-size: 10px; opacity: .7; }
+
+/* Integration diagram */
+.integration {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.integration .layer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.integration .block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.integration .block.engine { border-color: #8b5cf6; color: #c4b5fd; }
+.integration .block.ui { border-color: #3b82f6; color: #93c5fd; }
+.integration .block.data { border-color: #10b981; color: #6ee7b7; }
+
+.integration .arrow-down {
+  color: var(--muted);
+  font-size: 20px;
+  margin: 4px 0;
+}
+
+@media (max-width: 800px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  body { padding: 12px; }
+}
+</style>
+</head>
+<body>
+
+<h1>数治理方 · 客服端实时辅助层</h1>
+<div class="subtitle">实施方案报告 | 版本 1.0 | 2026-06-30 | 基于现有客服端 v3.12 代码架构</div>
+
+<!-- ============ 1. OVERVIEW ============ -->
+<h2>一、总体架构</h2>
+
+<div class="card">
+  <h3>1.1 三层模型</h3>
+  <div class="integration">
+    <div class="layer">
+      <div class="block ui">🖥 客服通话界面<br><span style="font-size:10px;opacity:.7">通话面板 + 弹窗层 + 侧边栏</span></div>
+    </div>
+    <div class="arrow-down">▼ BroadcastChannel 消息总线</div>
+    <div class="layer">
+      <div class="block engine">⚙️ 实时辅助引擎<br><span style="font-size:10px;opacity:.7">7个判断模块 · 规则引擎驱动</span></div>
+      <div class="block data">📊 数据上下文<br><span style="font-size:10px;opacity:.7">业主画像 · 通话记录 · 知识库</span></div>
+    </div>
+    <div class="arrow-down">▼ 写入</div>
+    <div class="layer">
+      <div class="block">🗄 localStorage / IndexedDB<br><span style="font-size:10px;opacity:.7">通话日志 · 情绪轨迹 · 承诺记录 · 标签更新</span></div>
+    </div>
+  </div>
+
+  <h3>1.2 与现有代码的集成点</h3>
+  <table>
+    <tr><th>现有模块</th><th>所在文件</th><th>集成方式</th></tr>
+    <tr>
+      <td><span class="tag tag-b">cco() 拨号</span></td>
+      <td>客服端.html 第241行</td>
+      <td>拨号时启动实时辅助引擎，绑定该次通话的 ownerId</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-y">ctp()/cqd() 快捷草稿</span></td>
+      <td>客服端.html 第246/260行</td>
+      <td>引擎检测到关键词→自动填充推荐话术到 #dpl（AI摘要框）</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-g">alc() 通信记录</span></td>
+      <td>客服端.html 第27行</td>
+      <td>通话结束时自动回写：情绪曲线、承诺可信度分、敏感词列表</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-v">D.lg 日志数组</span></td>
+      <td>客服端.html 第21行</td>
+      <td>日志字段扩展：新增 emotion、score、alerts、topics 等</td>
+    </tr>
+    <tr>
+      <td><span class="tag tag-r">D.o 业主数组</span></td>
+      <td>客服端.html 第21行</td>
+      <td>新增字段：promise_history、emotion_profile、risk_flags</td>
+    </tr>
+  </table>
+
+  <h3>1.3 核心设计原则</h3>
+  <div class="g3">
+    <div class="card2">
+      <div style="color:#93c5fd;font-weight:700;margin-bottom:6px">① 规则优先，渐进增强</div>
+      <div style="font-size:12px;color:var(--sub)">V1 纯规则引擎（正则+关键词），V2 引入 NLP，V3 接入 LLM。规则引擎始终兜底。</div>
+    </div>
+    <div class="card2">
+      <div style="color:#6ee7b7;font-weight:700;margin-bottom:6px">② 无侵入集成</div>
+      <div style="font-size:12px;color:var(--sub)">实时辅助层独立模块文件（realtime-assist.js），通过 BroadcastChannel 与客服端通信，不修改已有核心逻辑。</div>
+    </div>
+    <div class="card2">
+      <div style="color:#fbbf24;font-weight:700;margin-bottom:6px">③ 降级安全</div>
+      <div style="font-size:12px;color:var(--sub)">引擎不可用时→弹窗层静默关闭→客服照常工作。所有推荐均为"建议"而非"强制"。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 2. FEATURE MATRIX ============ -->
+<h2>二、七大功能全景</h2>
+
+<div class="feature-grid">
+  <div class="fcard" id="f6" onclick="scrollToFeature('f6-detail')">
+    <div class="num">06</div>
+    <div class="title">🔴 实时风险预警</div>
+    <div class="oneliner">检测"起诉/曝光/举报"→弹窗标红"高风险·建议转主管"</div>
+    <span class="prio prio-p0">P0 · 安全底线</span>
+  </div>
+  <div class="fcard" id="f7" onclick="scrollToFeature('f7-detail')">
+    <div class="num">07</div>
+    <div class="title">💬 话术实时推荐</div>
+    <div class="oneliner">语音转写检测关键词→自动匹配话术模板→弹窗提示</div>
+    <span class="prio prio-p1">P1 · 效率提升</span>
+  </div>
+  <div class="fcard" id="f8" onclick="scrollToFeature('f8-detail')">
+    <div class="num">08</div>
+    <div class="title">😊 情绪识别与应对</div>
+    <div class="oneliner">情绪分0-100，>70→弹窗"建议暂停施压·倾听为主"</div>
+    <span class="prio prio-p1">P1 · 通话质量</span>
+  </div>
+  <div class="fcard" id="f9" onclick="scrollToFeature('f9-detail')">
+    <div class="num">09</div>
+    <div class="title">🤝 承诺意向判定</div>
+    <div class="oneliner">结合历史承诺+本次语气+画像分类→给可信度评分</div>
+    <span class="prio prio-p0">P0 · 催收闭环</span>
+  </div>
+  <div class="fcard" id="f10" onclick="scrollToFeature('f10-detail')">
+    <div class="num">10</div>
+    <div class="title">🛡 业主敏感词检测</div>
+    <div class="oneliner">检测"去世/离婚/失业/生病"→弹窗"敏感·建议慰问优先"</div>
+    <span class="prio prio-p0">P0 · 合规底线</span>
+  </div>
+  <div class="fcard" id="f11" onclick="scrollToFeature('f11-detail')">
+    <div class="num">11</div>
+    <div class="title">⏱ 通话时长预警</div>
+    <div class="oneliner">>5分钟→弹窗"建议收尾"；业主在倾诉→不弹</div>
+    <span class="prio prio-p2">P2 · 效率辅助</span>
+  </div>
+  <div class="fcard" id="f12" onclick="scrollToFeature('f12-detail')">
+    <div class="num">12</div>
+    <div class="title">📋 多议题跟踪</div>
+    <div class="oneliner">自动拆分→弹窗"建议逐条确认：①电梯②水管③停车"</div>
+    <span class="prio prio-p2">P2 · 体验优化</span>
+  </div>
+</div>
+
+<!-- ============ 3. DETAILED DESIGN ============ -->
+<h2>三、各模块详细设计</h2>
+
+<!-- F6: Risk Warning -->
+<div class="card" id="f6-detail">
+  <h3 style="color:#ef4444">#6 实时风险预警 ▸ P0 安全底线</h3>
+
+  <div class="g2">
+    <div>
+      <h4>判定流程</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">通话中实时语音转写</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">关键词检测</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-node flow-check">匹配"起诉/法院/律师/投诉政府/媒体曝光/12345/信访/举报"</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">├─ YES →</span>
+          <span class="flow-node flow-yes">检查历史风险记录</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-action">计算风险分</span>
+        </div>
+        <div style="margin-left:40px">
+          <div class="flow-h">
+            <span class="flow-node flow-yes" style="font-size:11px">Risk ≥ 80：🔴 高·建议转主管</span>
+          </div>
+          <div class="flow-h" style="margin-top:4px">
+            <span class="flow-node" style="background:#422006;color:#fbbf24;font-size:11px">Risk 50-79：🟡 中·弹窗提醒谨慎</span>
+          </div>
+          <div class="flow-h" style="margin-top:4px">
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">Risk < 50：🔵 记录日志·不弹窗</span>
+          </div>
+        </div>
+        <div class="flow-h" style="margin-left:20px;margin-top:8px">
+          <span class="flow-arrow">└─ NO →</span>
+          <span class="flow-node flow-result">静默监控</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>风险评分模型</h4>
+      <table>
+        <tr><th>因子</th><th>权重</th><th>说明</th></tr>
+        <tr><td>关键词严重度</td><td>40%</td><td>"起诉"＞"投诉政府"＞"12345"</td></tr>
+        <tr><td>历史对抗记录</td><td>25%</td><td>过去30天E类信号次数</td></tr>
+        <tr><td>情绪分</td><td>20%</td><td>实时情绪分(来自#8)</td></tr>
+        <tr><td>画像风险</td><td>15%</td><td>D/E类标签→加分</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock" style="margin-top:12px">
+    <span class="alert-icon">🚨</span>
+    <strong>高风险预警</strong>
+    <div style="margin-top:6px;color:#fca5a5;font-size:11px">
+      业主提及：<mark style="background:#7f1d1d;color:#fca5a5;padding:0 4px">起诉</mark> · <mark style="background:#7f1d1d;color:#fca5a5;padding:0 4px">曝光</mark><br>
+      风险等级：<strong style="color:#ef4444">高 (85分)</strong><br>
+      建议动作：<strong>暂停催缴 · 转主管处理 · 记录完整录音</strong>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button style="background:#dc2626;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:11px">确认转主管</button>
+      <button style="background:transparent;border:1px solid #475569;color:#94a3b8;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:11px">继续通话</button>
+    </div>
+  </div>
+
+  <h4>关键词库（V1 规则引擎）</h4>
+  <table style="font-size:11px">
+    <tr><th>等级</th><th>关键词</th><th>触发动作</th></tr>
+    <tr><td><span class="tag tag-r">L3 · 红色</span></td><td>起诉、法院见、律师函、打官司</td><td>风险分+40，立即弹窗</td></tr>
+    <tr><td><span class="tag tag-y">L2 · 橙色</span></td><td>媒体曝光、电视台、报社、市长热线、12345</td><td>风险分+25，立即弹窗</td></tr>
+    <tr><td><span class="tag tag-b">L1 · 蓝色</span></td><td>举报、信访、向上级反映、投诉你们</td><td>风险分+15，累计达阈弹窗</td></tr>
+    <tr><td><span class="tag tag-gray">L0 · 观察</span></td><td>不满意、要个说法、找你们领导</td><td>风险分+5，仅记录不弹窗</td></tr>
+  </table>
+</div>
+
+<!-- F7: Script Recommendation -->
+<div class="card" id="f7-detail">
+  <h3 style="color:#3b82f6">#7 话术实时推荐 ▸ P1 效率提升</h3>
+
+  <div class="g2">
+    <div>
+      <h4>触发-匹配-推荐流水线</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">语音转写文本流</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">每3秒/每句批量检测</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-node flow-check">关键词+语义规则匹配</span>
+        </div>
+        <div style="margin-left:20px">
+          <div class="flow-h">
+            <span class="flow-arrow">├─</span>
+            <span style="font-size:12px;color:#93c5fd">"别人没交" → tag:群体观望 → 话术模板D2</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-arrow">├─</span>
+            <span style="font-size:12px;color:#6ee7b7">"服务太差" → tag:服务争议 → 话术模板A3</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-arrow">├─</span>
+            <span style="font-size:12px;color:#fbbf24">"确实困难" → tag:经济困难 → 话术模板B1</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-arrow">└─</span>
+            <span style="font-size:12px;color:#c4b5fd">无匹配 → 通用模板</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>话术模板结构</h4>
+      <pre>
+<span class="cm">// 话术模板数据结构</span>
+{
+  <span class="str">"id"</span>: <span class="str">"D2_群体观望"</span>,
+  <span class="str">"trigger"</span>: [<span class="str">"别人没交"</span>,<span class="str">"大家都在观望"</span>,<span class="str">"凭什么我先"</span>],
+  <span class="str">"scene"</span>: <span class="str">"D·惯性失约"</span>,
+  <span class="str">"template"</span>: <span class="str">"您说的'别人不交'我理解。"</span> +
+              <span class="str">"目前小区整体缴费率XX%，</span><span class="str">"</span> +
+              <span class="str">"但拖欠产生的滞纳金是自己承担的。"</span> +
+              <span class="str">"我们可以先处理您这边的不争议部分。"</span>,
+  <span class="str">"tips"</span>: <span class="str">"不要把'你为什么不交'施加压力。"</span>,
+  <span class="str">"forbidden"</span>: <span class="str">"禁止说'别人都交了就你不交'"</span>,
+  <span class="str">"confidence"</span>: <span class="num">0.85</span>,
+  <span class="str">"adopt_count"</span>: <span class="num">42</span>
+}</pre>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock info">
+    <strong>💡 话术推荐</strong>
+    <div style="margin-top:4px;font-size:11px">
+      检测到：<span class="tag tag-y">群体观望</span> — 业主说"别人也没交"<br>
+      推荐话术：<br>
+      <div style="background:#0f172a;padding:8px;border-radius:4px;margin:6px 0;color:#e2e8f0">
+        ——"我理解您的顾虑。小区整体缴费率目前在推进中，但滞纳金是个人承担的。我们可以先把您不争议的部分处理好，您看可以吗？"
+      </div>
+      <span style="color:#fbbf24;font-size:10px">⚠ 禁止："别人都交了就你不交"</span>
+    </div>
+  </div>
+
+  <h4>话术模板矩阵（与六类画像映射）</h4>
+  <table style="font-size:11px">
+    <tr><th>业主类型</th><th>常见回应</th><th>推荐模板</th><th>采纳率预期</th></tr>
+    <tr><td><span class="tag tag-y">A·合理争议</span></td><td>"电梯坏了半年没人修"</td><td>A3·先登记争议不催缴</td><td>85%</td></tr>
+    <tr><td><span class="tag tag-g">B·经济困难</span></td><td>"我也想交但实在没钱"</td><td>B1·共情+协商分期</td><td>72%</td></tr>
+    <tr><td><span class="tag tag-gray">C·观望跟风</span></td><td>"大家都欠着"</td><td>C2·个人后果说明</td><td>60%</td></tr>
+    <tr><td><span class="tag tag-o">D·惯性失约</span></td><td>"月底一定交"</td><td>D1·明确时间+后果告知</td><td>45%</td></tr>
+    <tr><td><span class="tag tag-r">E·对抗态度</span></td><td>"你们凭什么收费"</td><td>E0·不推荐话术·转主管</td><td>—</td></tr>
+    <tr><td><span class="tag tag-v">F·历史复杂</span></td><td>"前物业期间的事"</td><td>F1·承认历史+聚焦当下</td><td>55%</td></tr>
+  </table>
+</div>
+
+<!-- F8: Emotion Recognition -->
+<div class="card" id="f8-detail">
+  <h3 style="color:#f59e0b">#8 情绪识别与应对 ▸ P1 通话质量</h3>
+
+  <div class="g2">
+    <div>
+      <h4>情绪识别流水线</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">语音转写文本</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">双通道检测</span>
+        </div>
+        <div style="margin-left:20px">
+          <div class="flow-h">
+            <span class="flow-arrow">├─ A通道</span>
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">词汇检测（愤怒词/悲伤词/焦躁词）</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-arrow">└─ B通道</span>
+            <span class="flow-node" style="background:#422006;color:#fbbf24;font-size:11px">语音特征（语速↑、音量↑、停顿↓）— 需WebRTC</span>
+          </div>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">双通道融合→情绪分0-100</span>
+        </div>
+        <div style="margin-left:20px">
+          <div class="flow-h">
+            <span class="flow-node flow-yes" style="font-size:11px">E ≥ 70 → 🔴 愤怒/对抗</span>
+            <span style="font-size:11px;color:#94a3b8;margin-left:8px">→ "建议暂停施压·倾听为主"</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-node" style="background:#422006;color:#fbbf24;font-size:11px">E 40-69 → 🟡 激动/不满</span>
+            <span style="font-size:11px;color:#94a3b8;margin-left:8px">→ "建议使用共情话术"</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">E 20-39 → 🔵 中性/配合</span>
+            <span style="font-size:11px;color:#94a3b8;margin-left:8px">→ 正常推进</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-node flow-result" style="font-size:11px">E &lt; 20 → 平静/配合</span>
+            <span style="font-size:11px;color:#94a3b8;margin-left:8px">→ 无提示</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>V1 词汇检测词库</h4>
+      <table style="font-size:11px">
+        <tr><th>情绪标签</th><th>关键词示例</th><th>权重</th></tr>
+        <tr><td>😡 愤怒</td><td>"忍不了""太过分""欺人太甚""混蛋"</td><td>+25/词</td></tr>
+        <tr><td>😤 不满</td><td>"凭什么""一直拖""说了多少次""敷衍"</td><td>+15/词</td></tr>
+        <tr><td>😰 焦虑</td><td>"怎么办""急死""天天催""受不了"</td><td>+10/词</td></tr>
+        <tr><td>😢 悲伤</td><td>"没办法""命苦""活不下去""绝望"</td><td>+20/词</td></tr>
+        <tr><td>😐 中性</td><td>"好的""知道了""我看看""行"</td><td>-5/词</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock warn">
+    <strong>😤 情绪上升预警</strong>
+    <div style="margin-top:6px;font-size:11px">
+      当前情绪分：<strong style="color:#f59e0b">72/100（愤怒）</strong><br>
+      情绪趋势：<span style="color:#fca5a5">↗ 上升中</span>（过去30秒：45→62→72）<br>
+      触发词：<span class="tag tag-r">"忍不了"</span> <span class="tag tag-y">"说了多少次"</span><br>
+      建议动作：<strong>暂停施压 · 倾听为主 · 使用共情话术</strong>
+    </div>
+  </div>
+  <div style="font-size:11px;color:var(--sub);margin-top:6px">
+    ⚠ V1阶段仅实现A通道（词汇检测）。B通道（语音特征）需引入WebRTC + AudioContext API，列为V2升级项。
+  </div>
+
+  <h4>情绪轨迹存储</h4>
+  <pre>
+<span class="cm">// 每条通话日志新增 emotion_track 字段</span>
+{
+  <span class="str">"oid"</span>: <span class="num">1</span>,
+  <span class="str">"t"</span>: <span class="str">"2026-06-30T10:15:00"</span>,
+  <span class="str">"tp"</span>: <span class="str">"外呼"</span>,
+  <span class="str">"emotion_track"</span>: [
+    { <span class="str">"ts"</span>: <span class="num">0</span>,  <span class="str">"score"</span>: <span class="num">15</span>, <span class="str">"label"</span>: <span class="str">"平静"</span> },
+    { <span class="str">"ts"</span>: <span class="num">30</span>, <span class="str">"score"</span>: <span class="num">45</span>, <span class="str">"label"</span>: <span class="str">"不满"</span> },
+    { <span class="str">"ts"</span>: <span class="num">60</span>, <span class="str">"score"</span>: <span class="num">72</span>, <span class="str">"label"</span>: <span class="str">"愤怒"</span>, <span class="str">"alert"</span>: <span class="kw">true</span> }
+  ]
+}</pre>
+</div>
+
+<!-- F9: Commitment Assessment -->
+<div class="card" id="f9-detail">
+  <h3 style="color:#10b981">#9 承诺意向判定 ▸ P0 催收闭环</h3>
+
+  <div class="g2">
+    <div>
+      <h4>承诺可信度评分模型</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">业主表达缴费意向</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">多因子加权计算</span>
+        </div>
+      </div>
+      <table style="font-size:11px">
+        <tr><th>维度</th><th>权重</th><th>评分规则</th></tr>
+        <tr><td>历史承诺兑现率</td><td>35%</td><td>兑现次数/总承诺次数×100</td></tr>
+        <tr><td>时间具体性</td><td>25%</td><td>"15号之前"=90分·"月底"=60分·"尽快"=30分</td></tr>
+        <tr><td>金额确定性</td><td>15%</td><td>"先交5000"=90分·"全部交清"=50分（无具体数）</td></tr>
+        <tr><td>当前情绪分</td><td>15%</td><td>平静=+15·激动=-10·愤怒=-25</td></tr>
+        <tr><td>画像匹配度</td><td>10%</td><td>C类"观望"→可信度×0.7·A类→×1.0</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>判定结果与动作</h4>
+      <table style="font-size:11px">
+        <tr><th>可信度</th><th>标签</th><th>系统动作</th></tr>
+        <tr><td>≥80</td><td><span class="tag tag-g">高可信</span></td><td>正常记录·7天查账·不移交</td></tr>
+        <tr><td>50-79</td><td><span class="tag tag-y">需跟进</span></td><td>标记"承诺待验"·客服备注具体日期</td></tr>
+        <tr><td>30-49</td><td><span class="tag tag-o">低可信</span></td><td>标记"可能失约"·建议约定更具体时间</td></tr>
+        <tr><td>&lt;30</td><td><span class="tag tag-r">敷衍</span></td><td>不记录为有效承诺·继续推进</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock safe" style="margin-top:12px">
+    <strong>🤝 承诺可信度：<span style="color:#f59e0b">52分（需跟进）</span></strong>
+    <div style="margin-top:6px;font-size:11px">
+      业主说："月底之前交吧"<br>
+      历史承诺：<span style="color:#fca5a5">3次承诺·1次兑现（33%）</span><br>
+      画像：<span class="tag tag-o">D·惯性失约</span><br>
+      <span style="color:#fbbf24">⚠ 建议：引导业主约定具体日期和金额，而非模糊时间</span>
+    </div>
+  </div>
+
+  <h4>承诺数据结构</h4>
+  <pre>
+<span class="cm">// 承诺记录（附加到D.o[oid].promise_history）</span>
+{
+  <span class="str">"promise_id"</span>: <span class="str">"P20260630-001"</span>,
+  <span class="str">"call_log_id"</span>: <span class="str">"..."</span>,
+  <span class="str">"text"</span>: <span class="str">"月底之前交吧"</span>,
+  <span class="str">"parsed_date"</span>: <span class="str">"2026-07-31"</span>,          <span class="cm">// AI解析的具体日期</span>
+  <span class="str">"parsed_amount"</span>: <span class="kw">null</span>,                    <span class="cm">// AI解析的金额（null=未提及）</span>
+  <span class="str">"credibility"</span>: <span class="num">52</span>,                        <span class="cm">// 可信度评分</span>
+  <span class="str">"emotion_at_commit"</span>: <span class="num">35</span>,                 <span class="cm">// 承诺时的情绪分</span>
+  <span class="str">"check_date"</span>: <span class="str">"2026-08-03"</span>,              <span class="cm">// 系统设定查账日期（承诺日+3天宽限）</span>
+  <span class="str">"result"</span>: <span class="kw">null</span>                            <span class="cm">// null=未到期, true=已兑现, false=失约</span>
+}</pre>
+</div>
+
+<!-- F10: Sensitive Word -->
+<div class="card" id="f10-detail">
+  <h3 style="color:#8b5cf6">#10 业主敏感词检测 ▸ P0 合规底线</h3>
+
+  <div class="g2">
+    <div>
+      <h4>敏感词分类与动作</h4>
+      <table style="font-size:11px">
+        <tr><th>类别</th><th>关键词</th><th>弹窗动作</th></tr>
+        <tr><td>🕯 丧葬</td><td>去世、不在了、走了、过世、丧事</td><td><span class="tag tag-v">哀悼·暂缓催收30天</span></td></tr>
+        <tr><td>💔 家庭变故</td><td>离婚、分居、家暴、被赶出去</td><td><span class="tag tag-v">慰问·暂缓催收14天</span></td></tr>
+        <tr><td>📉 失业</td><td>失业、被裁、下岗、没工作了、公司倒闭</td><td><span class="tag tag-y">标记"经济困难·B类"</span></td></tr>
+        <tr><td>🏥 重病</td><td>住院、手术、癌症、大病、ICU</td><td><span class="tag tag-v">慰问·暂缓催收60天</span></td></tr>
+        <tr><td>🧒 特殊群体</td><td>独居老人、残疾人、低保户</td><td><span class="tag tag-y">标记"特殊关怀·降优先级"</span></td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>检测-分类-动作流水线</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">通话文本实时扫描</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">敏感词命中？</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">├─ YES →</span>
+          <span class="flow-node flow-action">查重（24h内同业主不重复弹）</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-yes">弹窗+推荐话术</span>
+        </div>
+        <div class="flow-h" style="margin-left:56px">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-result">自动标记业主画像 sensitivity flag</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">└─ NO →</span>
+          <span class="flow-node flow-result">静默</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock" style="border-color:#8b5cf6;animation-name:none;box-shadow:0 0 0 3px rgba(139,92,246,.15)">
+    <strong>🕯 敏感场景检测</strong>
+    <div style="margin-top:6px;font-size:11px">
+      检测到：<span class="tag tag-v">丧葬</span> — "我母亲上个月去世了"<br>
+      建议动作：<strong>立即切换慰问模式 · 暂停所有催缴话术 · 暂缓催收30天</strong><br>
+      <span style="color:#c4b5fd">推荐：表达哀悼→了解是否需要帮助→温和结束通话</span>
+    </div>
+  </div>
+
+  <h4>与现有代码的联动</h4>
+  <pre>
+<span class="cm">// 检测到敏感词后自动更新D.o[oid]</span>
+o.<span class="str">sensitivity_flags</span> = o.<span class="str">sensitivity_flags</span> || [];
+o.<span class="str">sensitivity_flags</span>.push({
+  <span class="str">"type"</span>: <span class="str">"bereavement"</span>,
+  <span class="str">"detected_at"</span>: <span class="str">"2026-06-30T10:15:00"</span>,
+  <span class="str">"snooze_until"</span>: <span class="str">"2026-07-30"</span>,  <span class="cm">// 暂缓催收30天</span>
+  <span class="str">"text"</span>: <span class="str">"我母亲上个月去世了"</span>
+});
+
+<span class="cm">// 下次外呼调度时检测暂缓标记</span>
+<span class="kw">if</span> (o.<span class="str">sensitivity_flags</span>?.some(f => <span class="kw">new</span> <span class="fn">Date</span>(f.<span class="str">snooze_until</span>) > <span class="kw">new</span> <span class="fn">Date</span>())) {
+  <span class="kw">return</span> <span class="str">"暂缓催收"</span>; <span class="cm">// 不出现在拨打列表</span>
+}</pre>
+</div>
+
+<!-- F11: Call Duration -->
+<div class="card" id="f11-detail">
+  <h3 style="color:#64748b">#11 通话时长预警 ▸ P2 效率辅助</h3>
+
+  <div class="g2">
+    <div>
+      <h4>判定逻辑</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">通话计时器启动</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">时长 > 5分钟？</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">├─ YES →</span>
+          <span class="flow-node flow-check">业主在倾诉？</span>
+        </div>
+        <div style="margin-left:60px">
+          <div class="flow-h">
+            <span class="flow-arrow">├─ YES →</span>
+            <span class="flow-node flow-no">不弹窗（倾听优先）</span>
+          </div>
+          <div class="flow-h" style="margin-top:4px">
+            <span class="flow-arrow">└─ NO →</span>
+            <span class="flow-node flow-action">弹窗"建议收尾"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>"倾诉"判定规则</h4>
+      <table style="font-size:11px">
+        <tr><th>条件</th><th>判定</th></tr>
+        <tr><td>过去60秒业主单次发言>100字</td><td>✅ 倾诉中</td></tr>
+        <tr><td>情绪分>40且持续上升</td><td>✅ 情绪释放中</td></tr>
+        <tr><td>提及服务问题且有具体细节</td><td>✅ 有效反馈中</td></tr>
+        <tr><td>客服插入语占比<20%</td><td>✅ 业主主导</td></tr>
+        <tr><td>以上都不满足</td><td>❌ 可弹窗提醒</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock warn" style="border-color:#64748b;animation-name:none;box-shadow:0 0 0 3px rgba(100,116,139,.12)">
+    <strong>⏱ 通话时长提醒</strong>
+    <div style="margin-top:6px;font-size:11px">
+      已通话 <strong>6分32秒</strong><br>
+      建议：<strong>进入收尾环节 · 复述核心问题 · 约定下次联系时间</strong>
+    </div>
+  </div>
+
+  <h4>时长分档建议</h4>
+  <table style="font-size:11px">
+    <tr><th>时长</th><th>动作</th></tr>
+    <tr><td>&lt;3分钟</td><td>正常·无提示</td></tr>
+    <tr><td>3-5分钟</td><td>进度条变为黄色·静默</td></tr>
+    <tr><td>>5分钟</td><td>弹窗提醒（排除倾诉）</td></tr>
+    <tr><td>>8分钟</td><td>二次弹窗+建议留联系方式后续跟进</td></tr>
+  </table>
+</div>
+
+<!-- F12: Multi-Topic -->
+<div class="card" id="f12-detail">
+  <h3 style="color:#f97316">#12 多议题跟踪 ▸ P2 体验优化</h3>
+
+  <div class="g2">
+    <div>
+      <h4>议题拆分逻辑</h4>
+      <div class="flow">
+        <div class="flow-h">
+          <span class="flow-node flow-trigger">业主发言文本</span>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">话题边界检测</span>
+        </div>
+        <div style="margin-left:20px">
+          <div class="flow-h">
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">分隔词："还有""另外""对了""再说"</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">序号："第一""第二""第三""①"</span>
+          </div>
+          <div class="flow-h">
+            <span class="flow-node" style="background:#1e3a5f;color:#93c5fd;font-size:11px">话题切换关键词</span>
+          </div>
+        </div>
+        <div class="flow-h">
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-check">独立议题 ≥2？</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">├─ YES →</span>
+          <span class="flow-node flow-action">生成议题清单→弹窗</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-node flow-result">逐一引导确认</span>
+        </div>
+        <div class="flow-h" style="margin-left:20px">
+          <span class="flow-arrow">└─ NO →</span>
+          <span class="flow-node flow-result">正常记录</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>议题分类映射</h4>
+      <table style="font-size:11px">
+        <tr><th>关键词</th><th>映射类型</th><th>草稿标签</th></tr>
+        <tr><td>电梯/楼层/门禁/楼道</td><td>报修</td><td>对应设施标签</td></tr>
+        <tr><td>态度/处理慢/不回复</td><td>投诉</td><td>服务态度</td></tr>
+        <tr><td>收费/物业费/不合理</td><td>投诉</td><td>收费不合理</td></tr>
+        <tr><td>建议/希望/能不能</td><td>建议</td><td>对应建议标签</td></tr>
+        <tr><td>停车/噪音/卫生</td><td>投诉</td><td>公区管理</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h4>弹窗 UI 示意</h4>
+  <div class="alert-mock info" style="border-color:#f97316;animation-name:none;box-shadow:0 0 0 3px rgba(249,115,22,.12)">
+    <strong>📋 多议题提醒</strong>
+    <div style="margin-top:6px;font-size:11px">
+      业主提出了 <strong>3个问题</strong>：<br>
+      <div style="margin:6px 0;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:#1e293b;border-radius:4px">
+          <span style="color:#f97316">①</span> 电梯异响（报修→电梯故障）
+          <span style="font-size:10px;background:#1e3a5f;color:#93c5fd;padding:1px 5px;border-radius:3px;margin-left:auto">待确认</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:#1e293b;border-radius:4px">
+          <span style="color:#f97316">②</span> 6楼水管漏水（报修→水管漏水）
+          <span style="font-size:10px;background:#1e3a5f;color:#93c5fd;padding:1px 5px;border-radius:3px;margin-left:auto">待确认</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 8px;background:#1e293b;border-radius:4px">
+          <span style="color:#f97316">③</span> 停车位被占（投诉→停车管理）
+          <span style="font-size:10px;background:#1e3a5f;color:#93c5fd;padding:1px 5px;border-radius:3px;margin-left:auto">待确认</span>
+        </div>
+      </div>
+      <span style="color:#fbbf24">💡 建议逐条与业主确认："我帮您逐个登记，先说电梯……"</span>
+    </div>
+  </div>
+
+  <h4>确认后自动创建草稿</h4>
+  <pre>
+<span class="cm">// 逐条确认后，自动为每个议题调用cqd()创建草稿</span>
+<span class="kw">const</span> topics = [
+  { <span class="str">"type"</span>: <span class="str">"baoxiu"</span>, <span class="str">"category"</span>: <span class="str">"电梯故障"</span>, <span class="str">"desc"</span>: <span class="str">"3栋电梯运行异响，已持续2周"</span> },
+  { <span class="str">"type"</span>: <span class="str">"baoxiu"</span>, <span class="str">"category"</span>: <span class="str">"水管漏水"</span>, <span class="str">"desc"</span>: <span class="str">"6楼走廊水管渗漏"</span> },
+  { <span class="str">"type"</span>: <span class="str">"tousu"</span>, <span class="str">"category"</span>: <span class="str">"停车管理"</span>, <span class="str">"desc"</span>: <span class="str">"外来车辆占用固定车位"</span> }
+];
+
+topics.forEach(t => {
+  window.<span class="fn">_co</span> = oid;
+  window.<span class="fn">_ct</span> = t.<span class="str">type</span>;
+  window.<span class="fn">_cc</span> = t.<span class="str">category</span>;
+  <span class="fn">cqd</span>(t.<span class="str">type</span>, t.<span class="str">category</span>);
+  <span class="fn">document</span>.<span class="fn">getElementById</span>(<span class="str">'dpd'</span>).<span class="str">value</span> = t.<span class="str">desc</span>;
+  <span class="fn">cpd</span>(); <span class="cm">// 逐条推送</span>
+});</pre>
+</div>
+
+<!-- ============ 4. DATA MODEL ============ -->
+<h2>四、数据模型扩展</h2>
+
+<div class="card">
+  <h3>4.1 业主数据（D.o[oid]）新增字段</h3>
+  <table>
+    <tr><th>字段</th><th>类型</th><th>说明</th><th>来源模块</th></tr>
+    <tr><td>promise_history</td><td>Array</td><td>承诺记录列表</td><td>#9</td></tr>
+    <tr><td>emotion_profile</td><td>Object</td><td>{avg_score, peak_score, trend}</td><td>#8</td></tr>
+    <tr><td>risk_flags</td><td>Array</td><td>[{type, level, time}]</td><td>#6</td></tr>
+    <tr><td>sensitivity_flags</td><td>Array</td><td>[{type, snooze_until}]</td><td>#10</td></tr>
+    <tr><td>topic_history</td><td>Array</td><td>历史议题列表</td><td>#12</td></tr>
+    <tr><td>script_prefs</td><td>Object</td><td>{preferred_templates, banned}</td><td>#7</td></tr>
+    <tr><td>avg_call_duration</td><td>Number</td><td>平均通话时长（秒）</td><td>#11</td></tr>
+  </table>
+
+  <h3>4.2 通话日志（D.lg）新增字段</h3>
+  <table style="font-size:12px">
+    <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+    <tr><td>emotion_track</td><td>Array</td><td>情绪时序轨迹 [{ts, score, label}]</td></tr>
+    <tr><td>alerts_fired</td><td>Array</td><td>触发的弹窗列表 [{time, type, action}]</td></tr>
+    <tr><td>script_used</td><td>String</td><td>客服采纳的话术模板ID</td></tr>
+    <tr><td>commitment_score</td><td>Number</td><td>本次通话的承诺可信度</td></tr>
+    <tr><td>topics_identified</td><td>Array</td><td>识别到的议题列表</td></tr>
+    <tr><td>duration_seconds</td><td>Number</td><td>通话时长</td></tr>
+    <tr><td>sensitive_words</td><td>Array</td><td>命中的敏感词</td></tr>
+    <tr><td>risk_score</td><td>Number</td><td>本次通话风险评分</td></tr>
+  </table>
+</div>
+
+<!-- ============ 5. IMPLEMENTATION ============ -->
+<h2>五、实施路线图</h2>
+
+<div class="card">
+  <h3>5.1 分阶段实施</h3>
+  <div class="phase-bar">
+    <div class="phase-step" style="background:#064e3b;color:#6ee7b7">
+      <div class="label">Phase 1</div>
+      <div class="time">第1-5天</div>
+      <div style="margin-top:6px;font-size:10px">规则引擎<br>+关键词库<br>+弹窗框架</div>
+    </div>
+    <div class="phase-step" style="background:#422006;color:#fbbf24">
+      <div class="label">Phase 2</div>
+      <div class="time">第6-10天</div>
+      <div style="margin-top:6px;font-size:10px">7模块接入<br>+数据联动<br>+UI打磨</div>
+    </div>
+    <div class="phase-step" style="background:#1e3a5f;color:#93c5fd">
+      <div class="label">Phase 3</div>
+      <div class="time">第11-15天</div>
+      <div style="margin-top:6px;font-size:10px">模拟通话测试<br>+阈值调优<br>+培训模式</div>
+    </div>
+    <div class="phase-step" style="background:#2d1b69;color:#c4b5fd">
+      <div class="label">Phase 4</div>
+      <div class="time">迭代</div>
+      <div style="margin-top:6px;font-size:10px">采纳率统计<br>+反馈学习<br>+V2 NLP升级</div>
+    </div>
+  </div>
+
+  <h3>5.2 Phase 1 详细任务</h3>
+  <table>
+    <tr><th>#</th><th>任务</th><th>产出</th><th>关联模块</th></tr>
+    <tr><td>1</td><td>创建 <code>realtime-assist.js</code> — 实时辅助引擎核心</td><td>规则引擎类 RealTimeAssist</td><td>全部7模块</td></tr>
+    <tr><td>2</td><td>关键词库配置文件 <code>keyword-bank.js</code></td><td>风险词/敏感词/情绪词/话题词4张字典</td><td>#6 #8 #10 #12</td></tr>
+    <tr><td>3</td><td>话术模板库 <code>script-templates.js</code></td><td>六类×各场景话术模板（约30条）</td><td>#7</td></tr>
+    <tr><td>4</td><td>弹窗组件 <code>alert-overlay.js</code></td><td>可复用弹窗工厂（红/黄/蓝/紫/灰5色）</td><td>UI层</td></tr>
+    <tr><td>5</td><td>通话时钟 <code>call-timer.js</code></td><td>计时器+分档提醒</td><td>#11</td></tr>
+    <tr><td>6</td><td>承诺判定器 <code>commit-evaluator.js</code></td><td>多因子加权模型</td><td>#9</td></tr>
+    <tr><td>7</td><td>语音转写模拟层 — V1用文本输入框替代真实语音</td><td>文本输入→引擎处理→弹窗输出的完整链路</td><td>全局</td></tr>
+  </table>
+
+  <h3>5.3 文件结构</h3>
+  <pre>
+数治理方/
+├── 客服端.html                    <span class="cm">← 修改：引入realtime-assist.js，cco()加引擎启动</span>
+├── js/
+│   └── realtime-assist/
+│       ├── realtime-assist.js     <span class="cm">← 主引擎 + 7个判断器注册</span>
+│       ├── keyword-bank.js        <span class="cm">← 4张关键词字典</span>
+│       ├── script-templates.js    <span class="cm">← 话术模板库</span>
+│       ├── alert-overlay.js       <span class="cm">← 弹窗组件</span>
+│       ├── call-timer.js          <span class="cm">← 通话计时器</span>
+│       └── commit-evaluator.js    <span class="cm">← 承诺可信度引擎</span>
+└── 客服端-实时辅助层-实施方案报告.html  <span class="cm">← 本文档</span></pre>
+
+  <h3>5.4 核心代码骨架</h3>
+  <pre>
+<span class="cm">// ===== realtime-assist.js 核心结构 =====</span>
+
+<span class="kw">class</span> <span class="fn">RealTimeAssist</span> {
+  <span class="fn">constructor</span>(ownerData) {
+    <span class="kw">this</span>.<span class="str">owner</span> = ownerData;         <span class="cm">// D.o[oid]</span>
+    <span class="kw">this</span>.<span class="str">transcript</span> = [];           <span class="cm">// 语音转写文本序列</span>
+    <span class="kw">this</span>.<span class="str">emotionHistory</span> = [];       <span class="cm">// 情绪轨迹</span>
+    <span class="kw">this</span>.<span class="str">alerts</span> = [];               <span class="cm">// 已触发弹窗（去重用）</span>
+    <span class="kw">this</span>.<span class="str">timer</span> = <span class="kw">new</span> <span class="fn">CallTimer</span>();      <span class="cm">// 计时器</span>
+    <span class="kw">this</span>.<span class="str">judgers</span> = [];              <span class="cm">// 注册的7个判断模块</span>
+  }
+
+  <span class="cm">// 注册判断模块</span>
+  <span class="fn">register</span>(jugder) { <span class="kw">this</span>.<span class="str">judgers</span>.<span class="fn">push</span>(jugder); }
+
+  <span class="cm">// 处理新语音片段（V1：文本输入）</span>
+  <span class="fn">ingest</span>(segment) {
+    <span class="kw">this</span>.<span class="str">transcript</span>.<span class="fn">push</span>({ <span class="str">t</span>: <span class="fn">Date</span>.<span class="fn">now</span>(), <span class="str">text</span>: segment });
+    <span class="kw">this</span>.<span class="str">judgers</span>.<span class="fn">forEach</span>(j => {
+      <span class="kw">const</span> result = j.<span class="fn">analyze</span>(segment, <span class="kw">this</span>.<span class="str">owner</span>, <span class="kw">this</span>.<span class="str">transcript</span>);
+      <span class="kw">if</span> (result?.alert) <span class="kw">this</span>.<span class="fn">fireAlert</span>(result);
+    });
+  }
+
+  <span class="fn">fireAlert</span>(result) {
+    <span class="cm">// 去重检查（同类型15秒内不重复弹）</span>
+    <span class="kw">if</span> (<span class="kw">this</span>.<span class="str">alerts</span>.<span class="fn">some</span>(a => a.<span class="str">type</span> === result.<span class="str">type</span>
+      && <span class="fn">Date</span>.<span class="fn">now</span>() - a.<span class="str">time</span> < <span class="num">15000</span>)) <span class="kw">return</span>;
+    <span class="kw">this</span>.<span class="str">alerts</span>.<span class="fn">push</span>({ <span class="str">type</span>: result.<span class="str">type</span>, <span class="str">time</span>: <span class="fn">Date</span>.<span class="fn">now</span>() });
+    <span class="fn">AlertOverlay</span>.<span class="fn">show</span>(result); <span class="cm">// 弹出弹窗</span>
+  }
+
+  <span class="fn">finalize</span>() {
+    <span class="cm">// 通话结束：回写日志+更新业主数据</span>
+    <span class="kw">const</span> summary = {
+      <span class="str">duration</span>: <span class="kw">this</span>.<span class="str">timer</span>.<span class="fn">elapsed</span>(),
+      <span class="str">emotionTrack</span>: <span class="kw">this</span>.<span class="str">emotionHistory</span>,
+      <span class="str">alerts</span>: <span class="kw">this</span>.<span class="str">alerts</span>,
+      <span class="str">topics</span>: <span class="kw">this</span>.<span class="str">judgers</span>.<span class="fn">find</span>(j=>j.<span class="str">name</span>===<span class="str">'multiTopic'</span>)?.<span class="str">topics</span>
+    };
+    <span class="kw">this</span>.<span class="fn">writeBackToApp</span>(summary);
+    <span class="kw">return</span> summary;
+  }
+}
+
+<span class="cm">// ===== 判断器接口 =====</span>
+<span class="cm">// 每个判断器实现：
+//   { name, analyze(segment, ownerData, fullTranscript) → { alert?, result } }</span>
+
+<span class="kw">const</span> riskWarningJudger = {
+  <span class="str">name</span>: <span class="str">'riskWarning'</span>,
+  <span class="fn">analyze</span>(seg, owner, transcript) {
+    <span class="kw">const</span> hits = <span class="fn">KEYWORD_BANK</span>.<span class="str">risk</span>.<span class="fn">filter</span>(kw => seg.<span class="fn">includes</span>(kw.<span class="str">word</span>));
+    <span class="kw">if</span> (hits.length === <span class="num">0</span>) <span class="kw">return null</span>;
+    <span class="kw">const</span> score = <span class="fn">calculateRiskScore</span>(hits, owner);
+    <span class="kw">if</span> (score >= <span class="num">50</span>) {
+      <span class="kw">return</span> {
+        <span class="str">alert</span>: <span class="kw">true</span>,
+        <span class="str">type</span>: <span class="str">'risk'</span>,
+        <span class="str">level</span>: score >= <span class="num">80</span> ? <span class="str">'high'</span> : <span class="str">'medium'</span>,
+        <span class="str">score</span>,
+        <span class="str">hits</span>,
+        <span class="str">suggestion</span>: score >= <span class="num">80</span>
+          ? <span class="str">'暂停催缴·转主管处理'</span>
+          : <span class="str">'谨慎沟通·保持录音'</span>
+      };
+    }
+    <span class="kw">return null</span>;
+  }
+};</pre>
+</div>
+
+<!-- ============ 6. INTEGRATION ============ -->
+<h2>六、与现有客服端集成指南</h2>
+
+<div class="card">
+  <h3>6.1 最小改动点</h3>
+  <table>
+    <tr><th>位置</th><th>当前代码</th><th>改动</th></tr>
+    <tr>
+      <td>Head</td>
+      <td>第1-17行 style</td>
+      <td>添加 &lt;script src="js/realtime-assist/realtime-assist.js"&gt;&lt;/script&gt;</td>
+    </tr>
+    <tr>
+      <td>cco() 拨号函数</td>
+      <td>第241行</td>
+      <td>末尾添加：<br><code>window.__rta = new RealTimeAssist(o);<br>window.__rta.timer.start();</code></td>
+    </tr>
+    <tr>
+      <td>通话面板</td>
+      <td>弹窗div #dp</td>
+      <td>面板底部新增"语音转写输入框"（V1阶段模拟用）<br><code>&lt;input id="transcript-input" placeholder="模拟语音转写：输入业主说的话..."&gt;</code></td>
+    </tr>
+    <tr>
+      <td>#cpd() 推送确认</td>
+      <td>第276行</td>
+      <td>推送前调用 rta.finalize() 回写总结数据</td>
+    </tr>
+    <tr>
+      <td>alc() 日志记录</td>
+      <td>第27行</td>
+      <td>参数扩展：alc(oid, tp, rs, nt, {emotion, commitment, alerts})</td>
+    </tr>
+  </table>
+
+  <h3>6.2 BroadcastChannel 通信设计</h3>
+  <pre>
+<span class="cm">// 客服端内嵌引擎（同源单页面，不需要跨页面通信）</span>
+<span class="cm">// 但如果未来拆分独立页面：</span>
+
+<span class="cm">// 客服端：</span>
+<span class="kw">const</span> bc = <span class="kw">new</span> <span class="fn">BroadcastChannel</span>(<span class="str">'sgzf_cs_assist'</span>);
+bc.<span class="fn">postMessage</span>({ <span class="str">type</span>: <span class="str">'call_start'</span>, <span class="str">ownerId</span>: oid, <span class="str">data</span>: o });
+
+<span class="cm">// 实时辅助侧：</span>
+bc.<span class="fn">onmessage</span> = (e) => {
+  <span class="kw">switch</span>(e.<span class="str">data</span>.<span class="str">type</span>) {
+    <span class="kw">case</span> <span class="str">'transcript'</span>: engine.<span class="fn">ingest</span>(e.<span class="str">data</span>.<span class="str">text</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">'call_start'</span>: engine.<span class="fn">init</span>(e.<span class="str">data</span>.<span class="str">data</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="str">'call_end'</span>: engine.<span class="fn">finalize</span>(); <span class="kw">break</span>;
+  }
+};</pre>
+</div>
+
+<!-- ============ 7. RISK & FALLBACK ============ -->
+<h2>七、风险与降级策略</h2>
+
+<div class="card">
+  <table>
+    <tr><th>风险</th><th>影响</th><th>降级策略</th></tr>
+    <tr>
+      <td>引擎崩溃/JS异常</td>
+      <td><span class="tag tag-y">中</span></td>
+      <td>try-catch包裹所有判断器；引擎失败→弹窗层关闭·客服正常通话不受影响</td>
+    </tr>
+    <tr>
+      <td>正则误判（假阳性）</td>
+      <td><span class="tag tag-gray">低</span></td>
+      <td>弹窗均为"建议"非强制；客服可忽略；记录采纳/拒绝日志用于后续调优</td>
+    </tr>
+    <tr>
+      <td>关键词漏检（假阴性）</td>
+      <td><span class="tag tag-gray">低</span></td>
+      <td>对话全文始终保留；通话结束后可回溯分析；V2 NLP升级自然降低漏检率</td>
+    </tr>
+    <tr>
+      <td>弹窗过多造成干扰</td>
+      <td><span class="tag tag-y">中</span></td>
+      <td>去重机制（同类型15秒内不重复弹）；同一通话同一模块最多弹窗3次</td>
+    </tr>
+    <tr>
+      <td>未引入真实语音转写</td>
+      <td><span class="tag tag-o">高</span></td>
+      <td>V1阶段使用文本输入框模拟转写；对接真实语音ASR列入V2计划</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============ 8. SUMMARY ============ -->
+<h2>八、总结</h2>
+
+<div class="card">
+  <div class="g3">
+    <div class="card2" style="border-left:3px solid #ef4444">
+      <div style="font-weight:700;margin-bottom:6px;color:#fca5a5">P0 安全与合规底线</div>
+      <div style="font-size:12px;color:var(--sub)">
+        #6 风险预警 + #9 承诺判定 + #10 敏感词检测 是三条安全底线。不装好不上线。<br>
+        三者如有遗漏 → 诉讼风险 · 失信滋长 · 舆情失控。
+      </div>
+    </div>
+    <div class="card2" style="border-left:3px solid #f59e0b">
+      <div style="font-weight:700;margin-bottom:6px;color:#fbbf24">P1 效率与质量</div>
+      <div style="font-size:12px;color:var(--sub)">
+        #7 话术推荐 + #8 情绪识别 决定客服日均产能和沟通质量。<br>
+        话术采纳率>60% → 新人也能快速上手。
+      </div>
+    </div>
+    <div class="card2" style="border-left:3px solid #3b82f6">
+      <div style="font-weight:700;margin-bottom:6px;color:#93c5fd">P2 体验优化</div>
+      <div style="font-size:12px;color:var(--sub)">
+        #11 时长预警 + #12 多议题跟踪 提升通话效率和业主体验。<br>
+        不阻塞核心流程，可后置上线。
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;padding:16px;background:#0f172a;border-radius:8px;border:1px solid var(--border)">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:#e2e8f0">📐 关键设计决策</div>
+    <table style="font-size:12px">
+      <tr><td style="width:40px">1.</td><td>V1纯规则引擎驱动（正则+关键词），不依赖外部NLP服务。零延迟、离线可用、成本为零。</td></tr>
+      <tr><td>2.</td><td>弹窗是"建议"不是"命令"——客服始终有最终决策权。系统只辅助、不替代人。</td></tr>
+      <tr><td>3.</td><td>V1语音转写用文本输入框模拟——待真实ASR方案确定后替换为WebSocket流式转写接口。</td></tr>
+      <tr><td>4.</td><td>所有判定结果写回D.lg和D.o，不依赖外部服务——即使断网系统仍可运行。</td></tr>
+      <tr><td>5.</td><td>引擎独立模块化——每个判断器实现统一接口，可独立测试、独立升级、按需启用。</td></tr>
+      <tr><td>6.</td><td>承诺可信度评分同时影响业主分类（9号模块输出→反馈到A-F标签置信度微调）。</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center;color:var(--muted);padding:40px 0 20px;font-size:11px">
+  数治理方 · 客服端实时辅助层实施方案报告 &nbsp;|&nbsp; 2026-06-30 &nbsp;|&nbsp; 版本 1.0<br>
+  基于现有客服端 v3.12 + AI外呼系统设计文档编制
+</div>
+
+<script>
+function scrollToFeature(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Highlight briefly
+    el.style.transition = 'box-shadow 0.5s';
+    el.style.boxShadow = '0 0 30px rgba(37,99,235,0.3)';
+    setTimeout(() => { el.style.boxShadow = ''; }, 1500);
+  }
+}
+</script>
+
+</body>
+</html>

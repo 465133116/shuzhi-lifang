@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求圆桌会 · AI主持人工作台</title>
+<style>
+:root{
+  --bg:#0b1120; --card:#0f172a; --card2:#111c33; --line:#1e293b;
+  --txt:#e2e8f0; --dim:#94a3b8;
+  --boss:#f59e0b; --dev:#3b82f6; --pm:#10b981; --ai:#8b5cf6;
+  --red:#ef4444; --warn:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+header{padding:20px 28px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1a30,var(--bg))}
+h1{font-size:20px;font-weight:700}
+h1 .tag{font-size:12px;color:var(--ai);border:1px solid rgba(139,92,246,.4);border-radius:6px;padding:2px 8px;margin-left:10px;vertical-align:middle;background:rgba(139,92,246,.08)}
+.sub{color:var(--dim);font-size:12px;margin-top:6px}
+.pipeline{display:flex;gap:0;margin-top:14px;align-items:center;flex-wrap:wrap}
+.stage{display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);opacity:.45;transition:.3s}
+.stage.on{opacity:1;box-shadow:0 0 14px rgba(139,92,246,.15)}
+.stage .n{width:22px;height:22px;border-radius:50%;background:#334155;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.stage.on .n{background:var(--ai)}
+.stage .c{font-size:12px;color:var(--dim)}
+.stage.on .c{color:var(--ai)}
+.arrow{color:#475569;margin:0 6px;font-size:14px}
+main{display:grid;grid-template-columns:330px 1fr 360px;gap:14px;padding:16px 20px;align-items:start}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h2{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.hint{font-size:11px;color:var(--dim);line-height:1.6;margin-bottom:10px}
+.panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--card2)}
+.panel.boss{border-left:3px solid var(--boss)}
+.panel.dev{border-left:3px solid var(--dev)}
+.panel.pm{border-left:3px solid var(--pm)}
+.panel .ph{font-size:13px;font-weight:700;margin-bottom:4px}
+.panel .pd{font-size:11px;color:var(--dim);margin-bottom:8px;line-height:1.5}
+textarea{width:100%;height:78px;background:#0b1424;border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:10px;font-family:inherit;font-size:12px;resize:vertical;line-height:1.6}
+textarea:focus{outline:none;border-color:var(--ai)}
+.anon{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);margin:8px 0}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-size:12px;padding:7px 14px;transition:.2s}
+.btn-sub{width:100%;background:var(--ai);color:#fff;font-weight:700}
+.btn-sub:hover{opacity:.85}
+.btn-mini{background:#1e293b;color:var(--txt);padding:5px 10px;font-size:11px;border:1px solid var(--line)}
+.btn-mini:hover{border-color:#475569}
+.idea-card{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--card2);border-left:3px solid #334155}
+.idea-card.cat-product{border-left-color:var(--boss)}
+.idea-card.cat-tech{border-left-color:var(--dev)}
+.idea-card.cat-sched{border-left-color:var(--pm)}
+.idea-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.badge{font-size:11px;padding:2px 8px;border-radius:5px;font-weight:600}
+.badge.boss{background:rgba(245,158,11,.15);color:var(--boss)}
+.badge.dev{background:rgba(59,130,246,.15);color:var(--dev)}
+.badge.pm{background:rgba(16,185,129,.15);color:var(--pm)}
+.badge.ai{background:rgba(139,92,246,.15);color:var(--ai)}
+.badge.anon{background:rgba(148,163,184,.15);color:var(--dim)}
+.badge.cat{background:#1e293b;color:var(--dim)}
+.ts{font-size:10px;color:#475569;margin-left:auto}
+.idea-text{font-size:12px;line-height:1.7;margin-bottom:8px;color:var(--txt)}
+.qa{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+.qa .q{font-size:11px;color:var(--ai);line-height:1.7;margin-bottom:3px}
+.qa .r{font-size:11px;color:var(--warn);line-height:1.7;margin-bottom:3px}
+.conflict{border:1px solid rgba(139,92,246,.35);background:rgba(139,92,246,.06);border-radius:10px;padding:12px;margin-bottom:10px}
+.conflict .ch{font-size:12px;font-weight:700;color:var(--ai);margin-bottom:6px}
+.conflict .ct{font-size:11px;line-height:1.7;color:var(--txt)}
+.decide-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 4px;padding-top:10px;border-top:1px dashed var(--line)}
+.decide-row .dl{font-size:11px;font-weight:700;width:74px;flex-shrink:0}
+.decide-row .state{font-size:10px;color:var(--dim);margin-left:2px}
+.note-in{flex:1;min-width:120px;background:#0b1424;border:1px solid var(--line);border-radius:6px;color:var(--txt);padding:5px 8px;font-size:11px;font-family:inherit}
+.note-in:focus{outline:none;border-color:var(--ai)}
+.tl{border-left:2px solid var(--line);padding-left:14px}
+.tl-item{padding:8px 0;border-bottom:1px dashed #1e293b;font-size:11px;line-height:1.7}
+.tl-item:last-child{border-bottom:none}
+.tl-item .t{color:#64748b;font-size:10px}
+.tl-item .who{font-weight:700}
+.tl-item .who.boss{color:var(--boss)}
+.tl-item .who.dev{color:var(--dev)}
+.tl-item .who.pm{color:var(--pm)}
+.tl-item .no{color:var(--red);font-weight:700}
+.tl-item .ok{color:var(--pm);font-weight:700}
+.tl-item .hold{color:var(--warn);font-weight:700}
+footer{padding:18px 28px 26px;border-top:1px solid var(--line);color:var(--dim);font-size:11px;line-height:1.8}
+footer b{color:var(--txt)}
+footer .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+footer .rule{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px}
+footer .rule b{font-size:11px}
+.empty{color:var(--dim);font-size:11px;text-align:center;padding:24px 8px;line-height:1.8}
+@media(max-width:1200px){main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>需求圆桌会 <span class="tag">AI主持人 · 机制原型</span></h1>
+  <div class="sub">三方充分表达想法 → AI主持分析需求 → 分级拍板 → 全程留痕。本原型为规则引擎模拟，用于验证机制是否成立。</div>
+  <div class="pipeline" id="pipeline"></div>
+</header>
+
+<main>
+  <!-- 左：表达区 -->
+  <section class="col">
+    <div class="card">
+      <h2><span class="dot" style="background:#334155"></span>① 表达阶段 · 三方各自的语言</h2>
+      <div class="hint">老板讲生意、开发讲技术、PM讲排期——用自己最顺的语言写，翻译交给AI。担心"老板在场效应"？勾选匿名，想法先以内容呈现，对齐后再亮身份。</div>
+
+      <div class="panel boss">
+        <div class="ph"><span class="badge boss">老板</span> <span style="color:var(--dim);font-size:11px">拍板：做什么</span></div>
+        <div class="pd">用生意语言：想解决什么商业问题、带来什么价值</div>
+        <textarea id="in-boss" placeholder="例：业主报修后物业处理太慢，我想加一个超时自动升级提醒，让业委会能看到，最好这个月就能上。"></textarea>
+        <div class="anon"><input type="checkbox" id="anon-boss"> 匿名表达（讨论后再亮身份）</div>
+        <button class="btn-sub" onclick="submitIdea('boss')">提交想法</button>
+      </div>
+
+      <div class="panel dev">
+        <div class="ph"><span class="badge dev">开发</span> <span style="color:var(--dim);font-size:11px">拍板：怎么做</span></div>
+        <div class="pd">用技术语言：技术债、架构、性能、工具改进</div>
+        <textarea id="in-dev" placeholder="例：工单数据现在都在localStorage里，数据结构乱，我想重构一下数据层，统一走一个模块，不然后面加功能都是坑。"></textarea>
+        <div class="anon"><input type="checkbox" id="anon-dev"> 匿名表达（讨论后再亮身份）</div>
+        <button class="btn-sub" onclick="submitIdea('dev')">提交想法</button>
+      </div>
+
+      <div class="panel pm">
+        <div class="ph"><span class="badge pm">项目经理</span> <span style="color:var(--dim);font-size:11px">拍板：何时做</span></div>
+        <div class="pd">用排期语言：范围、资源、里程碑、优先级冲突</div>
+        <textarea id="in-pm" placeholder="例：这个月排期已经满了，客服端还有两个功能没交付，新增的需求可能要排到下个月。"></textarea>
+        <div class="anon"><input type="checkbox" id="anon-pm"> 匿名表达（讨论后再亮身份）</div>
+        <button class="btn-sub" onclick="submitIdea('pm')">提交想法</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 中：AI主持区 -->
+  <section class="col">
+    <div class="card">
+      <h2><span class="dot" style="background:var(--ai)"></span>② 澄清阶段 · AI翻译成需求卡</h2>
+      <div class="hint">AI主持人把三方语言翻译成统一的需求卡，追问说不清的地方。AI只分析，不站队、不拍板。</div>
+      <div id="idea-list"></div>
+    </div>
+    <div class="card">
+      <h2><span class="dot" style="background:var(--ai)"></span>③ 对齐阶段 · AI呈现分歧</h2>
+      <div class="hint">AI把三方想法之间的矛盾摆到桌面上，让圆桌对质。注意：AI只呈现，不裁决。</div>
+      <div id="conflict-list"></div>
+    </div>
+  </section>
+
+  <!-- 右：拍板区 -->
+  <section class="col">
+    <div class="card">
+      <h2><span class="dot" style="background:var(--pm)"></span>④ 拍板阶段 · 分级拍板</h2>
+      <div class="hint">做什么=老板 · 怎么做=开发 · 何时做=PM。每个按钮都是一次留痕，包括驳回——否决也有记录。</div>
+      <div id="decide-list"></div>
+    </div>
+    <div class="card">
+      <h2><span class="dot" style="background:#334155"></span>决议记录 · 全程留痕</h2>
+      <div class="hint">每一次表达、每一次拍板、每一次驳回都有记录。让想法不被无声吞掉。</div>
+      <div class="tl" id="timeline"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <b>机制四条边界</b>
+  <div class="rules">
+    <div class="rule"><b>AI分析，人拍板</b><br>AI主持人只有分析权：翻译、追问、呈现分歧。拍板动作永远是人按的。</div>
+    <div class="rule"><b>分级拍板</b><br>做什么=老板 / 怎么做=开发 / 何时做=PM。三方在自己职权内拍板，不越界。</div>
+    <div class="rule"><b>表达保护</b><br>想法可匿名提交，先讨论内容、后亮身份，防止"老板在场效应"。</div>
+    <div class="rule"><b>否决留痕</b><br>被驳回的想法也要记录何时、何因、被谁否——每一次表达都有记录。</div>
+  </div>
+  <div style="margin-top:10px;text-align:center">
+    <button class="btn-mini" onclick="loadDemo()">载入演示数据</button>
+    <button class="btn-mini" onclick="clearAll()">清空全部</button>
+  </div>
+</footer>
+
+<script>
+const STORAGE_KEY='roundtable_v1';
+const ROLE_LABEL={boss:'老板',dev:'开发',pm:'项目经理'};
+const ROLE_CLASS={boss:'boss',dev:'dev',pm:'pm'};
+const CAT_LABEL={product:'产品想法',tech:'技术想法',sched:'排期想法'};
+const CAT_CLASS={product:'cat-product',tech:'cat-tech',sched:'cat-sched'};
+const CHOICE_LABEL={
+  boss:{yes:'列入议程',hold:'再议',no:'驳回'},
+  dev:{yes:'技术可行',hold:'需调整',no:'不可行'},
+  pm:{yes:'本期排入',hold:'下期',no:'无法排入'}
+};
+const state={ideas:[],decisions:[]};
+
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(s&&s.ideas){state.ideas=s.ideas||[];state.decisions=s.decisions||[];}
+  }catch(e){}
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function trunc(s,n){s=String(s);return s.length>n?s.slice(0,n)+'…':s;}
+function now(){return new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});}
+
+/* ── AI主持人：规则引擎模拟 ── */
+const TECH=/重构|架构|数据层|模块|接口|性能|优化|bug|稳定|迁移|代码|技术债/;
+const SCHED=/排期|工期|资源|人手|排满|排到|优先级|里程碑|下个月|排不下/;
+
+function categorize(text){
+  if(SCHED.test(text)&&!TECH.test(text))return 'sched';
+  if(TECH.test(text))return 'tech';
+  return 'product';
+}
+function buildQuestions(text,cat){
+  const q=[];
+  if(cat==='sched'){
+    if(!/优先/.test(text))q.push('哪几项必须本月交付？请给出优先级排序');
+    if(!/人手|人员|人力/.test(text))q.push('可调配的人手和工时情况？');
+  }else{
+    if(!/场景|小区|页面|报修|投诉|客服|物业端|业主端|业委会|端|模块|环节|流程|数据/.test(text))q.push('这个想法落地到哪个具体场景或环节？');
+    if(!/指标|%|提升|降低|减少|节省|目标|多少|元|次|天|收入|率/.test(text))q.push('期望达成的量化结果或指标是什么？');
+  }
+  if(!/月|周|天|时间|尽快|马上|本期|下期|排/.test(text))q.push('期望的时间窗口是？');
+  if(cat!=='sched'&&!/所有|全部|部分|哪些|范围/.test(text))q.push('影响范围：全部小区/楼栋还是部分？');
+  return q.slice(0,3);
+}
+function buildRisks(text){
+  const r=[];
+  if(/重构|迁移|重写|改/.test(text))r.push('涉及存量逻辑改动，需评估回归风险');
+  if(/数据|API|接口|第三方|对接/.test(text))r.push('涉及数据或外部依赖，需评估兼容与对接成本');
+  if(/排期|工期|资源|人手|满/.test(text))r.push('资源容量约束，需PM评估排期空间');
+  if(/自动|提醒|通知|升级/.test(text))r.push('自动触发类功能需明确定义触发规则与边界');
+  if(/卖|商城|收入|收费/.test(text))r.push('涉及商业模式变更，需先确认定位与合同边界');
+  return r;
+}
+function analyze(text){
+  const cat=categorize(text);
+  return{cat:cat,questions:buildQuestions(text,cat),risks:buildRisks(text)};
+}
+
+/* ── 分歧检测（AI呈现，不裁决） ── */
+function hasDecision(ideaId,role,choice){
+  return state.decisions.some(d=>d.ideaId===ideaId&&d.role===role&&d.choice===choice);
+}
+function computeConflicts(){
+  const cs=[];
+  const act=state.ideas.filter(i=>!hasDecision(i.id,'boss','no'));
+  const B=act.filter(i=>i.role==='boss'),D=act.filter(i=>i.role==='dev'),P=act.filter(i=>i.role==='pm');
+  B.forEach(b=>D.forEach(d=>{
+    if(/快|尽快|马上|这周|这个月|压缩|赶/.test(b.text)&&/重构|债|优化|质量|架构|结构/.test(d.text))
+      cs.push({type:'速度 vs 质量',text:('老板希望「'+trunc(b.text,20)+'」尽快落地，开发提出「'+trunc(d.text,20)+'」。焦点：先上功能，还是先还技术债？需要PM评估排期空间。')});
+  }));
+  B.forEach(b=>P.forEach(p=>{
+    if(/加|上|做|新增|新/.test(b.text)&&/满|排不下|无法|紧张|下个月/.test(p.text))
+      cs.push({type:'范围 vs 容量',text:('老板提出「'+trunc(b.text,20)+'」，PM反馈「'+trunc(p.text,20)+'」。焦点：新需求怎么排，砍什么保什么。')});
+  }));
+  D.forEach(d=>P.forEach(p=>{
+    if(/重构|债|优化/.test(d.text)&&/满|排不下|紧张/.test(p.text))
+      cs.push({type:'技术投入 vs 交付',text:('开发提出「'+trunc(d.text,20)+'」，PM反馈排期紧张。焦点：技术债投入占不占本迭代容量。')});
+  }));
+  return cs;
+}
+
+/* ── 提交与拍板 ── */
+function submitIdea(role){
+  const ta=document.getElementById('in-'+role);
+  const text=ta.value.trim();
+  if(!text){ta.style.borderColor='var(--red)';setTimeout(()=>ta.style.borderColor='',1200);return;}
+  const anon=document.getElementById('anon-'+role).checked;
+  const a=analyze(text);
+  state.ideas.push({id:Date.now()+''+Math.floor(Math.random()*999),role:role,text:text,ts:Date.now(),anonymous:anon,cat:a.cat,questions:a.questions,risks:a.risks});
+  ta.value='';
+  save();render();
+}
+function decide(ideaId,role,choice){
+  const noteEl=document.getElementById('note-'+ideaId+'-next');
+  const note=noteEl?noteEl.value.trim():'';
+  const idea=state.ideas.find(i=>i.id===ideaId);
+  if(!idea)return;
+  state.decisions.push({ideaId,role,choice,note,ts:Date.now()});
+  if(noteEl)noteEl.value='';
+  save();render();
+}
+function latestDecision(ideaId,role){
+  const arr=state.decisions.filter(d=>d.ideaId===ideaId&&d.role===role);
+  return arr.length?arr[arr.length-1]:null;
+}
+
+/* ── 渲染 ── */
+function render(){
+  const conflicts=computeConflicts();
+  const totalQ=state.ideas.reduce((s,i)=>s+i.questions.length,0);
+
+  document.getElementById('pipeline').innerHTML=[
+    {n:'①',t:'表达',c:state.ideas.length+' 条'},
+    {n:'②',t:'澄清',c:totalQ+' 问'},
+    {n:'③',t:'对齐',c:conflicts.length+' 项分歧'},
+    {n:'④',t:'拍板',c:state.decisions.length+' 条决议'}
+  ].map((s,i)=>{
+    const on=(i===0&&state.ideas.length>0)||(i===1&&totalQ>0)||(i===2&&conflicts.length>0)||(i===3&&state.decisions.length>0);
+    let h='<div class="stage'+(on?' on':'')+'"><span class="n">'+s.n+'</span><span>'+s.t+'</span><span class="c">'+s.c+'</span></div>';
+    if(i<3)h+='<span class="arrow">→</span>';
+    return h;
+  }).join('');
+
+  /* 需求卡 */
+  const il=document.getElementById('idea-list');
+  if(!state.ideas.length){
+    il.innerHTML='<div class="empty">还没有想法。左侧任选一个角色，用你最顺的语言写下想法——<br>老板讲生意、开发讲技术、PM讲排期，AI负责翻译成需求卡。</div>';
+  }else{
+    il.innerHTML=state.ideas.map(i=>{
+      const anonTag=i.anonymous?'<span class="badge anon">匿名</span>':'';
+      return '<div class="idea-card '+CAT_CLASS[i.cat]+'">'
+        +'<div class="idea-head"><span class="badge '+ROLE_CLASS[i.role]+'">'+ROLE_LABEL[i.role]+'</span>'
+        +anonTag+'<span class="badge cat">'+CAT_LABEL[i.cat]+'</span>'
+        +'<span class="badge ai">AI已翻译</span><span class="ts">'+new Date(i.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})+'</span></div>'
+        +'<div class="idea-text">'+esc(i.text)+'</div>'
+        +'<div class="qa">'
+        +(i.questions.length?'<div style="font-size:10px;color:var(--dim);margin-bottom:2px">AI追问：</div>'+i.questions.map(q=>'<div class="q">❓ '+esc(q)+'</div>').join(''):'')
+        +(i.risks.length?'<div style="font-size:10px;color:var(--dim);margin:4px 0 2px">风险提示：</div>'+i.risks.map(r=>'<div class="r">⚠ '+esc(r)+'</div>').join(''):'')
+        +'</div></div>';
+    }).join('');
+  }
+
+  /* 分歧卡 */
+  const cl=document.getElementById('conflict-list');
+  if(!conflicts.length){
+    cl.innerHTML='<div class="empty">暂无分歧。当老板要快、开发要稳、PM排期满同时出现时，AI会自动把矛盾摆到桌面上。</div>';
+  }else{
+    cl.innerHTML=conflicts.map(c=>'<div class="conflict"><div class="ch">⚖ '+esc(c.type)+'</div><div class="ct">'+esc(c.text)+'</div></div>').join('');
+  }
+
+  /* 拍板区 */
+  const dl=document.getElementById('decide-list');
+  if(!state.ideas.length){
+    dl.innerHTML='<div class="empty">有想法后，这里出现分级拍板按钮。</div>';
+  }else{
+    dl.innerHTML=state.ideas.map(i=>{
+      const rows=['boss','dev','pm'].map(r=>{
+        const ld=latestDecision(i.id,r);
+        const stateTag=ld?'<span class="state">已拍板：'+CHOICE_LABEL[r][ld.choice]+'</span>':'<span class="state">未拍板</span>';
+        const btns=['yes','hold','no'].map(ch=>{
+          const cls=ld&&ld.choice===ch?'outline:2px solid '+(ch==='no'?'var(--red)':'var(--ai)')+';':'';
+          return '<button class="btn-mini" style="'+cls+'" onclick="decide(\''+i.id+'\',\''+r+'\',\''+ch+'\')">'
+            +(ch==='yes'?'✅':'')+(ch==='hold'?'⏸':'')+(ch==='no'?'❌':'')+CHOICE_LABEL[r][ch]+'</button>';
+        }).join('');
+        return '<div class="decide-row"><span class="dl">'+ROLE_LABEL[r]+'</span>'+btns+stateTag+'</div>';
+      }).join('');
+      return '<div class="idea-card '+CAT_CLASS[i.cat]+'"><div class="idea-text" style="margin-bottom:0">「'+esc(trunc(i.text,26))+'」</div>'
+        +rows
+        +'<input class="note-in" id="note-'+i.id+'-next" placeholder="拍板备注（可选）：理由会记入决议记录" style="width:100%;margin-top:6px" onkeydown="window._nid=\''+i.id+'\'">'
+        +'</div>';
+    }).join('');
+  }
+
+  /* 决议记录 */
+  const tl=document.getElementById('timeline');
+  if(!state.decisions.length){
+    tl.innerHTML='<div class="empty">还没有决议。拍板后这里记录每次决定——包括驳回。</div>';
+  }else{
+    const items=[...state.decisions].sort((a,b)=>b.ts-a.ts);
+    tl.innerHTML=items.map(d=>{
+      const idea=state.ideas.find(i=>i.id===d.ideaId);
+      const ideaText=idea?trunc(idea.text,18):'(已删除的想法)';
+      const who='<span class="who '+ROLE_CLASS[d.role]+'">'+ROLE_LABEL[d.role]+'</span>';
+      const chCls=d.choice==='no'?'no':(d.choice==='hold'?'hold':'ok');
+      const ch='<span class="'+chCls+'">'+CHOICE_LABEL[d.role][d.choice]+'</span>';
+      const note=d.note?' · 理由：'+esc(d.note):'';
+      return '<div class="tl-item"><span class="t">'+new Date(d.ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})+'</span> '
+        +who+' '+ch+' 「'+esc(ideaText)+'」'+note+'</div>';
+    }).join('');
+  }
+}
+
+/* ── 演示数据 ── */
+function loadDemo(){
+  const base=Date.now();
+  state.ideas=[
+    {id:'d1',role:'boss',text:'业主报修后物业处理太慢，我想加一个超时自动升级提醒，让业委会能看到，最好这个月就能上。',ts:base-7200000,anonymous:false,cat:'product',questions:['期望达成的量化结果或指标是什么？（如：处理时长下降多少）','影响范围：全部小区/楼栋还是部分？'],risks:['自动触发类功能需明确定义触发规则与边界']},
+    {id:'d2',role:'dev',text:'工单数据现在都在localStorage里，数据结构乱，我想重构一下数据层，统一走一个模块，不然后面加功能都是坑。',ts:base-5400000,anonymous:true,cat:'tech',questions:['期望达成的量化结果或指标是什么？（如：后续功能开发提速多少）','期望的时间窗口是？'],risks:['涉及存量逻辑改动，需评估回归风险','涉及数据或外部依赖，需评估兼容与对接成本']},
+    {id:'d3',role:'pm',text:'这个月排期已经满了，客服端还有两个功能没交付，新增的需求可能要排到下个月。',ts:base-3600000,anonymous:false,cat:'sched',questions:['哪几项必须本月交付？请给出优先级排序','可调配的人手和工时情况？'],risks:['资源容量约束，需PM评估排期空间']},
+    {id:'d4',role:'boss',text:'在业主端加一个商城，卖点土特产和家政服务，增加收入。',ts:base-1800000,anonymous:false,cat:'product',questions:['期望的时间窗口是？','影响范围：全部小区/楼栋还是部分？'],risks:['涉及商业模式变更，需先确认定位与合同边界']}
+  ];
+  state.decisions=[
+    {ideaId:'d4',role:'boss',choice:'no',note:'P1阶段不做增值业务，聚焦工单闭环',ts:base-900000},
+    {ideaId:'d1',role:'boss',choice:'yes',note:'体验问题优先，先做',ts:base-600000},
+    {ideaId:'d1',role:'dev',choice:'hold',note:'升级提醒依赖数据层重构，先还债再上',ts:base-300000},
+    {ideaId:'d1',role:'pm',choice:'hold',note:'本月容量已满，下期排入',ts:base-60000}
+  ];
+  save();render();
+}
+function clearAll(){
+  if(!confirm('清空全部想法与决议？'))return;
+  state.ideas=[];state.decisions=[];
+  save();render();
+}
+
+/* 初始化 */
+load();
+if(!state.ideas.length)loadDemo();
+render();
+</script>
+</body>
+</html>

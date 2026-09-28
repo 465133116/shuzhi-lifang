@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · AI社区模拟 — 实验结果</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-deep: #0b1120; --bg-panel: #0f172a; --bg-card: #1e293b;
+    --border: #334155; --text: #e2e8f0; --text2: #94a3b8; --text3: #64748b;
+    --purple: #8b5cf6; --red: #ef4444; --yellow: #f59e0b; --green: #10b981;
+    --orange: #f97316; --gray: #64748b; --blue: #3b82f6; --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-deep); color: var(--text);
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.7; padding: 40px 60px; max-width: 1500px; margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.2em;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  h2 { font-size: 1.4em; margin: 44px 0 18px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+  .subtitle { color: var(--text3); font-size: 0.95em; margin-bottom: 36px; }
+
+  /* Dashboard cards */
+  .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 40px; }
+  .dash-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px; text-align: center;
+  }
+  .dash-card .label { font-size: 0.8em; color: var(--text3); margin-bottom: 6px; }
+  .dash-card .value { font-size: 2em; font-weight: 800; }
+  .dash-card .delta { font-size: 0.78em; margin-top: 4px; }
+  .dash-card .delta.up { color: var(--green); }
+  .dash-card .delta.down { color: var(--red); }
+  .bc-green { border-top: 3px solid var(--green); }
+  .bc-purple { border-top: 3px solid var(--purple); }
+  .bc-cyan { border-top: 3px solid var(--cyan); }
+  .bc-yellow { border-top: 3px solid var(--yellow); }
+
+  /* Charts */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .chart-box {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+  }
+  .chart-box h4 { margin-bottom: 16px; font-size: 1em; }
+  .chart-box canvas { max-height: 320px; }
+
+  /* Classification migration */
+  .migration { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .mig-card {
+    background: var(--bg-card); border-radius: 12px; padding: 18px; text-align: center;
+    position: relative;
+  }
+  .mig-card .mig-cls { font-size: 1.6em; font-weight: 800; }
+  .mig-card .mig-before { font-size: 0.78em; color: var(--text3); margin-top: 4px; }
+  .mig-card .mig-arrow { font-size: 1.5em; margin: 6px 0; }
+  .mig-card .mig-after { font-size: 1.1em; font-weight: 700; }
+  .mig-card .mig-delta { font-size: 0.75em; margin-top: 2px; }
+
+  /* Key findings */
+  .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .finding {
+    background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(6,182,212,0.04));
+    border: 1px solid rgba(139,92,246,0.15); border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .finding h5 { color: var(--purple); margin-bottom: 6px; font-size: 0.95em; }
+  .finding p { font-size: 0.82em; color: var(--text2); }
+
+  /* Factor table */
+  .factor-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  .factor-table th {
+    background: var(--bg-card); padding: 10px 14px; text-align: center;
+    font-size: 0.82em; color: var(--text2); border-bottom: 1px solid var(--border);
+  }
+  .factor-table td {
+    padding: 10px 14px; text-align: center; font-size: 0.84em;
+    border-bottom: 1px solid rgba(51,65,85,0.3);
+  }
+  .factor-table .f-name { font-weight: 700; text-align: left; }
+  .factor-table .f-ctrl { color: var(--red); }
+  .factor-table .f-trtm { color: var(--green); }
+  .factor-table .f-delta { font-weight: 700; }
+
+  /* Footer */
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+  .footer { text-align: center; color: var(--text3); font-size: 0.78em; }
+
+  @media (max-width: 1000px) {
+    body { padding: 20px; }
+    .dashboard { grid-template-columns: 1fr 1fr; }
+    .chart-row, .finding-grid, .migration { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🏙️ 数治理方 · AI社区模拟 — POC实验结果</h1>
+<p class="subtitle">500户 × 90天 × A/B对照 | 规则驱动智能体模型 | 验证五因子乘法理论</p>
+
+<!-- ══════════════════ Dashboard ══════════════════ -->
+<div class="dashboard">
+  <div class="dash-card bc-green">
+    <div class="label">物业费缴纳率</div>
+    <div class="value" style="color:var(--green)">27.4%</div>
+    <div class="delta up">▲ +18.6%（vs 传统 8.8%）</div>
+  </div>
+  <div class="dash-card bc-purple">
+    <div class="label">五因子乘积</div>
+    <div class="value" style="color:var(--purple)">×3395</div>
+    <div class="delta up">▲ 从 0.00001 → 0.03226</div>
+  </div>
+  <div class="dash-card bc-cyan">
+    <div class="label">工单闭环率</div>
+    <div class="value" style="color:var(--cyan)">82.6%</div>
+    <div class="delta up">▲ +43.8%（vs 传统 38.8%）</div>
+  </div>
+  <div class="dash-card bc-yellow">
+    <div class="label">客服累计介入</div>
+    <div class="value" style="color:var(--yellow)">32次</div>
+    <div class="delta" style="color:var(--text3)">工单证据累积 300条</div>
+  </div>
+</div>
+
+<!-- ══════════════════ Charts ══════════════════ -->
+<h2>📈 缴费率与五因子乘积 — 90天趋势</h2>
+<div class="chart-row">
+  <div class="chart-box">
+    <h4>🔴 传统物业 vs 🟢 数治理方 — 缴费率变化</h4>
+    <canvas id="paymentChart"></canvas>
+  </div>
+  <div class="chart-box">
+    <h4>⚡ 五因子乘积增长曲线（对数尺度）</h4>
+    <canvas id="factorChart"></canvas>
+  </div>
+</div>
+
+<!-- ══════════════════ Classification Migration ══════════════════ -->
+<h2>🔄 业主分类迁移</h2>
+<div class="migration" id="migration"></div>
+
+<!-- ══════════════════ Five Factors ══════════════════ -->
+<h2>📊 五因子均值对比</h2>
+<table class="factor-table" id="factorTable"></table>
+
+<!-- ══════════════════ Key Findings ══════════════════ -->
+<h2>💡 关键发现</h2>
+<div class="finding-grid" id="findings"></div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════ Mechanism ══════════════════ -->
+<h2>🔬 机制验证：五因子如何逐个做功</h2>
+<div class="finding-grid">
+  <div class="finding">
+    <h5>🧾 1. 收费正当性（+0.54 → 0.63）</h5>
+    <p>传统物业：服务无证据→业主认为"白交钱"（0.09）。平台后：300条工单证据累积→每次闭环=一次正当性加分。业主从"物业什么都没干"变成"原来做了这么多"。</p>
+  </div>
+  <div class="finding">
+    <h5>🤝 2. 履约可信度（+0.43 → 0.58）</h5>
+    <p>传统物业：闭环率38%→报修石沉大海→信任崩塌（0.14）。平台后：闭环率83%→"报修真的有人管"→信任重建。每一次闭环都是一次信任充值。</p>
+  </div>
+  <div class="finding">
+    <h5>👁️ 3. 价值感知度（+0.42 → 0.49）</h5>
+    <p>传统物业：保洁保安"看不见"→价值感知趋零（0.07）。平台后：月度简报+服务日志→"沉默的服务被看见"。信息不对等被打破。</p>
+  </div>
+  <div class="finding">
+    <h5>🏘️ 4. 守约共识度（+0.22 → 0.28）</h5>
+    <p>传统物业：业主群负面声音放大→"全小区都不交"的错觉（0.06）。平台后：数据透明化→邻居缴费率可见→社会规范压力→"别人在交，我也该交"。</p>
+  </div>
+  <div class="finding">
+    <h5>🎯 5. 分类精准度（+0.48 → 0.65）</h5>
+    <p>传统物业：一刀切催缴→把A当E→激化矛盾（0.17）。平台后：双轨数据+客服分类→不把争议者当对抗者→E降级为A→A解决回归C。32次客服介入撬动6.6pp分类迁移。</p>
+  </div>
+  <div class="finding">
+    <h5>⚡ 乘积放大效应</h5>
+    <p>五因子单独看都是"改善了几十个百分点"，但乘法模型使它们相互放大：0.09→0.63（7x） × 0.14→0.58（4x） × 0.07→0.49（7x） × 0.06→0.28（4.7x） × 0.17→0.65（3.8x）= 总体<strong style="color:var(--purple)">3395倍</strong>。这就是"同时做功"的力量——任何一个短板都会拖垮整体。</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="footer">
+  数治理方 · AI社区模拟 POC v1.0 | 规则驱动智能体模型（Level 1）| 500户 × 90天 × seed=42<br>
+  完整数据见: AI社区模拟_实验结果.xlsx | 源代码: simulation.py
+</div>
+
+<script>
+// ═══ Data ═══
+const paymentData = [{"day":1,"ctrl":10.6,"trtm":10.2},{"day":4,"ctrl":10.6,"trtm":10.2},{"day":7,"ctrl":10.6,"trtm":10.2},{"day":10,"ctrl":10.6,"trtm":10.2},{"day":13,"ctrl":10.6,"trtm":10.2},{"day":16,"ctrl":10.6,"trtm":10.2},{"day":19,"ctrl":10.6,"trtm":10.2},{"day":22,"ctrl":10.6,"trtm":10.2},{"day":25,"ctrl":10.6,"trtm":10.2},{"day":28,"ctrl":10.6,"trtm":10.2},{"day":31,"ctrl":9.0,"trtm":19.8},{"day":34,"ctrl":9.0,"trtm":19.8},{"day":37,"ctrl":9.0,"trtm":19.8},{"day":40,"ctrl":9.0,"trtm":19.8},{"day":43,"ctrl":9.0,"trtm":19.8},{"day":46,"ctrl":9.0,"trtm":19.8},{"day":49,"ctrl":9.0,"trtm":19.8},{"day":52,"ctrl":9.0,"trtm":19.8},{"day":55,"ctrl":9.0,"trtm":19.8},{"day":58,"ctrl":9.0,"trtm":19.8},{"day":61,"ctrl":8.8,"trtm":27.4},{"day":64,"ctrl":8.8,"trtm":27.4},{"day":67,"ctrl":8.8,"trtm":27.4},{"day":70,"ctrl":8.8,"trtm":27.4},{"day":73,"ctrl":8.8,"trtm":27.4},{"day":76,"ctrl":8.8,"trtm":27.4},{"day":79,"ctrl":8.8,"trtm":27.4},{"day":82,"ctrl":8.8,"trtm":27.4},{"day":85,"ctrl":8.8,"trtm":27.4},{"day":88,"ctrl":8.8,"trtm":27.4}];
+
+const factorData = [{"day":1,"ctrl_prod":0.00005821,"trtm_prod":0.00005038},{"day":4,"ctrl_prod":0.00004675,"trtm_prod":0.00010921},{"day":7,"ctrl_prod":0.00003956,"trtm_prod":0.00018586},{"day":10,"ctrl_prod":0.00003439,"trtm_prod":0.00028234},{"day":13,"ctrl_prod":0.00003162,"trtm_prod":0.00040043},{"day":16,"ctrl_prod":0.00002928,"trtm_prod":0.00055101},{"day":19,"ctrl_prod":0.0000278,"trtm_prod":0.00073903},{"day":22,"ctrl_prod":0.00002618,"trtm_prod":0.00094947},{"day":25,"ctrl_prod":0.00002536,"trtm_prod":0.00121625},{"day":28,"ctrl_prod":0.00002439,"trtm_prod":0.00147047},{"day":31,"ctrl_prod":0.00002362,"trtm_prod":0.00243102},{"day":34,"ctrl_prod":0.00002158,"trtm_prod":0.00452059},{"day":37,"ctrl_prod":0.00002003,"trtm_prod":0.00548229},{"day":40,"ctrl_prod":0.00001903,"trtm_prod":0.00608521},{"day":43,"ctrl_prod":0.0000179,"trtm_prod":0.00692582},{"day":46,"ctrl_prod":0.00001731,"trtm_prod":0.00769473},{"day":49,"ctrl_prod":0.00001643,"trtm_prod":0.00839992},{"day":52,"ctrl_prod":0.00001591,"trtm_prod":0.00931857},{"day":55,"ctrl_prod":0.00001552,"trtm_prod":0.01027796},{"day":58,"ctrl_prod":0.00001482,"trtm_prod":0.01122008},{"day":61,"ctrl_prod":0.00001437,"trtm_prod":0.01436258},{"day":64,"ctrl_prod":0.00001366,"trtm_prod":0.02002345},{"day":67,"ctrl_prod":0.00001297,"trtm_prod":0.02192943},{"day":70,"ctrl_prod":0.00001247,"trtm_prod":0.02318855},{"day":73,"ctrl_prod":0.00001206,"trtm_prod":0.02471815},{"day":76,"ctrl_prod":0.00001155,"trtm_prod":0.02607066},{"day":79,"ctrl_prod":0.00001101,"trtm_prod":0.02727897},{"day":82,"ctrl_prod":0.00001053,"trtm_prod":0.02873447},{"day":85,"ctrl_prod":0.00001013,"trtm_prod":0.03016272},{"day":88,"ctrl_prod":0.00000973,"trtm_prod":0.03156814}];
+
+const clsData = [
+  {cls:'F',label:'历史复杂',color:'#8b5cf6',ctrl:2.0,trtm:2.0},
+  {cls:'E',label:'对抗态度',color:'#ef4444',ctrl:15.0,trtm:14.0},
+  {cls:'A',label:'具体争议',color:'#f59e0b',ctrl:15.0,trtm:10.8},
+  {cls:'B',label:'经济困难',color:'#10b981',ctrl:10.0,trtm:10.0},
+  {cls:'D',label:'惯性失约',color:'#f97316',ctrl:22.0,trtm:21.6},
+  {cls:'C',label:'沉默多数',color:'#64748b',ctrl:36.0,trtm:41.6},
+];
+
+// ═══ Chart.js defaults ═══
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#334155';
+Chart.defaults.font.family = "'PingFang SC','Microsoft YaHei',sans-serif";
+
+// ═══ Payment Chart ═══
+new Chart(document.getElementById('paymentChart'), {
+  type: 'line',
+  data: {
+    labels: paymentData.map(d => 'D'+d.day),
+    datasets: [{
+      label: '传统物业', data: paymentData.map(d => d.ctrl),
+      borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
+      tension: 0.4, fill: true, pointRadius: 1
+    },{
+      label: '数治理方', data: paymentData.map(d => d.trtm),
+      borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)',
+      tension: 0.4, fill: true, pointRadius: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { usePointStyle: true, padding: 20 } } },
+    scales: {
+      y: { min: 0, max: 35, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// ═══ Factor Chart ═══
+new Chart(document.getElementById('factorChart'), {
+  type: 'line',
+  data: {
+    labels: factorData.map(d => 'D'+d.day),
+    datasets: [{
+      label: '传统物业', data: factorData.map(d => d.ctrl_prod * 10000),
+      borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)',
+      tension: 0.3, fill: true, pointRadius: 1
+    },{
+      label: '数治理方', data: factorData.map(d => d.trtm_prod * 10000),
+      borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)',
+      tension: 0.3, fill: true, pointRadius: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { usePointStyle: true, padding: 20 } } },
+    scales: {
+      y: { type: 'logarithmic',
+        ticks: { callback: v => (v/10000).toFixed(4) }
+      }
+    }
+  }
+});
+
+// ═══ Migration Cards ═══
+const migDiv = document.getElementById('migration');
+clsData.forEach(d => {
+  const diff = d.trtm - d.ctrl;
+  const arrow = diff > 0.5 ? '↑' : (diff < -0.5 ? '↓' : '→');
+  const deltaColor = diff > 0.5 ? 'var(--green)' : (diff < -0.5 ? 'var(--red)' : 'var(--text3)');
+  migDiv.innerHTML += `
+    <div class="mig-card" style="border-top:3px solid ${d.color}">
+      <div class="mig-cls" style="color:${d.color}">${d.cls}</div>
+      <div class="mig-before">${d.label}</div>
+      <div class="mig-before">初始 ${d.ctrl}%</div>
+      <div class="mig-arrow" style="color:${deltaColor}">${arrow}</div>
+      <div class="mig-after" style="color:${d.trtm > d.ctrl ? 'var(--green)' : (d.trtm < d.ctrl ? 'var(--red)' : 'var(--text)')}">${d.trtm}%</div>
+      <div class="mig-delta" style="color:${deltaColor}">${diff >= 0 ? '+' : ''}${diff.toFixed(1)}pp</div>
+    </div>`;
+});
+
+// ═══ Factor Table ═══
+const factors = [
+  {name:'收费正当性',ctrl:0.0896,trtm:0.6331,mech:'工单证据累积→每次闭环=正当性加分'},
+  {name:'履约可信度',ctrl:0.1449,trtm:0.5778,mech:'闭环率38%→83%→信任重建'},
+  {name:'价值感知度',ctrl:0.0711,trtm:0.4876,mech:'月度简报→沉默服务被看见'},
+  {name:'守约共识度',ctrl:0.0604,trtm:0.2799,mech:'数据透明→邻里参照→社会规范'},
+  {name:'分类精准度',ctrl:0.1703,trtm:0.6462,mech:'双轨分类→因人施策→转化效率提升'},
+];
+const ft = document.getElementById('factorTable');
+ft.innerHTML = `<tr><th>因子</th><th>传统(对照)</th><th>平台(实验)</th><th>提升倍数</th><th>做功机制</th></tr>`;
+factors.forEach(f => {
+  const mult = (f.trtm / f.ctrl).toFixed(1);
+  ft.innerHTML += `<tr>
+    <td class="f-name">${f.name}</td>
+    <td class="f-ctrl">${f.ctrl.toFixed(4)}</td>
+    <td class="f-trtm">${f.trtm.toFixed(4)}</td>
+    <td class="f-delta" style="color:var(--purple)">×${mult}</td>
+    <td style="text-align:left;font-size:0.8em;color:var(--text2)">${f.mech}</td>
+  </tr>`;
+});
+const cprod = 0.0000095, tprod = 0.03226;
+ft.innerHTML += `<tr style="background:rgba(139,92,246,0.08)">
+  <td class="f-name" style="color:var(--purple)">五因子乘积</td>
+  <td class="f-ctrl">${cprod.toFixed(6)}</td>
+  <td class="f-trtm" style="color:var(--purple)">${tprod.toFixed(6)}</td>
+  <td class="f-delta" style="color:var(--purple);font-size:1.1em">×3395</td>
+  <td style="text-align:left;font-size:0.8em;color:var(--text2)">乘法放大：5个因子各自的"几倍"相乘=数千倍</td>
+</tr>`;
+
+// ═══ Findings ═══
+const findings = [
+  {title:'🎯 A类→C类：最高效的转化路径',text:'A类（具体争议）从15.0%降至10.8%（−4.2pp）。工单闭环→问题解决→回归守约。这是数治理方最直接的转化通道——把"有理由不交"变成"理由消除了，该交了"。'},
+  {title:'🔥 E类对抗降级',text:'E类（对抗态度）从15.0%降至14.0%（−1.0pp）。客服回访将"对抗"引导为"具体问题"→降级为A→进入解决流程。32次客服介入中有部分成功将E转化为A。'},
+  {title:'⏰ D类惯性打破',text:'D类（惯性失约）从22.0%降至21.6%（−0.4pp）。客服回访+承诺记录→"被看见的承诺"打破拖延惯性。效果尚小但方向正确——惯性是最难打破但最值得打破的。'},
+  {title:'📈 C类沉默多数扩大',text:'C类从36.0%增至41.6%（+5.6pp）——净流入来自A/D/E的转化。社区守约基本盘扩大→缴费率从8.8%升至27.4%。沉默多数是社区秩序的真正压舱石。'},
+  {title:'🔍 未解决诉求率降低',text:'未解决诉求率从8.4%降至0.4%（−8.0pp）。物业闭环率从38.8%提升至82.6%——这是所有其他改善的前提。没有闭环就没有证据，没有证据就没有信任。'},
+  {title:'📊 信息透明的二阶效应',text:'月度简报+工单公开展示→"沉默的服务被看见"→价值感知度从0.07升至0.49（7x）。这是传统物业完全缺失的机制——做再多没人知道等于白做。'},
+];
+document.getElementById('findings').innerHTML = findings.map(f =>
+  `<div class="finding"><h5>${f.title}</h5><p>${f.text}</p></div>`
+).join('');
+</script>
+
+</body>
+</html>

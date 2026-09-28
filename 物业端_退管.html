@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 物业端·退管</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px;gap:12px}
+.tn span{font-weight:700;font-size:15px}.tn .info{font-size:11px;opacity:0.7;margin-left:auto}
+.ct{max-width:1400px;margin:0 auto;padding:16px}
+.side{width:220px;background:var(--c);border-radius:var(--r);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.side a{display:block;padding:10px 20px;font-size:13px;color:var(--t);text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:.15s}
+.side a:hover,.side a.on{background:#eff6ff;color:var(--p);border-left-color:var(--p);font-weight:600}
+.side .section{font-size:10px;color:var(--sub);padding:16px 20px 6px;text-transform:uppercase;letter-spacing:1px}
+.main{flex:1;min-width:0}
+.card{background:var(--c);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.stat{text-align:center;padding:12px}.stat .n{font-size:24px;font-weight:700}.stat .l{font-size:11px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-r{background:#fef2f2;color:var(--d)}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}.tag-b{background:#eff6ff;color:var(--p)}
+.btn{display:inline-block;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;transition:.15s}.btn:hover{opacity:.85}.btn-p{background:var(--p);color:#fff}.btn-d{background:var(--d);color:#fff}.btn-o{background:transparent;border:1px solid var(--b);color:var(--t)}
+.flex{display:flex;gap:16px}
+.badge{display:inline-block;min-width:20px;height:20px;line-height:20px;border-radius:10px;background:var(--d);color:#fff;font-size:10px;text-align:center;padding:0 6px}
+</style></head><body>
+<div class="tn"><span>数治理方 · 物业端（退管模块）</span><span class="info">翠苑新村(A类·物业已更替) | 退管物业：原天宏物业</span></div>
+<div class="ct"><div class="flex">
+<div class="side">
+<div class="section">小区信息</div>
+<a onclick="st('overview')" class="on" id="st-overview">概览</a>
+<a onclick="st('history')" id="st-history">历史欠费台账</a>
+<a onclick="st('disputes')" id="st-disputes">历史争议</a>
+<a onclick="st('tracks')" id="st-tracks">轨区分管理</a>
+<div class="section">合同与证据</div>
+<a onclick="st('contracts')" id="st-contracts">双轨合同</a>
+<a onclick="st('evidence')" id="st-evidence">证据链</a>
+</div>
+<div class="main" id="main"></div>
+</div></div>
+<script>
+
+var D={
+site:{name:'翠苑新村',type:'A',addr:'城西区翠苑路156号',total:800,currentMgr:'李经理',prevMgr:'原天宏物业',prevExit:'2024-03'},
+history:[
+{id:'H001',owner:'孙丽',room:'6-502',prevArrear:4800,currentArrear:2400,period:'2022-01~2024-03',status:'协商中',conclusion:'CON-088'},
+{id:'H002',owner:'周大明',room:'3-502',prevArrear:12000,currentArrear:0,period:'2021-06~2024-03',status:'催收中',conclusion:''},
+{id:'H003',owner:'赵大伟',room:'2-1101',prevArrear:3600,currentArrear:0,period:'2023-01~2024-03',status:'已结清',conclusion:'CON-045'}
+],
+disputes:[
+{id:'D001',owner:'周大明',room:'3-502',issue:'前物业期间公区设施损坏未修复',amount:8000,status:'协商中',date:'2026-06-20'},
+{id:'D002',owner:'刘洋',room:'1-201',issue:'前物业多收装修押金未退还',amount:2000,status:'待核验',date:'2026-06-22'}
+],
+tracks:[
+{id:'T001',owner:'孙丽',room:'6-502',track:'退管',amount:4800,belongTo:'原天宏物业',note:'协商结论减免至4000'},
+{id:'T002',owner:'周大明',room:'3-502',track:'退管',amount:12000,belongTo:'原天宏物业',note:''},
+{id:'T003',owner:'郑国强',room:'6-301',track:'在管',amount:1800,belongTo:'现管物业',note:''}
+],
+contracts:[
+{id:'C001',name:'双轨物业治理平台-服务总协议',parties:'平台+业委会+物业',status:'生效中',date:'2026-04-15'},
+{id:'C002',name:'在管物业服务协同合作协议',parties:'平台+在管物业',status:'生效中',date:'2026-04-15'},
+{id:'C003',name:'退管物业历史事项治理合作协议',parties:'平台+退管物业',status:'签署中',date:'2026-06-20'}
+]
+};
+
+function st(t){
+document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('on')});
+document.getElementById('st-'+t).classList.add('on');
+if(t==='overview')ro();else if(t==='history')rh();else if(t==='disputes')rd();
+else if(t==='tracks')rt();else if(t==='contracts')rc();else if(t==='evidence')re();
+}
+
+function ro(){
+var h='<h2 style="margin-bottom:16px">小区概览</h2>'+
+'<div class="g3" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--w)">A类</div><div class="l">小区类型</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.history.filter(function(x){return x.status!=='已结清'}).length+'</div><div class="l">未结清历史</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+D.disputes.length+'</div><div class="l">历史争议</div></div>'+
+'</div>'+
+'<div class="card"><h3 style="margin-bottom:8px">退管信息</h3>'+
+'<table><tr><td>退管物业</td><td>'+D.site.prevMgr+'</td></tr><tr><td>退出日期</td><td>'+D.site.prevExit+'</td></tr><tr><td>在管物业</td><td>'+D.site.currentMgr+'</td></tr><tr><td>历史欠费户</td><td>'+D.history.length+'户 | 合计 ¥'+(D.history.reduce(function(s,x){return s+x.prevArrear},0))+'</td></tr></table></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">关键提示</h3>'+
+'<div style="font-size:13px;color:var(--sub);line-height:1.8">• 历史欠费归属退管物业，催收对外说明"前物业欠费"<br>• 协商结论已产生的结果以结论金额为准<br>• 轨区分标注确保催收话术正确归属<br>• 双轨合同签署完成后自动生效轨区分路由</div></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function rh(){
+var h='<h2 style="margin-bottom:16px">历史欠费台账</h2><div class="card"><table><tr><th>编号</th><th>业主</th><th>房号</th><th>前物业欠费</th><th>现欠费</th><th>期间</th><th>状态</th><th>协商结论</th></tr>';
+D.history.forEach(function(x){
+var ss=x.status==='已结清'?'tag-g':x.status==='协商中'?'tag-y':'tag-r';
+h+='<tr><td>'+x.id+'</td><td>'+x.owner+'</td><td>'+x.room+'</td><td>¥'+x.prevArrear+'</td><td>¥'+x.currentArrear+'</td><td>'+x.period+'</td><td><span class="tag '+ss+'">'+x.status+'</span></td><td>'+x.conclusion+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function rd(){
+var h='<h2 style="margin-bottom:16px">历史争议</h2><div class="card"><table><tr><th>编号</th><th>业主</th><th>房号</th><th>争议事项</th><th>金额</th><th>状态</th><th>日期</th></tr>';
+D.disputes.forEach(function(x){
+var ss=x.status==='协商中'?'tag-y':'tag-r';
+h+='<tr><td>'+x.id+'</td><td>'+x.owner+'</td><td>'+x.room+'</td><td>'+x.issue+'</td><td>¥'+x.amount+'</td><td><span class="tag '+ss+'">'+x.status+'</span></td><td>'+x.date+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function rt(){
+var h='<h2 style="margin-bottom:16px">轨区分管理</h2><div class="card"><table><tr><th>编号</th><th>业主</th><th>房号</th><th>轨类型</th><th>金额</th><th>归属</th><th>备注</th></tr>';
+D.tracks.forEach(function(x){
+var ts=x.track==='退管'?'tag-y':x.track==='在管'?'tag-g':'tag-b';
+h+='<tr><td>'+x.id+'</td><td>'+x.owner+'</td><td>'+x.room+'</td><td><span class="tag '+ts+'">'+x.track+'轨</span></td><td>¥'+x.amount+'</td><td>'+x.belongTo+'</td><td>'+x.note+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function rc(){
+var h='<h2 style="margin-bottom:16px">双轨合同</h2><div class="card"><table><tr><th>编号</th><th>合同名称</th><th>签署方</th><th>状态</th><th>签署日期</th></tr>';
+D.contracts.forEach(function(x){
+var ss=x.status==='生效中'?'tag-g':x.status==='签署中'?'tag-y':'tag-r';
+h+='<tr><td>'+x.id+'</td><td>'+x.name+'</td><td>'+x.parties+'</td><td><span class="tag '+ss+'">'+x.status+'</span></td><td>'+x.date+'</td></tr>';
+});
+h+='</table></div><div class="card"><h3 style="margin-bottom:8px">合同说明</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 服务总协议：平台与业委会、物业三方签署<br>• 在管协同：平台与现管物业签署，保障现行服务<br>• 退管治理：平台与退管物业签署，处理历史事项<br>• 全部签署后轨区分路由自动生效</div></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function re(){
+var h='<h2 style="margin-bottom:16px">证据链</h2>'+
+'<div class="g2">'+
+'<div class="card"><h3 style="margin-bottom:8px">退管物业证据</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 历史欠费明细台账<br>• 前物业服务合同<br>• 历史催收记录<br>• 业委会协商结论 CON-045/088</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">在管物业证据</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 现任物业服务合同<br>• SLA执行标准<br>• 工单履约记录<br>• 信用评分历史</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">跨期证据</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 物业更替交接记录<br>• 责任边界划分<br>• 联合复核结论<br>• 协商结论库索引</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">证据链完整性</h3><div style="font-size:12px">'+
+'<div style="margin:8px 0"><span>账单快照</span><div class="progress" style="margin-top:4px"><div style="width:100%;background:var(--s)"></div></div></div>'+
+'<div style="margin:8px 0"><span>催收记录</span><div class="progress" style="margin-top:4px"><div style="width:80%;background:var(--w)"></div></div></div>'+
+'<div style="margin:8px 0"><span>合同文件</span><div class="progress" style="margin-top:4px"><div style="width:67%;background:var(--w)"></div></div></div>'+
+'<div style="margin:8px 0"><span>协商结论</span><div class="progress" style="margin-top:4px"><div style="width:100%;background:var(--s)"></div></div></div>'+
+'</div></div></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+ro();
+
+</script></body></html>

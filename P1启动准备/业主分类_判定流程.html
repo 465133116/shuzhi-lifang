@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业主分类 · 判定流程 · 数治理方</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:#0b1120;color:#e2e8f0;padding:30px 20px 60px}
+h1{text-align:center;font-size:18px;font-weight:700;margin-bottom:4px;letter-spacing:2px}
+.sub{text-align:center;font-size:11px;color:#475569;margin-bottom:40px}
+
+.pipeline{max-width:900px;margin:0 auto;position:relative}
+
+/* === DECISION NODE (diamond) === */
+.decision{position:relative;margin:0 auto 0 auto;display:flex;flex-direction:column;align-items:center}
+.diamond{width:340px;min-height:56px;background:#1e293b;border:2px solid #334155;transform:rotate(0);display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;position:relative;z-index:1;cursor:default;transition:all .15s}
+.diamond:hover{border-color:#475569}
+.diamond .q{font-size:11px;color:#64748b;margin-bottom:2px}
+.diamond .ask{font-size:14px}
+
+/* YES / NO branches */
+.branches{display:flex;justify-content:center;gap:80px;margin-top:-1px;position:relative;z-index:0}
+.branch-line{position:relative;display:flex;flex-direction:column;align-items:center}
+.branch-label{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;margin-bottom:6px;z-index:1}
+.label-yes{background:#10b98120;color:#10b981;border:1px solid #10b98130}
+.label-no{background:#ef444420;color:#ef4444;border:1px solid #ef444430}
+
+/* Vertical connectors */
+.vline{width:2px;height:28px;background:#334155}
+.hline{position:absolute;top:-14px;height:2px;background:#334155}
+.hline-left{left:0;right:50%}
+.hline-right{left:50%;right:0}
+
+/* === RESULT NODE (rounded rect) === */
+.result{margin:0 auto;padding:12px 20px;border-radius:10px;text-align:center;min-width:260px;position:relative;cursor:default;transition:all .15s}
+.result:hover{filter:brightness(1.15)}
+.result .cat{font-size:11px;opacity:.7;margin-bottom:2px}
+.result .name{font-size:15px;font-weight:700;margin-bottom:2px}
+.result .detail{font-size:10px;opacity:.5;margin-top:4px}
+
+/* Category colors */
+.cat-f{border-left:4px solid #8b5cf6;background:linear-gradient(135deg,#1e1b4b,#181535)}
+.cat-f .name{color:#a78bfa}
+.cat-e{border-left:4px solid #ef4444;background:linear-gradient(135deg,#1f1118,#1a1016)}
+.cat-e .name{color:#f87171}
+.cat-a{border-left:4px solid #f59e0b;background:linear-gradient(135deg,#1f180a,#1a1408)}
+.cat-a .name{color:#fbbf24}
+.cat-b{border-left:4px solid #10b981;background:linear-gradient(135deg,#0a1e16,#081810)}
+.cat-b .name{color:#34d399}
+.cat-d{border-left:4px solid #f97316;background:linear-gradient(135deg,#1f1208,#1a0e06)}
+.cat-d .name{color:#fb923c}
+.cat-c{border-left:4px solid #64748b;background:linear-gradient(135deg,#14171c,#101316)}
+.cat-c .name{color:#94a3b8}
+
+/* Substage detail row */
+.sub-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.sub-tag{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600}
+
+/* Arrow down */
+.arrow-down{text-align:center;font-size:16px;color:#334155;padding:6px 0;letter-spacing:2px}
+
+/* Divider between major sections */
+.divider{max-width:900px;margin:30px auto;display:flex;align-items:center;gap:12px}
+.divider-line{flex:1;height:1px;background:#1e293b}
+.divider-label{font-size:10px;color:#334155;white-space:nowrap}
+
+/* Horizontal parallel */
+.parallel{display:flex;gap:30px;justify-content:center;align-items:flex-start;margin:0 auto}
+
+/* Inline note */
+.note-inline{font-size:10px;color:#475569;text-align:center;margin-top:6px;font-style:italic}
+
+/* Source indicator */
+.src{font-size:9px;opacity:.5}
+.src::before{content:'← '}
+
+/* Legend strip */
+.legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px;padding:16px;background:rgba(255,255,255,.02);border-radius:8px;max-width:900px;margin-left:auto;margin-right:auto}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:10px}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+/* New: summary box */
+.quick-ref{max-width:900px;margin:40px auto 0;padding:16px;background:rgba(255,255,255,.03);border-radius:8px;font-size:11px;display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+.quick-item{text-align:center}
+.quick-item .big{font-size:20px;font-weight:800}
+.quick-item .lbl{font-size:9px;color:#64748b}
+</style>
+</head>
+<body>
+
+<h1>🔀 业主分类 · 判定流程</h1>
+<div class="sub">双轨数据合并 → F→E→A→B→D→C · 从上到下 · 命中即停</div>
+
+<div class="pipeline">
+
+<!-- ====== STEP 1: F ====== -->
+<div class="decision">
+  <div class="diamond" style="border-color:#8b5cf6;background:linear-gradient(135deg,#1e1b4b40,#18153540)">
+    <div>
+      <div class="q">判定 ①</div>
+      <div class="ask">业主 lb 含特殊关键词？<br><span style="font-size:10px;color:#8b5cf6;font-weight:400">已搬家 / 产权变更 / 出租 / 继承 / 号码无效</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:120px">
+  <div class="branch-line">
+    <span class="branch-label label-yes">是</span>
+    <div class="result cat-f">
+      <div class="cat">主分类</div>
+      <div class="name">F · 历史复杂</div>
+      <div class="detail">独立通道，不参与后续判定</div>
+    </div>
+    <div class="sub-row">
+      <span class="sub-tag" style="background:#8b5cf620;color:#a78bfa">号码无效</span>
+      <span class="sub-tag" style="background:#8b5cf620;color:#a78bfa">产权变更</span>
+      <span class="sub-tag" style="background:#8b5cf620;color:#a78bfa">继承纠纷</span>
+      <span class="sub-tag" style="background:#8b5cf620;color:#a78bfa">出租</span>
+    </div>
+  </div>
+  <div class="branch-line">
+    <span class="branch-label label-no">否 ↓</span>
+  </div>
+</div>
+
+<!-- ====== STEP 2: E ====== -->
+<div class="arrow-down">│</div>
+<div class="decision">
+  <div class="diamond" style="border-color:#ef4444;background:linear-gradient(135deg,#1f111840,#1a101640)">
+    <div>
+      <div class="q">判定 ②</div>
+      <div class="ask">有对抗信号？</div>
+      <div style="font-size:10px;color:#ef4444;font-weight:400;margin-top:4px">
+        拒接≥3 · 攻击投诉 · 明确拒缴 · 态度差评≥3
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:120px">
+  <div class="branch-line">
+    <span class="branch-label label-yes">是</span>
+    <div class="result cat-e">
+      <div class="cat">主分类</div>
+      <div class="name">E · 对抗态度</div>
+    </div>
+    <div class="sub-row">
+      <span class="sub-tag" style="background:#ef444420;color:#f87171">E1·拒接型</span>
+      <span class="sub-tag" style="background:#ef444420;color:#f87171">E2·攻击型</span>
+      <span class="sub-tag" style="background:#ef444420;color:#f87171">E3·拒缴型</span>
+      <span class="sub-tag" style="background:#ef444420;color:#fca5a5">E4·差评型</span>
+    </div>
+    <div class="note-inline">不解决态度，其他无从谈起</div>
+  </div>
+  <div class="branch-line">
+    <span class="branch-label label-no">否 ↓</span>
+  </div>
+</div>
+
+<!-- ====== STEP 3: A ====== -->
+<div class="arrow-down">│</div>
+<div class="decision">
+  <div class="diamond" style="border-color:#f59e0b;background:linear-gradient(135deg,#1f180a40,#1a140840)">
+    <div>
+      <div class="q">判定 ③</div>
+      <div class="ask">有未闭环工单？</div>
+      <div style="font-size:10px;color:#f59e0b;font-weight:400;margin-top:4px">
+        报修/投诉工单(含客服草稿) · st ≠ done
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:120px">
+  <div class="branch-line">
+    <span class="branch-label label-yes">是</span>
+    <div class="result cat-a">
+      <div class="cat">主分类</div>
+      <div class="name">A · 有具体争议</div>
+    </div>
+    <div class="sub-row">
+      <span class="sub-tag" style="background:#f59e0b20;color:#fbbf24">报修型</span>
+      <span class="sub-tag" style="background:#f59e0b20;color:#fbbf24">投诉型</span>
+      <span class="sub-tag" style="background:#f59e0b20;color:#fbbf24">混合型</span>
+      <span class="sub-tag" style="background:#f59e0b20;color:#fcd34d">反复型</span>
+      <span class="sub-tag" style="background:#f59e0b20;color:#fcd34d">首次型</span>
+    </div>
+    <div class="note-inline">先解决问题，是最好的沟通</div>
+  </div>
+  <div class="branch-line">
+    <span class="branch-label label-no">否 ↓</span>
+  </div>
+</div>
+
+<!-- ====== STEP 4-5: B and D (parallel) ====== -->
+<div class="arrow-down">│</div>
+<div class="decision">
+  <div class="diamond" style="border-color:#10b981;background:linear-gradient(135deg,#0a1e1640,#08181040)">
+    <div>
+      <div class="q">判定 ④</div>
+      <div class="ask">通话中表达经济困难？<br><span style="font-size:10px;color:#10b981;font-weight:400">且证据等级≥B2（反复或可验证）</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:120px">
+  <div class="branch-line">
+    <span class="branch-label label-yes">是</span>
+    <div class="result cat-b">
+      <div class="cat">主分类</div>
+      <div class="name">B · 经济困难</div>
+    </div>
+    <div class="sub-row">
+      <span class="sub-tag" style="background:#10b98120;color:#34d399">B1·自述</span>
+      <span class="sub-tag" style="background:#10b98120;color:#34d399">B2·反复</span>
+      <span class="sub-tag" style="background:#10b98120;color:#6ee7b7">B3·可验证</span>
+    </div>
+    <div class="note-inline"><span class="src" style="color:#a855f7">客服轨道</span>nt关键词检测</div>
+  </div>
+  <div class="branch-line">
+    <span class="branch-label label-no">否 ↓</span>
+  </div>
+</div>
+
+<div class="arrow-down">│</div>
+<div class="decision">
+  <div class="diamond" style="border-color:#f97316;background:linear-gradient(135deg,#1f120840,#1a0e0640)">
+    <div>
+      <div class="q">判定 ⑤</div>
+      <div class="ask">无争议承诺 ≥ 2次？</div>
+      <div style="font-size:10px;color:#f97316;font-weight:400;margin-top:4px">
+        通话中说会交但无行动 · 经过衰减后的有效计数
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:120px">
+  <div class="branch-line">
+    <span class="branch-label label-yes">是</span>
+    <div class="result cat-d">
+      <div class="cat">主分类</div>
+      <div class="name">D · 惯性失约</div>
+    </div>
+    <div class="sub-row">
+      <span class="sub-tag" style="background:#f9731620;color:#fb923c">D1·轻度 1-2次</span>
+      <span class="sub-tag" style="background:#f9731620;color:#fb923c">D2·中度 3-4次</span>
+      <span class="sub-tag" style="background:#f9731620;color:#fdba74">D3·重度 ≥5次</span>
+      <span class="sub-tag" style="background:#f9731620;color:#fdba74">D4·沉默型</span>
+    </div>
+    <div class="note-inline"><span class="src" style="color:#a855f7">客服轨道</span>rs=无争议计数</div>
+  </div>
+  <div class="branch-line">
+    <span class="branch-label label-no">否 ↓</span>
+  </div>
+</div>
+
+<!-- ====== STEP 6: C (fallback) ====== -->
+<div class="arrow-down">│</div>
+<div class="decision">
+  <div class="diamond" style="border-color:#64748b;background:linear-gradient(135deg,#14171c40,#10131640)">
+    <div>
+      <div class="q">判定 ⑥ 兜底</div>
+      <div class="ask">C类细分判定</div>
+      <div style="font-size:10px;color:#64748b;font-weight:400;margin-top:4px">
+        以上全否 → 走C类流水线
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="branches" style="gap:0">
+  <div class="branch-line" style="width:100%">
+    <span class="branch-label" style="background:#64748b20;color:#64748b;border:1px solid #64748b30">C类流水线 ↓</span>
+
+    <!-- C sub-flow -->
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px;width:100%">
+
+      <!-- C5 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto">
+          <div class="name" style="font-size:12px">C5 · 已解决</div>
+          <div class="detail" style="font-size:9px">A消除后 · 无其他信号</div>
+        </div>
+        <span style="font-size:10px;color:#334155">← 条件：有A消除记录</span>
+      </div>
+
+      <!-- C1 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto">
+          <div class="name" style="font-size:12px">C1 · 从众观望</div>
+          <div class="detail" style="font-size:9px">"别人交我就交""大家都交了吗"</div>
+        </div>
+        <span style="font-size:10px;color:#334155">← nt含从众关键词</span>
+      </div>
+
+      <!-- C2 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto">
+          <div class="name" style="font-size:12px">C2 · 拖延观望</div>
+          <div class="detail" style="font-size:9px">"不急""再看吧""到时候再说"</div>
+        </div>
+        <span style="font-size:10px;color:#334155">← nt含拖延关键词</span>
+      </div>
+
+      <!-- C3 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto">
+          <div class="name" style="font-size:12px">C3 · 对比观望</div>
+          <div class="detail" style="font-size:9px">"隔壁小区""凭什么我们"</div>
+        </div>
+        <span style="font-size:10px;color:#334155">← nt含对比关键词</span>
+      </div>
+
+      <!-- C4 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto">
+          <div class="name" style="font-size:12px">C4 · 信任缺失</div>
+          <div class="detail" style="font-size:9px">评分低 / 说"物业不管" · 但无投诉工单</div>
+        </div>
+        <span style="font-size:10px;color:#334155">← 不满但不够A类</span>
+      </div>
+
+      <!-- C6 -->
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="result cat-c" style="flex:1;min-width:auto;opacity:.7">
+          <div class="name" style="font-size:12px">C6 · 信息不足</div>
+          <div class="detail" style="font-size:9px">无工单 · 无通话 · 无标签</div>
+        </div>
+        <span style="font-size:10px;color:#475569">← 以上全否 · 纯默认</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /pipeline -->
+
+<!-- Divider -->
+<div class="divider" style="max-width:900px">
+  <div class="divider-line"></div>
+  <div class="divider-label">数据来源说明</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- Quick reference -->
+<div class="quick-ref" style="max-width:900px">
+  <div class="quick-item">
+    <div class="big" style="color:#3b82f6">📱</div>
+    <div class="lbl">小程序轨道</div>
+    <div style="font-size:9px;color:#64748b;margin-top:4px">产生 A · E(攻击) · C4 · C5</div>
+    <div style="font-size:9px;color:#475569">衰减30天</div>
+  </div>
+  <div style="width:1px;background:#1e293b"></div>
+  <div class="quick-item">
+    <div class="big" style="color:#a855f7">🎧</div>
+    <div class="lbl">客服轨道</div>
+    <div style="font-size:9px;color:#64748b;margin-top:4px">产生 B · D · E(拒接/拒缴) · C1~C3</div>
+    <div style="font-size:9px;color:#475569">衰减14天</div>
+  </div>
+  <div style="width:1px;background:#1e293b"></div>
+  <div class="quick-item">
+    <div class="big" style="color:#f59e0b">OR</div>
+    <div class="lbl">合并方式</div>
+    <div style="font-size:9px;color:#64748b;margin-top:4px">任一轨道有 = 信号on</div>
+    <div style="font-size:9px;color:#475569">两轨独立计算，互不干扰</div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend" style="max-width:900px">
+  <div class="leg-item"><div class="leg-dot" style="background:#8b5cf6"></div>F · 历史复杂（独立通道）</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ef4444"></div>E · 对抗态度</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div>A · 有具体争议</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div>B · 经济困难</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#f97316"></div>D · 惯性失约</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#64748b"></div>C · 无信号（兜底）</div>
+</div>
+
+</body>
+</html>

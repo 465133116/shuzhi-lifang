@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>模型对比：框架+权重 vs 完全权重</title>
+<style>
+  body{margin:0;background:#0b1120;display:flex;justify-content:center;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+  .wrap{width:1500px;padding:30px 0;color:#e2e8f0}
+  h1{text-align:center;color:#fff;font-size:26px;margin:0 0 6px}
+  .sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:28px}
+  .grid{display:grid;grid-template-columns:280px 1fr 1fr;gap:0;border:1px solid #1e293b;border-radius:12px;overflow:hidden}
+  .head{padding:14px;font-weight:700;font-size:15px;text-align:center}
+  .head.dim{background:#0f1a2b;color:#94a3b8;border-bottom:1px solid #1e293b}
+  .head.a{background:#0a2e1f;color:#34d399;border-bottom:1px solid #1e293b}
+  .head.b{background:#3b2e0a;color:#fbbf24;border-bottom:1px solid #1e293b}
+  .dim-cell{background:#0f1a2b;color:#94a3b8;padding:12px 14px;font-size:13px;font-weight:600;border-bottom:1px solid #1e293b}
+  .cell{padding:12px 14px;font-size:12.5px;line-height:1.65;border-bottom:1px solid #1e293b;vertical-align:top}
+  .cell.a{background:#0a1410}
+  .cell.b{background:#14100a}
+  .tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:10px;margin-right:6px}
+  .good{background:#0a2e1f;color:#34d399;border:1px solid #1e563e}
+  .bad{background:#3b1212;color:#f87171;border:1px solid #5c1e1e}
+  .mid{background:#3b2e0a;color:#fbbf24;border:1px solid #5c4a10}
+  .sec{margin-top:34px;font-size:18px;font-weight:700;color:#fff;border-left:4px solid #8b5cf6;padding-left:12px}
+  .scene{margin-top:14px;background:#0f1a2b;border:1px solid #1e293b;border-radius:10px;padding:16px 18px}
+  .scene h4{margin:0 0 8px;font-size:14px;color:#fbbf24}
+  .scene .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12.5px;line-height:1.6}
+  .scene .row div{padding:10px 12px;border-radius:8px}
+  .scene .row .a{background:#0a2e1f;color:#cbd5e1}
+  .scene .row .b{background:#3b2e0a;color:#cbd5e1}
+  .concl{margin-top:34px;background:#0f1a2b;border:1px solid #8b5cf6;border-radius:12px;padding:20px 24px;line-height:1.9;font-size:13.5px}
+  .concl b{color:#a78bfa}
+  .verdict{color:#34d399;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>两种模型对比：框架+权重（现状） vs 完全权重</h1>
+  <div class="sub">V3.2 定稿模型 对比 纯 score 排序模型 ｜ 基于真实数据推演（6413 笔 · 5 客服 · 300/人/周）</div>
+
+  <div class="grid">
+    <div class="head dim">对比维度</div>
+    <div class="head a">A · 框架+权重（现状 V3.2）</div>
+    <div class="head b">B · 完全权重（纯 score）</div>
+
+    <div class="dim-cell">模型结构</div>
+    <div class="cell a">四层：去向分流（E/F/A 出列）→ 四档配额 → 五键 → 六因子。框架管结构，权重管程度，分工明确</div>
+    <div class="cell b">单层：全池每笔算一个 score → 降序取前 1300 → 蛇形。优雅极简，一个分数决定一切</div>
+
+    <div class="dim-cell">月覆盖率<br>（核心风险）</div>
+    <div class="cell a"><span class="tag good">已验证 ✓</span>call_count 硬键保证：B 版补位模拟 5 周 100% 覆盖。新户（call=0）必然先于回流户</div>
+    <div class="cell b"><span class="tag bad">覆盖死亡</span>大额回流户 79 分 ＞ 新户 67 分——池内有 1300 个高分回流户时新户永不到达。61-100% 饿死问题回归</div>
+
+    <div class="dim-cell">大额优先</div>
+    <div class="cell a"><span class="tag good">四档配额</span>档1 每月 62/人火力锁定，1.9 周打透；金额不进 score 也不怕（配额即通道）</div>
+    <div class="cell b"><span class="tag bad">无处安放</span>金额进 score 会压死其他因子（35万倍跨度）；不进 score 则大额无特权——14万户和500元户 score 相近</div>
+
+    <div class="dim-cell">E 类对抗户</div>
+    <div class="cell a"><span class="tag good">硬性出池</span>本月不安排人工，外呼机器人正常流程通知——客服不被骂，对抗户冷却</div>
+    <div class="cell b"><span class="tag bad">排不出列表</span>E 户 57.5 分居全池中游——权重只能让他排低一点，永远排不出去。每周继续被打、继续对抗</div>
+
+    <div class="dim-cell">F 类空号户</div>
+    <div class="cell a"><span class="tag good">硬性出池</span>不进列表，客服反馈物业核实——不浪费拨打名额</div>
+    <div class="cell b"><span class="tag bad">每周打空号</span>F 户 65.5 分排位不低，每周 1300 名额里白占——空号反复拨打</div>
+
+    <div class="dim-cell">承诺时点</div>
+    <div class="cell a"><span class="tag good">豁免第0键</span>"下周二交"→ 前3天排最前。二元窗口（窗口内/外）用硬键表达，言而有信</div>
+    <div class="cell b"><span class="tag bad">无法表达</span>3 天窗口是悬崖式二元事件，连续权重表达不出"到期前1天 vs 后1天"的质变——承诺时点必然错过</div>
+
+    <div class="dim-cell">覆盖需求<br>对权重的反噬</div>
+    <div class="cell a"><span class="tag good">无冲突</span>覆盖由第1键硬保证，六因子权重专注"组内谁先打"，不需为覆盖让步</div>
+    <div class="cell b"><span class="tag bad">权重扭曲</span>要让新户赢过回流大户，探索分权重须提到 40%+——"回款为主"的 30% AI 权重名存实亡，模型退化成隐性 call_count 框架（且不透明）</div>
+
+    <div class="dim-cell">模型复杂度<br>与可解释性</div>
+    <div class="cell a"><span class="tag mid">中等</span>两层分明但规则透明——客服问"这户为什么在前"有明确答案（承诺/没打过/分高）</div>
+    <div class="cell b"><span class="tag good">最简</span>单分数天然好理解，但 score 是六因子黑盒合成，单户排序原因难拆解</div>
+
+    <div class="dim-cell">参数敏感性</div>
+    <div class="cell a"><span class="tag good">框架吸收波动</span>权重微调只影响组内顺序，全局结构（覆盖/配额/豁免）不受影响，月度锁定更稳</div>
+    <div class="cell b"><span class="tag bad">权重全裸</span>±5% 微调即大换位（相邻户 score 差常仅 2-3 分），排序震荡剧烈，影子回测后调参代价大</div>
+
+    <div class="dim-cell">回测纯净度</div>
+    <div class="cell a"><span class="tag mid">较复杂</span>影子对照 = 框架+权重的组合差异，归因需拆解</div>
+    <div class="cell b"><span class="tag good">最干净</span>对照组就是"权重不同"，回测归因直接——这是纯权重最大的学术优势</div>
+
+    <div class="dim-cell">合规安全</div>
+    <div class="cell a"><span class="tag good">红线内建</span>外呼频次/时段/录音在框架层硬校验，与排序无关</div>
+    <div class="cell b"><span class="tag mid">需外置</span>合规不是排序问题——纯权重模型仍需独立合规层，模型"纯粹性"只是排序部分纯粹</div>
+  </div>
+
+  <div class="sec">四场景行为推演（同一批数据，两个模型的每周结果）</div>
+  <div class="scene">
+    <h4>场景1 · 新户 vs 大额回流户</h4>
+    <div class="row">
+      <div class="a"><b>A</b>：新户（call=0）先打 ✓ —— 覆盖底线生效</div>
+      <div class="b"><b>B</b>：回流大户（79分）先打，新户（67分）继续等 —— 覆盖失守</div>
+    </div>
+  </div>
+  <div class="scene">
+    <h4>场景2 · 对抗户（拒接5次）</h4>
+    <div class="row">
+      <div class="a"><b>A</b>：出池 → 外呼机器人通知，客服列表无此人 ✓</div>
+      <div class="b"><b>B</b>：57.5 分每周进入 1300 名单，客服每周被骂</div>
+    </div>
+  </div>
+  <div class="scene">
+    <h4>场景3 · 空号户</h4>
+    <div class="row">
+      <div class="a"><b>A</b>：F 池，反馈物业核实，不占拨打名额 ✓</div>
+      <div class="b"><b>B</b>：65.5 分反复拨打空号，名额浪费</div>
+    </div>
+  </div>
+  <div class="scene">
+    <h4>场景4 · 承诺"下周二发工资就交"</h4>
+    <div class="row">
+      <div class="a"><b>A</b>：前3天豁免排最前，客服按约定回访 ✓ 言而有信</div>
+      <div class="b"><b>B</b>：无特殊待遇，承诺户排在中位，客服周二根本轮不到他</div>
+    </div>
+  </div>
+
+  <div class="concl">
+    <b>结论</b>：完全权重模型的优势是真实的——<b>结构最简、回测最干净、参数最少</b>。但它在四个业务结构点上必然失败：<span class="verdict">覆盖死亡、E/F 回归列表、大额失保障、承诺时点失表达</span>。
+    <br><br>
+    <b>本质</b>：业务里存在"二元规则"（打/不打、必须/不必须）和"连续程度"（多可能、多新鲜）两类信息。权重只能表达后者；前者硬塞进权重，覆盖需求会倒逼探索分权重扭曲到 40%+，模型退化成不透明的隐性框架。
+    <br><br>
+    <b>折中路线（最小框架版）</b>：保留权重做不到的安全壳（E/F 出池、合规红线、承诺豁免），把 call_count 硬键和四档配额并入权重（探索分提权 + 金额对数分）——兼具两方优点。与现状模型的优劣，正是 <b>P0 影子模式</b>的天然对照实验：两套模型各跑一个月，回款数据裁决。
+  </div>
+</div>
+</body>
+</html>

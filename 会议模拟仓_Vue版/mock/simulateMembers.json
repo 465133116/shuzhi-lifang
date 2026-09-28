@@ -1,0 +1,10 @@
+[
+  { "id": 1, "name": "张三(主持人)", "role": "host", "avatar": "avatar1.png", "status": "online", "mic": true, "camera": true },
+  { "id": 2, "name": "李四(业主)", "role": "participant", "avatar": "avatar2.png", "status": "online", "mic": false, "camera": true },
+  { "id": 3, "name": "王五(业主)", "role": "participant", "avatar": "avatar3.png", "status": "online", "mic": false, "camera": false },
+  { "id": 4, "name": "赵六(业主)", "role": "participant", "avatar": "avatar4.png", "status": "offline", "mic": false, "camera": false },
+  { "id": 5, "name": "钱七(业主)", "role": "participant", "avatar": "avatar5.png", "status": "online", "mic": true, "camera": true },
+  { "id": 6, "name": "孙八(业主)", "role": "participant", "avatar": "avatar6.png", "status": "online", "mic": false, "camera": false },
+  { "id": 7, "name": "周九(业主)", "role": "participant", "avatar": "avatar7.png", "status": "online", "mic": false, "camera": true },
+  { "id": 8, "name": "吴十(业主)", "role": "participant", "avatar": "avatar8.png", "status": "online", "mic": false, "camera": false }
+]

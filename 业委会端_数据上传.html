@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 业委会端·数据上传</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px}
+.tn span{font-weight:700;font-size:15px}
+.ct{max-width:1200px;margin:0 auto;padding:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--c);border-radius:var(--r);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}.tag-r{background:#fef2f2;color:var(--d)}
+.btn{display:inline-block;padding:8px 16px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.15s}.btn:hover{opacity:.85}.btn-p{background:var(--p);color:#fff}.btn-o{background:transparent;border:2px dashed var(--b);color:var(--t);text-align:center;padding:40px;width:100%}
+.upload-zone{border:2px dashed var(--b);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:12px}.upload-zone:hover{border-color:var(--p);background:#eff6ff}
+.upload-zone .icon{font-size:36px;color:var(--sub);margin-bottom:8px}
+.progress-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-top:8px}.progress-bar>div{height:100%;background:var(--s);border-radius:3px;transition:width 0.5s}
+</style></head><body>
+<div class="tn"><span>数治理方 · 业委会端（数据管理）</span></div>
+<div class="ct">
+<div class="g2">
+<div class="card"><h2 style="margin-bottom:4px">上传业主名单</h2><p style="font-size:12px;color:var(--sub);margin-bottom:16px">支持Excel(.xlsx)导入，包含：业主姓名、手机号、房号、管家对应关系</p>
+<div class="upload-zone" onclick="document.getElementById('of1').click()"><div class="icon">+</div><div style="font-size:14px;font-weight:600">点击上传或拖拽文件</div><div style="font-size:11px;color:var(--sub)">.xlsx 格式</div></div>
+<input type="file" id="of1" accept=".xlsx" class="h" onchange="simUpload(this,'owner')">
+<div id="op1" class="h"><div style="font-size:12px;margin-bottom:4px">上传成功！解析中...</div><div class="progress-bar"><div style="width:100%"></div></div><div style="font-size:11px;color:var(--sub);margin-top:8px">已导入 <strong>800</strong> 户业主信息</div></div>
+</div>
+
+<div class="card"><h2 style="margin-bottom:4px">上传物业合同</h2><p style="font-size:12px;color:var(--sub);margin-bottom:16px">支持PDF/图片上传，合同内容用于定义SLA时限基准</p>
+<div class="upload-zone" onclick="document.getElementById('of2').click()"><div class="icon">+</div><div style="font-size:14px;font-weight:600">点击上传或拖拽文件</div><div style="font-size:11px;color:var(--sub)">.pdf .jpg 格式</div></div>
+<input type="file" id="of2" accept=".pdf,.jpg,.jpeg,.png" class="h" onchange="simUpload(this,'contract')">
+<div id="op2" class="h"><div style="font-size:12px;margin-bottom:4px">上传成功！AI解析中...</div><div class="progress-bar"><div style="width:100%"></div></div><div style="font-size:11px;color:var(--sub);margin-top:8px">合同已解析，SLA时限已自动生成</div></div>
+</div>
+</div>
+
+<div class="card"><h2 style="margin-bottom:12px">SLA时限配置</h2><p style="font-size:12px;color:var(--sub);margin-bottom:16px">以下时限基于已上传合同自动解析，可手动调整</p>
+<table><tr><th>等级</th><th>报修类型</th><th>响应时限</th><th>处理时限</th><th>合同依据</th><th>状态</th></tr>
+<tr><td><span class="tag tag-r">紧急</span></td><td>水管爆裂/漏电/燃气/电梯困人</td><td>15分钟</td><td>2小时</td><td>合同第3.2条</td><td><span class="tag tag-g">已生效</span></td></tr>
+<tr><td><span class="tag tag-y">优先</span></td><td>停水停电/门禁故障/下水道堵塞</td><td>30分钟</td><td>4小时</td><td>合同第3.3条</td><td><span class="tag tag-g">已生效</span></td></tr>
+<tr><td><span class="tag tag-b">标准</span></td><td>门窗/门锁/墙面渗水/公共照明</td><td>2小时</td><td>24小时</td><td>合同第3.4条</td><td><span class="tag tag-g">已生效</span></td></tr>
+<tr><td>普通</td><td>换灯泡/疏通马桶/墙面修补</td><td>4小时</td><td>72小时</td><td>合同第3.5条</td><td><span class="tag tag-g">已生效</span></td></tr>
+</table></div>
+
+<div class="card"><h2 style="margin-bottom:12px">已上传文件</h2>
+<table><tr><th>文件名</th><th>类型</th><th>上传时间</th><th>状态</th></tr>
+<tr><td>阳光花园业主名单_202606.xlsx</td><td>业主名单</td><td>2026-06-20 14:30</td><td><span class="tag tag-g">已导入</span></td></tr>
+<tr><td>阳光花园物业服务合同.pdf</td><td>物业合同</td><td>2026-06-18 09:15</td><td><span class="tag tag-g">已解析</span></td></tr>
+</table></div>
+</div>
+<script>
+function simUpload(input,type){
+if(input.files.length>0){
+var fn=input.files[0].name;
+document.getElementById('op'+(type==='owner'?'1':'2')).classList.remove('h');
+var up=document.getElementById('op'+(type==='owner'?'1':'2'));
+up.querySelector('div:first-child').innerText=fn+' 上传成功！';
+}
+}
+</script></body></html>

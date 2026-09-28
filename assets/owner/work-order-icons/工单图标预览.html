@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业主端图标预览</title>
+    <link href="../fontawesome/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, 'PingFang SC', sans-serif; padding: 24px; background: #f5f5f5; }
+        h1 { font-size: 20px; margin-bottom: 20px; color: #333; }
+        h2 { font-size: 16px; margin: 24px 0 12px; color: #666; border-left: 4px solid #1890ff; padding-left: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+        .icon-item { background: #fff; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .icon-item i { font-size: 24px; margin-bottom: 8px; display: block; color: #333; }
+        .icon-item .name { font-size: 11px; color: #999; word-break: break-all; }
+        .icon-item .class { font-size: 10px; color: #bbb; margin-top: 4px; }
+        .icon-item.colored i { color: inherit; }
+        .icon-item.receipt i { color: #1890ff; }
+        .icon-item.walking i { color: #52c41a; }
+        .icon-item.car i { color: #faad14; }
+        .icon-item.calendar i { color: #eb2f96; }
+        .icon-item.box i { color: #2f54eb; }
+        .icon-item.chart i { color: #ad8b00; }
+        .icon-item.repair i { color: #1890ff; }
+        .icon-item.suggest i { color: #52c41a; }
+        .icon-item.complaint i { color: #faad14; }
+    </style>
+</head>
+<body>
+    <h1>业主端图标预览</h1>
+    <p style="color:#666; font-size:14px; margin-bottom:20px;">以下为业主端工单、公告、通知、年度计划、社区动态等涉及的图标，来源于 Font Awesome 6.4.0，可截图或复制到其他项目使用。</p>
+
+    <h2>工单类型</h2>
+    <div class="grid">
+        <div class="icon-item repair"><i class="fa-solid fa-screwdriver-wrench"></i><span class="name">报修</span><span class="class">fa-screwdriver-wrench</span></div>
+        <div class="icon-item suggest"><i class="fa-solid fa-lightbulb"></i><span class="name">建议</span><span class="class">fa-lightbulb</span></div>
+        <div class="icon-item complaint"><i class="fa-solid fa-triangle-exclamation"></i><span class="name">投诉</span><span class="class">fa-triangle-exclamation</span></div>
+        <div class="icon-item complaint"><i class="fa-solid fa-comments"></i><span class="name">投诉(卡片)</span><span class="class">fa-comments</span></div>
+        <div class="icon-item" style="color:#722ED1;"><i class="fa-solid fa-users-between-lines"></i><span class="name">业委会督办</span><span class="class">fa-users-between-lines</span></div>
+    </div>
+
+    <h2>报修弹窗</h2>
+    <div class="grid">
+        <div class="icon-item"><i class="fa-solid fa-house"></i><span class="name">家中报修</span><span class="class">fa-house</span></div>
+        <div class="icon-item"><i class="fa-solid fa-tree"></i><span class="name">公共区域</span><span class="class">fa-tree</span></div>
+        <div class="icon-item" style="color:#faad14;"><i class="fa-solid fa-coins"></i><span class="name">积分</span><span class="class">fa-coins</span></div>
+        <div class="icon-item"><i class="fa-solid fa-bold"></i><span class="name">加粗</span><span class="class">fa-bold</span></div>
+        <div class="icon-item"><i class="fa-solid fa-list-ul"></i><span class="name">列表</span><span class="class">fa-list-ul</span></div>
+        <div class="icon-item"><i class="fa-solid fa-image"></i><span class="name">添加图片</span><span class="class">fa-image</span></div>
+        <div class="icon-item" style="color:#1890ff;"><i class="fa-solid fa-robot"></i><span class="name">AI诊断</span><span class="class">fa-robot</span></div>
+    </div>
+
+    <h2>我的服务中心（工单入口）</h2>
+    <div class="grid">
+        <div class="icon-item receipt"><i class="fa-solid fa-clipboard-list"></i><span class="name">工单中心</span><span class="class">fa-clipboard-list</span></div>
+        <div class="icon-item receipt"><i class="fa-solid fa-receipt"></i><span class="name">账单缴费</span><span class="class">fa-receipt</span></div>
+        <div class="icon-item walking"><i class="fa-solid fa-person-walking"></i><span class="name">访客通行</span><span class="class">fa-person-walking</span></div>
+        <div class="icon-item car"><i class="fa-solid fa-car"></i><span class="name">停车服务</span><span class="class">fa-car</span></div>
+        <div class="icon-item calendar"><i class="fa-solid fa-calendar-check"></i><span class="name">活动报名</span><span class="class">fa-calendar-check</span></div>
+        <div class="icon-item box"><i class="fa-solid fa-box-open"></i><span class="name">资源预约</span><span class="class">fa-box-open</span></div>
+        <div class="icon-item chart"><i class="fa-solid fa-chart-line"></i><span class="name">物业监督</span><span class="class">fa-chart-line</span></div>
+    </div>
+
+    <h2>工单详情</h2>
+    <div class="grid">
+        <div class="icon-item"><i class="fa-solid fa-hashtag"></i><span class="name">工单号</span><span class="class">fa-hashtag</span></div>
+        <div class="icon-item"><i class="fa-solid fa-copy"></i><span class="name">复制</span><span class="class">fa-copy</span></div>
+        <div class="icon-item"><i class="fa-solid fa-clock"></i><span class="name">时间</span><span class="class">fa-clock</span></div>
+        <div class="icon-item"><i class="fa-solid fa-spinner fa-spin"></i><span class="name">加载</span><span class="class">fa-spinner</span></div>
+        <div class="icon-item suggest"><i class="fa-solid fa-circle-check"></i><span class="name">验收</span><span class="class">fa-circle-check</span></div>
+        <div class="icon-item"><i class="fa-solid fa-upload"></i><span class="name">上传</span><span class="class">fa-upload</span></div>
+    </div>
+
+    <h2>积分规则</h2>
+    <div class="grid">
+        <div class="icon-item suggest"><i class="fa-solid fa-circle-plus"></i><span class="name">加分</span><span class="class">fa-circle-plus</span></div>
+        <div class="icon-item complaint"><i class="fa-solid fa-circle-minus"></i><span class="name">扣分</span><span class="class">fa-circle-minus</span></div>
+    </div>
+
+    <h2>公告</h2>
+    <div class="grid">
+        <div class="icon-item complaint"><i class="fa-solid fa-thumbtack"></i><span class="name">置顶公告</span><span class="class">fa-thumbtack</span></div>
+        <div class="icon-item receipt"><i class="fa-solid fa-bullhorn"></i><span class="name">公告(通用)</span><span class="class">fa-bullhorn</span></div>
+    </div>
+
+    <h2>通知</h2>
+    <div class="grid">
+        <div class="icon-item receipt"><i class="fa-solid fa-bell"></i><span class="name">通知中心/会议提醒</span><span class="class">fa-bell</span></div>
+        <div class="icon-item"><i class="fa-solid fa-pause"></i><span class="name">暂停轮播</span><span class="class">fa-pause</span></div>
+        <div class="icon-item"><i class="fa-solid fa-play"></i><span class="name">继续轮播</span><span class="class">fa-play</span></div>
+        <div class="icon-item"><i class="fa-solid fa-arrow-left"></i><span class="name">返回</span><span class="class">fa-arrow-left</span></div>
+    </div>
+
+    <h2>年度计划</h2>
+    <div class="grid">
+        <div class="icon-item receipt"><i class="fa-solid fa-calendar-days"></i><span class="name">全年计划</span><span class="class">fa-calendar-days</span></div>
+        <div class="icon-item receipt"><i class="fa-solid fa-clipboard-list"></i><span class="name">年度工作计划表</span><span class="class">fa-clipboard-list</span></div>
+        <div class="icon-item"><i class="fa-regular fa-calendar-check"></i><span class="name">空状态</span><span class="class">fa-calendar-check</span></div>
+        <div class="icon-item complaint"><i class="fa-solid fa-circle-exclamation"></i><span class="name">加载失败</span><span class="class">fa-circle-exclamation</span></div>
+    </div>
+
+    <h2>社区动态</h2>
+    <div class="grid">
+        <div class="icon-item"><i class="fa-solid fa-video"></i><span class="name">视频</span><span class="class">fa-video</span></div>
+        <div class="icon-item"><i class="fa-regular fa-image"></i><span class="name">图文</span><span class="class">fa-image</span></div>
+        <div class="icon-item"><i class="fa-regular fa-file-lines"></i><span class="name">文本</span><span class="class">fa-file-lines</span></div>
+    </div>
+
+    <h2>社区议事厅</h2>
+    <div class="grid">
+        <div class="icon-item receipt"><i class="fa-solid fa-handshake"></i><span class="name">议事厅</span><span class="class">fa-handshake</span></div>
+        <div class="icon-item receipt"><i class="fa-solid fa-users-viewfinder"></i><span class="name">议事厅背景</span><span class="class">fa-users-viewfinder</span></div>
+        <div class="icon-item chart"><i class="fa-solid fa-chart-pie"></i><span class="name">数据看板</span><span class="class">fa-chart-pie</span></div>
+        <div class="icon-item receipt"><i class="fa-solid fa-pen-to-square"></i><span class="name">议事讨论</span><span class="class">fa-pen-to-square</span></div>
+    </div>
+
+    <h2>通用</h2>
+    <div class="grid">
+        <div class="icon-item"><i class="fa-solid fa-xmark"></i><span class="name">关闭</span><span class="class">fa-xmark</span></div>
+        <div class="icon-item"><i class="fa-solid fa-angle-right"></i><span class="name">右箭头</span><span class="class">fa-angle-right</span></div>
+        <div class="icon-item"><i class="fa-regular fa-star"></i><span class="name">星级(空)</span><span class="class">fa-star</span></div>
+        <div class="icon-item complaint"><i class="fa-solid fa-star"></i><span class="name">星级(实)</span><span class="class">fa-star</span></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>运营端 · 供应链监管</title>
+<style>
+:root {
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
+  --cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--purple:#8b5cf6;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1280px;margin:0 auto}
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.3rem;font-weight:700}
+.mod-header .badge{padding:4px 12px;border-radius:12px;font-size:0.72rem;background:rgba(100,116,139,0.12);color:var(--muted)}
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--card);border-radius:var(--r);padding:4px;border:1px solid var(--border)}
+.tab{padding:8px 18px;border-radius:6px;font-size:0.82rem;cursor:pointer;color:var(--muted);transition:.15s;white-space:nowrap}
+.tab:hover{color:var(--text)}.tab.active{background:var(--blue);color:#fff;font-weight:600}
+.tab .badge{margin-left:6px;padding:1px 7px;border-radius:8px;font-size:0.65rem;background:rgba(255,255,255,0.2)}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.stat .n{font-size:1.5rem;font-weight:800;color:var(--blue)}.stat .l{font-size:0.65rem;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:0.79rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem;white-space:nowrap}
+tr:hover td{background:rgba(59,130,246,0.02)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}.tag-purple{background:rgba(139,92,246,0.12);color:var(--purple)}
+.tag-muted{background:rgba(100,116,139,0.12);color:var(--muted)}
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;transition:.15s;font-family:inherit}
+.btn:hover{opacity:.85}.btn-p{background:var(--blue);color:#fff;font-weight:600}.btn-g{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-sm{padding:4px 10px;font-size:0.68rem}
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-r{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.funnel-bar{height:20px;border-radius:4px;display:flex;overflow:hidden;margin:8px 0}
+.funnel-bar div{display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="mod-header">
+  <h2>🏗️ 供应链监管 <span class="badge">运营端 · 数治理方平台</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">平台管理员 · 杭州个信数治</span>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+
+</div>
+
+<script>
+var cur='dash';
+var tabs=[
+  {id:'dash',label:'📊 总览'},
+  {id:'t1review',label:'🔍 T1入驻审核'},
+  {id:'t1pool',label:'🏢 T1供应商池'},
+  {id:'t2funnel',label:'📈 T1→T2转化'},
+  {id:'alerts',label:'⚠️ 风险预警'},
+  {id:'blacklist',label:'🚫 黑名单管理'}
+];
+
+function rt(){
+  var h='';
+  tabs.forEach(function(t){
+    var bd='';
+    if(t.id==='t1review'){
+      var pc=D.t1.filter(function(x){return x.status==='待审核'}).length;
+      if(pc) bd='<span class="badge">'+pc+'</span>';
+    }
+    if(t.id==='alerts'){
+      var ac=D.alerts.filter(function(x){return !x.resolved}).length;
+      if(ac) bd='<span class="badge" style="background:rgba(239,68,68,0.3)">'+ac+'</span>';
+    }
+    h+='<div class="tab'+(t.id===cur?' active':'')+'" onclick="sw(\''+t.id+'\')">'+t.label+bd+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+function sw(id){cur=id;rt();r(id)}
+
+// ═══════ DATA ═══════
+var P='sgzf_op_sc_';
+var D={t1:[],t2map:[],alerts:[],blacklist:[],apilogs:[]};
+function load(){
+  try{var d=localStorage.getItem(P+'data');if(d) D=JSON.parse(d)}catch(e){seed()}
+  if(!D.t1.length) seed();
+}
+function save(){localStorage.setItem(P+'data',JSON.stringify(D))}
+function seed(){
+  D.t1=[
+    {id:'T1-001',name:'通力电梯',cat:'电梯维保',credit:92,status:'已通过',applyDate:'2026-01-10',approveDate:'2026-01-15',lic:'TS123456-2026'},
+    {id:'T1-002',name:'飞利浦照明',cat:'照明设备',credit:95,status:'已通过',applyDate:'2026-02-05',approveDate:'2026-02-10',lic:'—'},
+    {id:'T1-003',name:'日丰管业',cat:'管道材料',credit:78,status:'已通过',applyDate:'2026-03-01',approveDate:'2026-03-05',lic:'—'},
+    {id:'T1-004',name:'安保用品商城',cat:'制服装备',credit:58,status:'已冻结',applyDate:'2026-03-15',approveDate:'2026-03-20',lic:'—',freezeReason:'信用分<60 + 新增经营异常'},
+    {id:'T1-005',name:'绿城园林',cat:'绿化养护',credit:88,status:'已通过',applyDate:'2026-04-01',approveDate:'2026-04-05',lic:'YL2024001'},
+    {id:'T1-006',name:'安盾消防',cat:'消防检测',credit:96,status:'已通过',applyDate:'2026-04-10',approveDate:'2026-04-15',lic:'XF2023015'},
+    {id:'T1-007',name:'锦绣清洁',cat:'清洁保洁',credit:72,status:'已通过',applyDate:'2026-05-01',approveDate:'2026-05-05',lic:'—'},
+    {id:'T1-008',name:'长城防水',cat:'防水工程',credit:85,status:'已通过',applyDate:'2026-05-20',approveDate:'2026-05-25',lic:'—'},
+    {id:'T1-009',name:'三安电梯',cat:'电梯维保',credit:65,status:'已通过',applyDate:'2026-06-01',approveDate:'2026-06-05',lic:'TS2023058'},
+    {id:'T1-010',name:'新锐安防科技',cat:'安防设备',credit:0,status:'待审核',applyDate:'2026-07-26',approveDate:'',lic:'待提交'}
+  ];
+  D.t2map=[
+    {tid:'T1-001',communities:['阳光花园','翠苑新村']},
+    {tid:'T1-002',communities:['阳光花园','锦绣家园']},
+    {tid:'T1-005',communities:['阳光花园','翠苑新村']},
+    {tid:'T1-006',communities:['阳光花园']},
+    {tid:'T1-007',communities:['阳光花园']},
+    {tid:'T1-008',communities:[]},
+    {tid:'T1-009',communities:[]}
+  ];
+  D.alerts=[
+    {id:'AL001',tid:'T1-004',type:'信用下降',msg:'安保用品商城信用分从62降至58，新增工商经营异常记录',date:'2026-07-15',resolved:true},
+    {id:'AL002',tid:'T1-010',type:'待审核',msg:'新锐安防科技提交T1入驻申请，等待API审核+人工复核',date:'2026-07-26',resolved:false},
+    {id:'AL003',tid:'T1-003',type:'信用下降',msg:'日丰管业信用分从82降至78，API扫描到1条劳务纠纷',date:'2026-07-20',resolved:false}
+  ];
+  D.blacklist=[{id:'BL001',name:'鑫鹏物业设备',reason:'安全事故致人受伤',date:'2025-12-01'}];
+  D.apilogs=[{date:'2026-07-27',scanned:156,passed:142,failed:14,issues:2}];
+  save();
+}
+
+// ═══════ RENDER ═══════
+function r(t){
+  if(t==='dash') rd();else if(t==='t1review') rtr();else if(t==='t1pool') rtp();
+  else if(t==='t2funnel') rtf();else if(t==='alerts') ral();else if(t==='blacklist') rbl();
+}
+
+function rd(){
+  var total=D.t1.length;var approved=D.t1.filter(function(x){return x.status==='已通过'}).length;
+  var frozen=D.t1.filter(function(x){return x.status==='已冻结'}).length;var pending=D.t1.filter(function(x){return x.status==='待审核'}).length;
+  var inT2=D.t2map.filter(function(x){return x.communities.length>0}).length;
+  var unresolved=D.alerts.filter(function(x){return !x.resolved}).length;
+
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">'+total+'</div><div class="l">T1供应商总数</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--green)">'+approved+'</div><div class="l">已通过</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--amber)">'+pending+'</div><div class="l">待审核</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--red)">'+frozen+'</div><div class="l">已冻结</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--cyan)">'+inT2+'</div><div class="l">已进入T2</div></div>';
+  h+='<div class="stat"><div class="n" style="color:'+(unresolved?'var(--red)':'var(--text))+'">'+unresolved+'</div><div class="l">未处理预警</div></div>';
+  h+='</div>';
+
+  // T1→T2 转化漏斗
+  h+='<div class="card"><h3 style="margin-bottom:12px">📈 T1→T2 转化漏斗</h3>';
+  h+='<div style="display:flex;align-items:center;gap:0;margin:16px 0;font-size:0.72rem;font-weight:600;text-align:center">';
+  h+='<div style="background:var(--blue);padding:16px 12px;border-radius:8px 0 0 8px;flex:1">T1申请<br>'+total+'</div>';
+  h+='<div style="background:var(--cyan);padding:16px 12px;flex:1">T1通过<br>'+approved+'</div>';
+  h+='<div style="background:var(--green);padding:16px 12px;flex:1">至少1个小区<br>'+inT2+'</div>';
+  h+='<div style="background:var(--purple);padding:16px 12px;border-radius:0 8px 8px 0;flex:1">≥3个小区<br>'+D.t2map.filter(function(x){return x.communities.length>=3}).length+'</div>';
+  h+='</div>';
+  h+='<div style="font-size:0.7rem;color:var(--muted)">转化率：'+Math.round(inT2/approved*100)+'%的T1供应商被至少1个小区邀请</div></div>';
+
+  // API扫描日志
+  h+='<div class="card"><h3 style="margin-bottom:12px">🔍 最近API扫描</h3>';
+  D.apilogs.forEach(function(l){
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:8px;font-size:0.78rem;padding:10px;background:var(--card2);border-radius:8px">';
+    h+='<div><strong>日期：</strong>'+l.date+'</div><div><strong>扫描：</strong>'+l.scanned+'家</div><div><strong>通过：</strong>'+l.passed+'家</div><div><strong>异常：</strong>'+l.failed+'家</div><div><strong>问题：</strong>'+l.issues+'项</div></div>';
+  });
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function rtr(){
+  var pending=D.t1.filter(function(x){return x.status==='待审核'});
+  var h='<div class="card"><div class="card-hd"><h3>🔍 T1入驻审核队列</h3><span class="tag tag-amber">'+pending.length+'待审</span></div>';
+  if(!pending.length){h+='<p style="text-align:center;padding:30px;color:var(--muted)">暂无待审核申请</p>';}
+  else{
+    pending.forEach(function(s){
+      h+='<div style="border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:8px;padding:16px;margin-bottom:12px">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px"><div><strong>'+s.name+'</strong> <span class="tag tag-cyan">'+s.cat+'</span></div><span class="tag tag-amber">待审核</span></div>';
+      h+='<div style="font-size:0.76rem;color:var(--muted);margin-bottom:10px">申请日期：'+s.applyDate+' | 资质：'+s.lic+'</div>';
+      h+='<div style="display:flex;gap:8px"><button class="btn btn-g btn-sm">✅ 通过</button><button class="btn btn-r btn-sm">❌ 拒绝</button><button class="btn btn-o btn-sm">补充资料</button></div></div>';
+    });
+  }
+  h+='</div>';
+
+  // 审核日志
+  h+='<div class="card"><h3 style="margin-bottom:12px">审核标准</h3>';
+  h+='<div style="font-size:0.78rem;color:var(--muted);line-height:2">';
+  h+='<p>① API自动扫描：工商状态 → 司法风险 → 行业资质 → 口碑评价</p>';
+  h+='<p>② 人工复核：过往案例真实性、资质证书有效性、经营范围匹配度</p>';
+  h+='<p>③ 通过后进入T1供应商池，信用分初始值基于API扫描结果</p>';
+  h+='</div></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function rtp(){
+  var h='<div class="card"><div class="card-hd"><h3>🏢 T1供应商池（'+D.t1.length+'家）</h3></div>';
+  h+='<table><tr><th>编号</th><th>名称</th><th>品类</th><th>信用分</th><th>状态</th><th>入驻日期</th><th>T2覆盖</th><th>操作</th></tr>';
+  D.t1.forEach(function(s){
+    var map=D.t2map.find(function(m){return m.tid===s.id});
+    var t2c=map?map.communities.length:0;
+    var st=s.status==='已通过'?'tag-green':s.status==='待审核'?'tag-amber':s.status==='已冻结'?'tag-red':'tag-muted';
+    var act=s.status==='已通过'?'<button class="btn btn-r btn-sm">冻结</button>':s.status==='已冻结'?'<button class="btn btn-g btn-sm">解冻</button>':'';
+    h+='<tr><td>'+s.id+'</td><td><strong>'+s.name+'</strong></td><td>'+s.cat+'</td><td>'+s.credit+'</td><td><span class="tag '+st+'">'+s.status+'</span></td><td>'+s.approveDate+'</td><td>'+t2c+'个小区</td><td>'+act+'</td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function rtf(){
+  var h='<div class="card"><div class="card-hd"><h3>📈 T1→T2 转化明细</h3></div>';
+  h+='<div class="alert alert-i">此视图展示每个T1供应商被多少个小区邀请加入T2——转化率越高，说明该供应商越受小区欢迎。</div>';
+  h+='<table><tr><th>T1供应商</th><th>品类</th><th>信用分</th><th>T2覆盖小区数</th><th>覆盖小区</th><th>转化状态</th></tr>';
+  D.t2map.forEach(function(m){
+    var s=D.t1.find(function(x){return x.id===m.tid});if(!s)return;
+    var tagCls=m.communities.length>=3?'tag-green':m.communities.length>=1?'tag-cyan':'tag-muted';
+    var tagText=m.communities.length>=3?'⭐高转化':m.communities.length>=1?'已转化':'未转化';
+    h+='<tr><td>'+s.name+'</td><td>'+s.cat+'</td><td>'+s.credit+'</td><td>'+m.communities.length+'</td><td>'+(m.communities.join(', ')||'—')+'</td><td><span class="tag '+tagCls+'">'+tagText+'</span></td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function ral(){
+  var h='<div class="card"><div class="card-hd"><h3>⚠️ 风险预警</h3></div>';
+  D.alerts.forEach(function(a){
+    var cls=a.resolved?'alert-i':'alert-r';
+    h+='<div class="alert '+cls+'" style="display:flex;justify-content:space-between;align-items:center">';
+    h+='<div><strong>['+a.type+']</strong> '+a.msg+'<br><span style="font-size:0.68rem">'+a.date+' | '+a.tid+'</span></div>';
+    h+=a.resolved?'<span class="tag tag-green">已处理</span>':'<button class="btn btn-g btn-sm">标记已处理</button>';
+    h+='</div>';
+  });
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function rbl(){
+  var h='<div class="card"><div class="card-hd"><h3>🚫 黑名单</h3></div>';
+  h+='<table><tr><th>编号</th><th>名称</th><th>原因</th><th>列入日期</th></tr>';
+  D.blacklist.forEach(function(b){
+    h+='<tr><td>'+b.id+'</td><td><strong style="color:var(--red)">'+b.name+'</strong></td><td>'+b.reason+'</td><td>'+b.date+'</td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+load();rt();r('dash');
+</script>
+</body>
+</html>

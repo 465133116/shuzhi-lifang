@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五端生态 · 自动化测试</title>
+  <script src="ecosystem-bridge.js"></script>
+  <script src="ecosystem-ticket-utils.js"></script>
+  <script src="ecosystem-dashboard-utils.js"></script>
+  <script src="property-tests.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Microsoft YaHei", sans-serif; padding: 24px; background: #0f172a; color: #e2e8f0; }
+    h1 { font-size: 20px; margin-bottom: 16px; color: #93c5fd; }
+    h2 { font-size: 16px; margin: 20px 0 12px; color: #60a5fa; }
+    .result { background: #1e293b; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .pass { border-left: 4px solid #22c55e; }
+    .fail { border-left: 4px solid #ef4444; }
+    .skip { border-left: 4px solid #f59e0b; }
+    .pass .label { color: #22c55e; }
+    .fail .label { color: #ef4444; }
+    .skip .label { color: #f59e0b; }
+    .label { font-weight: 600; margin-bottom: 4px; }
+    .detail { font-size: 13px; color: #94a3b8; }
+    .category { font-size: 11px; color: #64748b; margin-top: 4px; }
+    #summary { margin-top: 20px; padding: 16px; background: #334155; border-radius: 8px; font-size: 14px; }
+    #summary .rate { font-size: 24px; font-weight: 700; color: #22c55e; }
+    #summary .rate.fail { color: #ef4444; }
+    button { margin-top: 12px; padding: 10px 20px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin-right: 8px; }
+    button:hover { background: #2563eb; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn { padding: 8px 16px; background: #1e293b; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; cursor: pointer; }
+    .tab-btn.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  </style>
+</head>
+<body>
+  <h1><i class="fas fa-vial"></i> 五端生态 自动化测试</h1>
+  <p style="color:#94a3b8; font-size:14px; margin-bottom:16px;">在同源下打开本页（如 http://localhost:3838/生态/test-runner.html）运行</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="bridge">Bridge 测试</button>
+    <button class="tab-btn" data-tab="property">物业端测试</button>
+  </div>
+  <div id="results"></div>
+  <div id="summary"></div>
+  <button type="button" id="btnRun">运行 Bridge 测试</button>
+  <button type="button" id="btnPropertyRun">运行物业端测试</button>
+  <script>
+    (function() {
+      var currentTab = 'bridge';
+      
+      function add(name, pass, detail, category) {
+        var container = document.getElementById('results');
+        var div = document.createElement('div');
+        var cls = pass === null ? 'skip' : (pass ? 'pass' : 'fail');
+        div.className = 'result ' + cls;
+        var icon = pass === null ? '○' : (pass ? '✓' : '✗');
+        div.innerHTML = '<div class="label">' + icon + ' ' + name + '</div><div class="detail">' + (detail || '') + '</div>' + (category ? '<div class="category">[' + category + ']</div>' : '');
+        container.appendChild(div);
+      }
+
+      function runBridgeTests() {
+        document.getElementById('results').innerHTML = '';
+        var results = [];
+        var bridge = window.EcosystemBridge;
+        var TicketUtils = window.EcosystemTicketUtils;
+        var DashUtils = window.EcosystemDashboardUtils;
+
+        if (!bridge) {
+          add('EcosystemBridge 加载', false, 'window.EcosystemBridge 未定义');
+        } else {
+          add('EcosystemBridge 加载', true, '已加载');
+        }
+
+        if (bridge) {
+          var apis = ['getTickets', 'addTicket', 'updateTicket', 'subscribe', 'getMeta'];
+          var missing = apis.filter(function(k) { return !(k in bridge); });
+          add('Bridge 核心 API', missing.length === 0, missing.length ? '缺失: ' + missing.join(', ') : 'getTickets/addTicket/subscribe/getMeta 可用');
+
+          var meta = bridge.getMeta();
+          add('getMeta()', meta && meta.schemaVersion, meta ? 'schemaVersion: ' + meta.schemaVersion : '无返回');
+
+          var unsub = bridge.subscribe(function(s, v, d) {});
+          add('subscribe()', typeof unsub === 'function', '可订阅，返回 unsubscribe');
+          if (unsub) unsub();
+
+          var unsub2 = bridge.subscribeByStore && bridge.subscribeByStore('tickets', function() {});
+          add('subscribeByStore()', typeof unsub2 === 'function', '可订阅指定 store');
+          if (unsub2) unsub2();
+
+          var before = bridge.getTickets().length;
+          var t = bridge.addTicket({ id: 'test_' + Date.now(), type: '报修', status: '待接单', createTime: new Date().toISOString() });
+          var after = bridge.getTickets().length;
+          var ok = after === before + 1 && t && t.id;
+          bridge.setTickets(bridge.getTickets().filter(function(x) { return x.id !== t.id; }));
+          add('addTicket / getTickets', ok, ok ? '写入与读取正常' : '写入或读取异常');
+        }
+
+        if (!TicketUtils) {
+          add('EcosystemTicketUtils', false, '未加载');
+        } else {
+          var hasUtils = typeof TicketUtils.ticketToRowHtml === 'function' && typeof TicketUtils.badgeClass === 'function';
+          add('EcosystemTicketUtils', hasUtils, hasUtils ? 'ticketToRowHtml、badgeClass 可用' : '部分方法缺失');
+        }
+
+        if (!DashUtils) {
+          add('EcosystemDashboardUtils', false, '未加载');
+        } else {
+          var metrics = DashUtils.computeTicketMetrics && DashUtils.computeTicketMetrics([]);
+          var alerts = DashUtils.computeRiskAlerts && DashUtils.computeRiskAlerts([]);
+          add('EcosystemDashboardUtils', !!metrics && Array.isArray(alerts), (metrics && Array.isArray(alerts)) ? 'computeTicketMetrics、computeRiskAlerts 可用' : '方法异常');
+        }
+
+        try {
+          var key = 'sgzf_test_' + Date.now();
+          localStorage.setItem(key, '1');
+          var ok = localStorage.getItem(key) === '1';
+          localStorage.removeItem(key);
+          add('localStorage 可用', ok, ok ? '同源数据互通前提满足' : 'localStorage 不可用');
+        } catch (e) {
+          add('localStorage 可用', false, '可能 file:// 打开，无法跨端互通');
+        }
+
+        updateSummary();
+      }
+
+      function runPropertyTests() {
+        document.getElementById('results').innerHTML = '';
+        var PropertyTests = window.PropertyTests;
+        
+        if (!PropertyTests) {
+          add('PropertyTests 加载', false, 'window.PropertyTests 未定义，请确保 property-tests.js 已加载');
+          updateSummary();
+          return;
+        }
+
+        add('PropertyTests 加载', true, '测试框架已加载');
+        
+        var results = PropertyTests.runAll();
+        var summary = PropertyTests.getResults();
+        
+        results.forEach(function(r) {
+          add(r.name, r.pass, r.detail, r.category);
+        });
+
+        var summaryEl = document.getElementById('summary');
+        var rateClass = summary.rate >= 85 ? '' : 'fail';
+        summaryEl.innerHTML = '<div>总计: ' + summary.coverage.total + ' 项 | 通过: ' + summary.coverage.passed + ' | 失败: ' + summary.coverage.failed + ' | 跳过: ' + summary.coverage.skipped + '</div><div style="margin-top:8px;">测试覆盖率: <span class="rate ' + rateClass + '">' + summary.rate + '%</span>' + (summary.rate >= 85 ? ' ✓ 达标' : ' ✗ 未达标') + '</div>';
+      }
+
+      function updateSummary() {
+        var container = document.getElementById('results');
+        var results = container.querySelectorAll('.result');
+        var passCount = 0, failCount = 0, skipCount = 0;
+        results.forEach(function(r) {
+          if (r.classList.contains('pass')) passCount++;
+          else if (r.classList.contains('fail')) failCount++;
+          else if (r.classList.contains('skip')) skipCount++;
+        });
+        var total = passCount + failCount + skipCount;
+        var rate = total > 0 ? Math.round(passCount / total * 100) : 0;
+        var summaryEl = document.getElementById('summary');
+        var rateClass = rate >= 85 ? '' : 'fail';
+        summaryEl.innerHTML = '<div>总计: ' + total + ' 项 | 通过: ' + passCount + ' | 失败: ' + failCount + ' | 跳过: ' + skipCount + '</div><div style="margin-top:8px;">测试覆盖率: <span class="rate ' + rateClass + '">' + rate + '%</span></div>';
+      }
+
+      document.getElementById('btnRun').onclick = function() {
+        currentTab = 'bridge';
+        runBridgeTests();
+      };
+
+      document.getElementById('btnPropertyRun').onclick = function() {
+        currentTab = 'property';
+        runPropertyTests();
+      };
+
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.onclick = function() {
+          document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          currentTab = this.getAttribute('data-tab');
+          if (currentTab === 'bridge') runBridgeTests();
+          else if (currentTab === 'property') runPropertyTests();
+        };
+      });
+
+      runBridgeTests();
+    })();
+  </script>
+</body>
+</html>

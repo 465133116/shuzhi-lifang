@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>制度导航中心 - 单元与集成测试</title>
+  <style>
+    body { font-family: Consolas, monospace; padding: 20px; }
+    .test-case { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .pass { border-left: 5px solid green; background: #e8f5e9; }
+    .fail { border-left: 5px solid red; background: #ffebee; }
+    .summary { font-size: 1.2em; font-weight: bold; margin-bottom: 20px; }
+  </style>
+  <!-- 引入被测模块 -->
+  <script src="community-policy-core.js"></script>
+</head>
+<body>
+  <h1>制度导航中心 - 测试报告</h1>
+  <div id="summary" class="summary">Running tests...</div>
+  <div id="results"></div>
+
+  <script>
+    const TestRunner = {
+      passed: 0,
+      failed: 0,
+      
+      assert: function(condition, message) {
+        if (!condition) {
+          throw new Error(message || "Assertion failed");
+        }
+      },
+      
+      assertEqual: function(actual, expected, message) {
+        if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+          throw new Error(`${message || "Equality check failed"}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+        }
+      },
+
+      run: async function(name, testFn) {
+        const el = document.createElement('div');
+        el.className = 'test-case';
+        try {
+          await testFn();
+          el.classList.add('pass');
+          el.innerHTML = `✅ <strong>${name}</strong>: Passed`;
+          this.passed++;
+        } catch (e) {
+          el.classList.add('fail');
+          el.innerHTML = `❌ <strong>${name}</strong>: Failed<br><pre>${e.message}</pre>`;
+          console.error(e);
+          this.failed++;
+        }
+        document.getElementById('results').appendChild(el);
+        this.updateSummary();
+      },
+
+      updateSummary: function() {
+        document.getElementById('summary').textContent = 
+          `Total: ${this.passed + this.failed} | Passed: ${this.passed} | Failed: ${this.failed}`;
+      }
+    };
+
+    // --- Persistence Layer Tests ---
+    TestRunner.run('Database: Get All Categories', () => {
+      const cats = PolicyModule.Database.getCategories();
+      TestRunner.assert(cats.length > 0, 'Should return categories');
+      TestRunner.assert(cats.find(c => c.id === 'cat_law'), 'Should contain root category');
+    });
+
+    TestRunner.run('Database: Search Policies', () => {
+      const results = PolicyModule.Database.searchPolicies('民法典');
+      TestRunner.assert(results.length > 0, 'Should find policies');
+      TestRunner.assert(results[0].title.includes('民法典'), 'Result title should match');
+    });
+
+    TestRunner.run('Database: Update Like Count', () => {
+      const pid = 'p1';
+      const initial = PolicyModule.Database.getInteractions(pid).likes;
+      PolicyModule.Database.updateLike(pid, 1);
+      const after = PolicyModule.Database.getInteractions(pid).likes;
+      TestRunner.assertEqual(after, initial + 1, 'Like count should increment');
+    });
+
+    // --- Business Logic Layer Tests ---
+    TestRunner.run('Service: Category Tree Structure', () => {
+      const tree = PolicyModule.Service.getCategoryTree();
+      TestRunner.assert(tree.length > 0, 'Tree should not be empty');
+      const root = tree.find(n => n.id === 'cat_law');
+      TestRunner.assert(root.children.length > 0, 'Root node should have children');
+      TestRunner.assertEqual(root.children[0].parentId, 'cat_law', 'Child parentId should match');
+    });
+
+    TestRunner.run('Service: Advanced Search', () => {
+      const criteria = { type: '法律' };
+      const results = PolicyModule.Service.advancedSearch(criteria);
+      TestRunner.assert(results.length > 0, 'Should find policies by type');
+      results.forEach(p => TestRunner.assertEqual(p.type, '法律', 'Policy type should match'));
+
+      const criteriaDate = { dateFrom: '2020-01-01', dateTo: '2022-01-01' };
+      const resultsDate = PolicyModule.Service.advancedSearch(criteriaDate);
+      TestRunner.assert(resultsDate.length > 0, 'Should find policies by date range');
+    });
+
+    TestRunner.run('Service: Policy Detail with Interactions', () => {
+      const detail = PolicyModule.Service.getPolicyDetail('p1');
+      TestRunner.assert(detail.id === 'p1', 'Should return correct policy');
+      TestRunner.assert(typeof detail.likes === 'number', 'Should include likes count');
+    });
+
+    // --- Integration Tests ---
+    TestRunner.run('Integration: Search Flow', () => {
+      const keyword = '物业';
+      const results = PolicyModule.Service.search(keyword);
+      TestRunner.assert(Array.isArray(results), 'Search should return array');
+      results.forEach(p => {
+        const match = p.title.includes(keyword) || p.content.includes(keyword);
+        TestRunner.assert(match, `Policy ${p.id} should match keyword`);
+      });
+    });
+
+  </script>
+</body>
+</html>

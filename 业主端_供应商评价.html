@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业主端 · 供应商评价</title>
+<style>
+:root {
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
+  --cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--orange:#f97316;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:800px;margin:0 auto}
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.2rem;font-weight:700}
+.mod-header .badge{padding:3px 10px;border-radius:10px;font-size:0.7rem;background:rgba(249,115,22,0.12);color:var(--orange)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.9rem;font-weight:700}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}.tag-orange{background:rgba(249,115,22,0.12);color:var(--orange)}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;font-family:inherit}
+.btn:hover{opacity:.85}.btn-p{background:var(--orange);color:#fff;font-weight:600}.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-sm{padding:4px 10px;font-size:0.68rem}
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;font-family:inherit;background:var(--card2);color:var(--text);margin-bottom:4px}
+input:focus,select:focus,textarea:focus{border-color:var(--orange);outline:none}
+label{display:block;font-size:0.73rem;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+textarea{resize:vertical;min-height:60px}
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-s{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:var(--green)}
+.sup-row{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.sup-row:hover{border-color:rgba(249,115,22,0.3)}
+.sup-avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(249,115,22,0.1);flex-shrink:0}
+.sup-info{flex:1}.sup-info .sn{font-weight:700;font-size:0.84rem}.sup-info .sd{font-size:0.7rem;color:var(--muted)}
+.stars{display:flex;gap:3px;font-size:1.3rem;cursor:pointer}
+.stars span{color:var(--border);transition:.15s}
+.stars span.on{color:var(--amber)}
+@media(max-width:500px){.container{padding:12px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="mod-header">
+  <h2>🏘️ 小区服务评价 <span class="badge">阳光花园</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">业主 · 张建国 | 3-1502</span>
+</div>
+
+<div id="content"></div>
+
+</div>
+
+<script>
+var P='sgzf_ow_ev_';
+var D={suppliers:[],evaluations:[],complaints:[]};
+function load(){
+  try{var d=localStorage.getItem(P+'data');if(d)D=JSON.parse(d)}catch(e){seed()}
+  if(!D.suppliers.length) seed();
+}
+function save(){localStorage.setItem(P+'data',JSON.stringify(D))}
+function seed(){
+  D.suppliers=[
+    {id:'V001',name:'通力电梯',cat:'电梯维保',credit:92,rating:4.3,myHistory:'3栋客梯维保（7月）'},
+    {id:'V002',name:'飞利浦照明',cat:'照明设备',credit:95,rating:4.8,myHistory:'—'},
+    {id:'V005',name:'绿城园林',cat:'绿化养护',credit:88,rating:4.6,myHistory:'草坪补种（6月）'},
+    {id:'V006',name:'安盾消防',cat:'消防检测',credit:96,rating:4.9,myHistory:'—'}
+  ];
+  D.evaluations=[{id:'EV001',supId:'V001',rating:3,comment:'维保后电梯还是有点异响，希望能再检查一下',date:'2026-07-22'}];
+  D.complaints=[{id:'CP001',supId:'V001',title:'电梯维保后仍有异响',desc:'7月20日通力电梯来维保了3栋客梯，但第二天乘坐时仍然能听到金属摩擦声。请物业安排复查。',date:'2026-07-22',status:'已提交'}];
+  save();
+}
+
+function r(){
+  var h='';
+
+  // ═══ 小区供应商列表 ═══
+  h+='<div class="card"><div class="card-hd"><h3>🏢 本小区服务商</h3><span style="font-size:0.72rem;color:var(--muted)">你评价过的供应商会影响其信用分</span></div>';
+  h+='<div class="alert alert-i">📢 以下供应商正在为阳光花园提供服务。服务质量由全体业主共同监督——你的评价将计入供应商信用评分。</div>';
+
+  D.suppliers.forEach(function(s){
+    var myEval=D.evaluations.filter(function(e){return e.supId===s.id});
+    var hasEval=myEval.length>0;
+    h+='<div class="sup-row">';
+    h+='<div class="sup-avatar">🏢</div>';
+    h+='<div class="sup-info"><div class="sn">'+s.name+' <span class="tag tag-cyan">'+s.cat+'</span></div><div class="sd">信用 '+s.credit+' | 综合评分 ★'+s.rating+' | '+s.myHistory+'</div></div>';
+    if(!hasEval){
+      h+='<button class="btn btn-p btn-sm" onclick="showEval(\''+s.id+'\')">评价</button>';
+    } else {
+      h+='<span class="tag tag-green">已评价 ★'+myEval[0].rating+'</span>';
+    }
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // ═══ 我的评价记录 ═══
+  if(D.evaluations.length){
+    h+='<div class="card"><div class="card-hd"><h3>📝 我的评价</h3></div>';
+    D.evaluations.forEach(function(e){
+      var s=D.suppliers.find(function(x){return x.id===e.supId});
+      h+='<div style="padding:10px;border-bottom:1px solid var(--border);margin-bottom:4px">';
+      h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px"><strong>'+(s?s.name:e.supId)+'</strong><span style="color:var(--amber)">★'.repeat(e.rating)+'</span></div>';
+      h+='<div style="font-size:0.76rem;color:var(--muted)">'+e.comment+'</div><div style="font-size:0.68rem;color:var(--muted)">'+e.date+'</div></div>';
+    });
+    h+='</div>';
+  }
+
+  // ═══ 投诉入口 ═══
+  h+='<div class="card"><div class="card-hd"><h3>📩 服务投诉</h3></div>';
+  h+='<div class="alert alert-s">如果你对供应商的服务不满意，可以在此提交投诉。投诉将反馈至物业、业委会和社区端。</div>';
+
+  if(D.complaints.length){
+    D.complaints.forEach(function(c){
+      var s=D.suppliers.find(function(x){return x.id===c.supId});
+      h+='<div style="border-left:3px solid var(--orange);padding:10px 14px;margin-bottom:8px;background:var(--card2);border-radius:0 8px 8px 0">';
+      h+='<div style="display:flex;justify-content:space-between;margin-bottom:4px"><strong>'+(s?s.name:'')+'</strong><span class="tag tag-amber">'+c.status+'</span></div>';
+      h+='<div style="font-weight:600;font-size:0.82rem;margin-bottom:4px">'+c.title+'</div>';
+      h+='<div style="font-size:0.74rem;color:var(--muted)">'+c.desc+'</div><div style="font-size:0.68rem;color:var(--muted);margin-top:4px">'+c.date+'</div></div>';
+    });
+  }
+
+  h+='<div><label>投诉标题</label><input id="cp-title" placeholder="简述问题"></div>';
+  h+='<div><label>投诉内容</label><textarea id="cp-desc" placeholder="详细描述遇到的问题"></textarea></div>';
+  h+='<button class="btn btn-p" onclick="submitComplaint()" style="width:100%;padding:10px">提交投诉</button>';
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function showEval(sid){
+  var s=D.suppliers.find(function(x){return x.id===sid});if(!s)return;
+  var h='<div class="modal-overlay" onclick="if(event.target===this)this.remove()"><div class="modal" style="max-width:420px"><h3>评价 '+s.name+'</h3>';
+  h+='<div style="text-align:center;margin:16px 0"><div style="font-size:0.85rem;margin-bottom:8px">服务质量评分</div>';
+  h+='<div class="stars" id="eval-stars">';
+  for(var i=1;i<=5;i++) h+='<span onclick="setStars('+i+')">★</span>';
+  h+='</div></div>';
+  h+='<input type="hidden" id="eval-rating" value="0">';
+  h+='<label>评价内容</label><textarea id="eval-comment" placeholder="分享你的体验..."></textarea>';
+  h+='<div style="margin-top:12px"><button class="btn btn-p" style="width:100%" onclick="submitEval(\''+sid+'\')">提交评价</button></div>';
+  h+='</div></div>';
+  document.getElementById('content').insertAdjacentHTML('beforeend',h);
+}
+
+function setStars(r){
+  document.getElementById('eval-rating').value=r;
+  var stars=document.querySelectorAll('#eval-stars span');
+  stars.forEach(function(s,i){s.className=(i<r)?'on':'';});
+}
+
+function submitEval(sid){
+  var r=parseInt(document.getElementById('eval-rating').value)||0;
+  var c=document.getElementById('eval-comment').value.trim();
+  if(!r){alert('请评分');return;}
+  D.evaluations.push({id:'EV'+Date.now(),supId:sid,rating:r,comment:c,date:new Date().toISOString().slice(0,10)});
+  save();
+  document.querySelectorAll('.modal-overlay').forEach(function(m){m.remove()});
+  r();
+  alert('✅ 评价已提交，将计入供应商信用分');
+}
+
+function submitComplaint(){
+  var t=document.getElementById('cp-title').value.trim();
+  var d=document.getElementById('cp-desc').value.trim();
+  if(!t||!d){alert('请填写投诉信息');return;}
+  D.complaints.push({id:'CP'+Date.now(),supId:'',title:t,desc:d,date:new Date().toISOString().slice(0,10),status:'已提交'});
+  save();r();
+  alert('✅ 投诉已提交，物业和业委会将收到通知');
+}
+
+load();r();
+</script>
+</body>
+</html>

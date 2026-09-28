@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>物业端 · 采购模块</title>
+<style>
+:root {
+  --bg: #0b1120; --card: #0f172a; --card2: #131d33;
+  --border: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
+  --cyan: #06b6d4; --green: #10b981; --red: #ef4444;
+  --amber: #f59e0b; --blue: #3b82f6; --r: 10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+
+/* ═══ Header ═══ */
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.mod-header .community-badge{padding:4px 12px;border-radius:12px;font-size:0.72rem;background:rgba(59,130,246,0.12);color:var(--blue)}
+
+/* ═══ Tabs ═══ */
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:var(--r);padding:4px;border:1px solid var(--border)}
+.tab{padding:8px 20px;border-radius:6px;font-size:0.82rem;cursor:pointer;color:var(--muted);transition:.15s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--blue);color:#fff;font-weight:600}
+
+/* ═══ Stats ═══ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.stat .n{font-size:1.6rem;font-weight:800;color:var(--blue)}
+.stat .l{font-size:0.7rem;color:var(--muted);margin-top:4px}
+
+/* ═══ Card ═══ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+
+/* ═══ Table ═══ */
+table{width:100%;border-collapse:collapse;font-size:0.8rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem;white-space:nowrap}
+tr:hover td{background:rgba(59,130,246,0.02)}
+
+/* ═══ Tags ═══ */
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}
+.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}
+.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.tag-muted{background:rgba(100,116,139,0.12);color:var(--muted)}
+
+/* ═══ Buttons ═══ */
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;transition:.15s;font-family:inherit}
+.btn:hover{opacity:.85}
+.btn-p{background:var(--blue);color:#fff;font-weight:600}
+.btn-c{background:var(--cyan);color:#000;font-weight:600}
+.btn-g{background:var(--green);color:#fff}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:0.68rem}
+.btn-blk{display:block;width:100%}
+
+/* ═══ Forms ═══ */
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;font-family:inherit;background:var(--card2);color:var(--text);margin-bottom:4px}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);outline:none}
+label{display:block;font-size:0.73rem;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+textarea{resize:vertical;min-height:60px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ═══ Supplier Card ═══ */
+.sup-card{border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.sup-card:hover{border-color:rgba(59,130,246,0.3)}
+.sup-avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:rgba(59,130,246,0.1);flex-shrink:0}
+.sup-info{flex:1}
+.sup-info .sn{font-weight:700;font-size:0.85rem}
+.sup-info .sd{font-size:0.7rem;color:var(--muted);margin-top:2px}
+
+/* ═══ Alert ═══ */
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+
+/* ═══ Stars ═══ */
+.stars{color:var(--amber);font-size:1.2rem;letter-spacing:2px}
+.stars-input{display:flex;gap:4px;cursor:pointer;font-size:1.5rem}
+.stars-input span{color:var(--border);transition:.15s}
+.stars-input span.on{color:var(--amber)}
+
+@media(max-width:800px){.stats,.frow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══ HEADER ═══ -->
+<div class="mod-header">
+  <h2>🛒 采购管理 <span class="community-badge">阳光花园</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">物业经理 · 张经理</span>
+</div>
+
+<!-- ═══ TABS ═══ -->
+<div class="tabs" id="tabs"></div>
+
+<!-- ═══ CONTENT ═══ -->
+<div id="content"></div>
+
+</div>
+
+<script>
+var curTab='quick';
+
+var tabs=[
+  {id:'quick',label:'⚡ 快捷采购',desc:'小额直采·2000元以内'},
+  {id:'suppliers',label:'🏢 小区供应商',desc:'已加入T2的供应商'},
+  {id:'request',label:'📝 采购申请',desc:'提交需审批的采购'},
+  {id:'compare',label:'📊 比价看板',desc:'多供应商报价对比'},
+  {id:'evaluate',label:'⭐ 验收评价',desc:'完成验收·评价供应商'}
+];
+
+function rtabs(){
+  var h='';
+  tabs.forEach(function(t){
+    h+='<div class="tab'+(t.id===curTab?' active':'')+'" onclick="sw(\''+t.id+'\')" title="'+t.desc+'">'+t.label+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+
+function sw(id){curTab=id;rtabs();render(id)}
+
+// ═══════════ DATA ═══════════
+var PREFIX='sgzf_pm_proc_';
+var D={orders:[],evaluations:[]};
+
+function load(){
+  try{var d=localStorage.getItem(PREFIX+'data');if(d)D=JSON.parse(d)}
+  catch(e){seed()}
+  if(!D.orders.length) seed();
+}
+function save(){localStorage.setItem(PREFIX+'data',JSON.stringify(D))}
+
+function seed(){
+  D.orders=[
+    {id:'PM001',item:'楼道LED灯泡×20',supplier:'飞利浦照明',cat:'照明设备',amount:1400,date:'2026-07-20',status:'已完成',type:'quick',evaluated:true,rating:5},
+    {id:'PM002',item:'水管接头+密封圈',supplier:'日丰管业',cat:'管道材料',amount:1200,date:'2026-07-25',status:'审批中',type:'quick',evaluated:false},
+    {id:'PM003',item:'保安制服×5套',supplier:'安保用品商城',cat:'制服装备',amount:1800,date:'2026-07-26',status:'待验收',type:'quick',evaluated:false},
+    {id:'PM004',item:'电梯钢丝绳更换',supplier:'通力电梯',cat:'电梯维保',amount:28000,date:'2026-07-20',status:'审批中',type:'request',evaluated:false}
+  ];
+  D.suppliers=[
+    {id:'V001',name:'通力电梯',cat:'电梯维保',credit:92,rating:4.5,contact:'李工 13900001111'},
+    {id:'V002',name:'飞利浦照明',cat:'照明设备',credit:95,rating:4.8,contact:'王经理 13900002222'},
+    {id:'V003',name:'日丰管业',cat:'管道材料',credit:78,rating:4.2,contact:'赵工 13900003333'},
+    {id:'V005',name:'绿城园林',cat:'绿化养护',credit:88,rating:4.6,contact:'周工 13900005555'},
+    {id:'V006',name:'安盾消防',cat:'消防检测',credit:96,rating:4.9,contact:'刘经理 13900006666'}
+  ];
+  save();
+}
+
+// ═══════════ RENDER ═══════════
+function render(t){
+  if(t==='quick') rquick();
+  else if(t==='suppliers') rsup();
+  else if(t==='request') rreq();
+  else if(t==='compare') rcomp();
+  else if(t==='evaluate') reval();
+}
+
+// ─── QUICK PROCUREMENT ───
+function rquick(){
+  var total=D.orders.length;
+  var done=D.orders.filter(function(o){return o.status==='已完成'}).length;
+  var pending=D.orders.filter(function(o){return o.status==='审批中'}).length;
+  var toEval=D.orders.filter(function(o){return o.status==='待验收'}).length;
+
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">'+total+'</div><div class="l">总采购单</div></div>';
+  h+='<div class="stat"><div class="n">'+done+'</div><div class="l">已完成</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--amber)">'+pending+'</div><div class="l">审批中</div></div>';
+  h+='<div class="stat"><div class="n" style="color:'+(toEval?'var(--cyan)':'var(--text))+'">'+toEval+'</div><div class="l">待验收</div></div>';
+  h+='</div>';
+
+  // Quick form
+  h+='<div class="card"><div class="card-hd"><h3>⚡ 快捷采购（≤2000元·物业经理直接审批）</h3></div>';
+  h+='<div class="frow"><div><label>采购项目</label><input id="qf-item" placeholder="如：楼道LED灯泡×20"></div><div><label>品类</label><select id="qf-cat"><option value="">— 选择 —</option><option>照明设备</option><option>管道材料</option><option>清洁保洁</option><option>制服装备</option><option>绿化养护</option></select></div></div>';
+  h+='<div class="frow"><div><label>供应商</label><select id="qf-sup"><option value="">— 选择 —</option>';
+  D.suppliers.forEach(function(s){h+='<option value="'+s.name+'">'+s.name+'（'+s.cat+'·信用'+s.credit+'）</option>';});
+  h+='</select></div><div><label>金额（元）</label><input id="qf-amt" type="number" placeholder="0" onchange="checkQuickAmt()"><span id="qf-warn" style="font-size:0.7rem;color:var(--red);display:none">⚠ 超过2000元，请走"采购申请"通道</span></div></div>';
+  h+='<div><label>说明</label><textarea id="qf-desc" placeholder="采购原因"></textarea></div>';
+  h+='<button class="btn btn-p btn-blk" onclick="submitQuick()" style="padding:10px;font-size:0.9rem">提交快捷采购</button></div>';
+
+  // Recent orders
+  h+='<div class="card"><div class="card-hd"><h3>📋 采购记录</h3></div>';
+  h+='<table><tr><th>编号</th><th>项目</th><th>供应商</th><th>品类</th><th>金额</th><th>类型</th><th>日期</th><th>状态</th><th>操作</th></tr>';
+  D.orders.slice().reverse().forEach(function(o){
+    var tp=o.type==='quick'?'<span class="tag tag-blue">快捷</span>':'<span class="tag tag-cyan">申请</span>';
+    var st=o.status==='已完成'?'tag-green':o.status==='审批中'?'tag-amber':o.status==='待验收'?'tag-cyan':'tag-muted';
+    var act='';
+    if(o.status==='待验收') act='<button class="btn btn-g btn-sm" onclick="sw(\'evaluate\')">验收</button>';
+    else if(o.status==='已完成'&&!o.evaluated) act='<button class="btn btn-o btn-sm" onclick="sw(\'evaluate\')">评价</button>';
+    else if(o.status==='已完成') act='<span class="tag tag-green">已评价</span>';
+    h+='<tr><td>'+o.id+'</td><td>'+o.item+'</td><td>'+o.supplier+'</td><td>'+o.cat+'</td><td>¥'+o.amount+'</td><td>'+tp+'</td><td>'+o.date+'</td><td><span class="tag '+st+'">'+o.status+'</span></td><td>'+act+'</td></tr>';
+  });
+  h+='</table></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function checkQuickAmt(){
+  var amt=parseInt(document.getElementById('qf-amt').value)||0;
+  document.getElementById('qf-warn').style.display=amt>2000?'block':'none';
+}
+
+function submitQuick(){
+  var item=document.getElementById('qf-item').value.trim();
+  var cat=document.getElementById('qf-cat').value;
+  var sup=document.getElementById('qf-sup').value;
+  var amt=parseInt(document.getElementById('qf-amt').value)||0;
+  if(!item||!cat||!sup||!amt){alert('请填写完整');return;}
+  if(amt>2000){alert('金额超过2000元，请使用"采购申请"通道提交业委会审批');return;}
+  D.orders.push({id:'PM'+Date.now().toString(36).toUpperCase(),item:item,supplier:sup,cat:cat,amount:amt,date:new Date().toISOString().slice(0,10),status:'已完成',type:'quick',evaluated:false});
+  save();rquick();
+  alert('✅ 快捷采购完成，请验收后评价');
+}
+
+// ─── SUPPLIERS ───
+function rsup(){
+  var h='<div class="card"><div class="card-hd"><h3>🏢 小区供应商池（T2）</h3><span style="font-size:0.75rem;color:var(--muted)">'+D.suppliers.length+'家</span></div>';
+  h+='<div class="alert alert-i">这些供应商已通过数治理方平台审核（T1），并由业委会批准加入本小区供应链（T2）。你可以在快捷采购和采购申请中直接选用。</div>';
+
+  D.suppliers.forEach(function(s){
+    var cfCls=s.credit>=90?'#10b981':s.credit>=75?'#06b6d4':s.credit>=60?'#f59e0b':'#ef4444';
+    h+='<div class="sup-card">';
+    h+='<div class="sup-avatar">🏢</div>';
+    h+='<div class="sup-info"><div class="sn">'+s.name+'</div><div class="sd">'+s.cat+' | '+s.contact+'</div></div>';
+    h+='<div style="text-align:right"><div style="font-weight:700;font-size:0.85rem;color:'+cfCls+'">信用 '+s.credit+'</div><div style="font-size:0.68rem;color:var(--muted)">★ '+s.rating+'</div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  h+='<div class="card" style="text-align:center"><p style="color:var(--muted);font-size:0.82rem;margin-bottom:12px">需要新的供应商？联系业委会从平台供应链（T1）中邀请</p><button class="btn btn-o">通知业委会添加供应商</button></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+// ─── REQUEST ───
+function rreq(){
+  var h='<div class="card"><div class="card-hd"><h3>📝 采购申请（需业委会审批）</h3></div>';
+  h+='<div class="alert alert-w">⚠️ 采购金额>2000元须经业委会审批：2000~5000→采购委员 | 5000~20000→业委会会议 | >20000→会议+社区备案</div>';
+
+  h+='<div class="frow"><div><label>采购项目 *</label><input id="rq-item" placeholder="如：电梯钢丝绳更换"></div><div><label>品类</label><select id="rq-cat"><option value="">— 选择 —</option><option>电梯维保</option><option>消防检测</option><option>照明设备</option><option>管道材料</option><option>安防设备</option><option>绿化养护</option><option>清洁保洁</option><option>垃圾清运</option></select></div></div>';
+  h+='<div class="frow"><div><label>推荐供应商</label><select id="rq-sup"><option value="">— 选择 —</option>';
+  D.suppliers.forEach(function(s){h+='<option value="'+s.name+'">'+s.name+'（'+s.cat+'·信用'+s.credit+'）</option>';});
+  h+='</select></div><div><label>预估金额（元） *</label><input id="rq-amt" type="number" placeholder="0"></div></div>';
+  h+='<div><label>采购说明 *</label><textarea id="rq-desc" placeholder="详细说明采购原因、用途、紧急程度"></textarea></div>';
+  h+='<div class="frow"><div><label>期望完成日期</label><input id="rq-date" type="date"></div><div><label>紧急程度</label><select id="rq-urg"><option value="0">普通</option><option value="1">紧急（事后补审批）</option></select></div></div>';
+
+  h+='<div style="padding:12px;background:var(--card2);border-radius:8px;margin:16px 0;font-size:0.78rem;color:var(--muted)">';
+  h+='<strong>审批路径预览：</strong><br>';
+  h+='<span id="rq-approve-preview">物业经理 → 业委会采购委员 → 业委会会议</span></div>';
+
+  h+='<button class="btn btn-p btn-blk" onclick="submitRequest()" style="padding:10px;font-size:0.9rem">提交采购申请</button></div>';
+  document.getElementById('content').innerHTML=h;
+
+  // Live approval preview
+  document.getElementById('rq-amt').addEventListener('input',function(){
+    var a=parseInt(this.value)||0;
+    var p=document.getElementById('rq-approve-preview');
+    if(a<=2000) p.textContent='物业经理（直接审批）';
+    else if(a<=5000) p.textContent='物业经理 → 业委会采购委员';
+    else if(a<=20000) p.textContent='物业经理 → 采购委员 → 业委会会议';
+    else p.textContent='物业经理 → 业委会会议 → 社区备案';
+  });
+}
+
+function submitRequest(){
+  var item=document.getElementById('rq-item').value.trim();
+  var cat=document.getElementById('rq-cat').value;
+  var sup=document.getElementById('rq-sup').value;
+  var amt=parseInt(document.getElementById('rq-amt').value)||0;
+  var desc=document.getElementById('rq-desc').value.trim();
+  if(!item||!cat||!amt){alert('请填写必填项');return;}
+  D.orders.push({id:'PM'+Date.now().toString(36).toUpperCase(),item:item,supplier:sup||'待匹配',cat:cat,amount:amt,date:new Date().toISOString().slice(0,10),status:'审批中',type:'request',evaluated:false});
+  save();rreq();
+  alert('✅ 采购申请已提交，等待业委会审批');
+}
+
+// ─── COMPARE ───
+function rcomp(){
+  var h='<div class="page-hd"><h1>📊 比价看板</h1><div class="desc">同一采购需求·多供应商报价横向对比</div></div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">📋 草坪补种+绿化修剪·阳光花园 — 3家报价对比</h3>';
+  h+='<div class="alert alert-i">采购需求：小区主入口草坪补种约200㎡ + 绿化带修剪。预算：¥10,000以内。紧急。</div>';
+
+  h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0">';
+  var quotes=[
+    {sup:'绿城园林',credit:88,rating:4.6,price:8500,labor:'2人·2天',material:'草皮+营养土·含清运',warranty:'3个月',dist:'1.5km',note:'本小区6次合作·全好评',rec:true},
+    {sup:'青青园艺',credit:76,rating:4.1,price:6200,labor:'1人·3天',material:'草皮·清运另计',warranty:'1个月',dist:'4.2km',note:'新入驻·尚无本小区合作记录',rec:false},
+    {sup:'都市绿景',credit:82,rating:4.3,price:7800,labor:'2人·2天',material:'草皮+营养土·含清运',warranty:'2个月',dist:'3.8km',note:'周边碧水湾合作3次',rec:false}
+  ];
+  quotes.forEach(function(q){
+    h+='<div style="border:1px solid '+(q.rec?'var(--green)':'var(--border)')+';border-radius:10px;padding:16px;background:'+(q.rec?'rgba(16,185,129,0.03)':'var(--card)')+'">';
+    if(q.rec) h+='<div style="text-align:center;margin-bottom:8px"><span class="tag tag-green">⭐ 推荐</span></div>';
+    h+='<div style="text-align:center;font-weight:700;font-size:1rem;margin-bottom:4px">'+q.sup+'</div>';
+    h+='<div style="text-align:center;font-size:0.72rem;color:var(--muted);margin-bottom:12px">信用'+q.credit+' | ★'+q.rating+' | '+q.dist+'</div>';
+    h+='<div style="text-align:center;font-size:1.8rem;font-weight:800;color:'+(q.rec?'var(--green)':'var(--cyan)')+';margin-bottom:12px">¥'+q.price.toLocaleString()+'</div>';
+    h+='<div style="font-size:0.74rem;color:var(--muted);line-height:1.8">';
+    h+='<div>👷 '+q.labor+'</div><div>📦 '+q.material+'</div><div>🛡️ 质保：'+q.warranty+'</div><div>💬 '+q.note+'</div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+
+  h+='<div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-g" style="flex:1">选定绿城园林·推荐业委会审批</button><button class="btn btn-o">继续询价</button></div></div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+// ─── EVALUATE ───
+function reval(){
+  var toEval=D.orders.filter(function(o){return o.status==='已完成'&&!o.evaluated||o.status==='待验收'});
+
+  var h='<div class="card"><div class="card-hd"><h3>⭐ 验收评价</h3></div>';
+
+  if(!toEval.length){
+    h+='<div style="text-align:center;padding:30px"><p style="font-size:2rem;margin-bottom:8px">✅</p><p style="color:var(--muted)">暂无待验收或待评价的采购单</p></div>';
+    document.getElementById('content').innerHTML=h;return;
+  }
+
+  toEval.forEach(function(o){
+    h+='<div class="sup-card" style="flex-wrap:wrap">';
+    h+='<div class="sup-avatar">📦</div>';
+    h+='<div class="sup-info"><div class="sn">'+o.item+'</div><div class="sd">'+o.supplier+' | ¥'+o.amount+' | '+o.date+'</div></div>';
+    if(o.status==='待验收'){
+      h+='<button class="btn btn-g btn-sm" onclick="acceptOrder(\''+o.id+'\')">确认验收</button>';
+    } else {
+      h+='<div style="display:flex;align-items:center;gap:8px;margin-top:8px;width:100%">';
+      h+='<span style="font-size:0.78rem">评分：</span>';
+      for(var i=1;i<=5;i++) h+='<span style="font-size:1.2rem;cursor:pointer;color:'+(i<=(o.rating||0)?'var(--amber)':'var(--border))+'" onclick="rateOrder(\''+o.id+'\','+i+')">★</span>';
+      h+='<button class="btn btn-g btn-sm" onclick="submitEval(\''+o.id+'\')" style="margin-left:auto">提交评价</button>';
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function acceptOrder(id){
+  var o=D.orders.find(function(x){return x.id===id});if(!o)return;
+  o.status='已完成';save();reval();
+}
+
+function rateOrder(id,r){
+  var o=D.orders.find(function(x){return x.id===id});if(!o)return;
+  o.rating=r;reval();
+}
+
+function submitEval(id){
+  var o=D.orders.find(function(x){return x.id===id});if(!o)return;
+  if(!o.rating){alert('请先评分');return;}
+  o.evaluated=true;save();reval();
+  alert('✅ 评价已提交，将计入供应商信用分');
+}
+
+// ═══════════ INIT ═══════════
+load();rtabs();render('quick');
+</script>
+</body>
+</html>

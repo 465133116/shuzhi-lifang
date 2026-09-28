@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业委会端 · 采购模块</title>
+<style>
+:root {
+  --bg: #0b1120; --card: #0f172a; --card2: #131d33;
+  --border: #1e293b; --text: #e2e8f0; --muted: #94a3b8;
+  --cyan: #06b6d4; --green: #10b981; --red: #ef4444;
+  --amber: #f59e0b; --blue: #3b82f6; --purple: #8b5cf6;
+  --r: 10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.mod-header .community-badge{padding:4px 12px;border-radius:12px;font-size:0.72rem;background:rgba(139,92,246,0.12);color:var(--purple)}
+
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:var(--r);padding:4px;border:1px solid var(--border)}
+.tab{padding:8px 18px;border-radius:6px;font-size:0.82rem;cursor:pointer;color:var(--muted);transition:.15s;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--purple);color:#fff;font-weight:600}
+.tab .badge{margin-left:6px;padding:1px 7px;border-radius:8px;font-size:0.65rem;background:rgba(255,255,255,0.2)}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.stat .n{font-size:1.5rem;font-weight:800;color:var(--purple)}
+.stat .l{font-size:0.68rem;color:var(--muted);margin-top:4px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+
+table{width:100%;border-collapse:collapse;font-size:0.79rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem;white-space:nowrap}
+tr:hover td{background:rgba(139,92,246,0.02)}
+
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}
+.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}
+.tag-blue{background:rgba(59,130,246,0.12);color:var(--blue)}
+.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.tag-purple{background:rgba(139,92,246,0.12);color:var(--purple)}
+.tag-muted{background:rgba(100,116,139,0.12);color:var(--muted)}
+
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;transition:.15s;font-family:inherit}
+.btn:hover{opacity:.85}
+.btn-p{background:var(--purple);color:#fff;font-weight:600}
+.btn-c{background:var(--cyan);color:#000;font-weight:600}
+.btn-g{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:0.68rem}
+.btn-blk{display:block;width:100%}
+
+input,select,textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;font-family:inherit;background:var(--card2);color:var(--text);margin-bottom:4px}
+input:focus,select:focus,textarea:focus{border-color:var(--purple);outline:none}
+label{display:block;font-size:0.73rem;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-s{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);color:var(--green)}
+.alert-r{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+
+/* ═══ Approval card ═══ */
+.approval-card{border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:var(--r);padding:18px 20px;margin-bottom:12px;background:var(--card)}
+.approval-card.urgent{border-left-color:var(--red)}
+.approval-card .ac-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:10px}
+.approval-card .ac-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:0.76rem;margin-bottom:10px}
+.approval-card .ac-actions{display:flex;gap:8px;margin-top:12px}
+
+/* ═══ Budget bar ═══ */
+.budget-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin:6px 0}
+.budget-fill{height:100%;border-radius:4px;transition:width .3s}
+.bf-ok{background:var(--green)}.bf-warn{background:var(--amber)}.bf-over{background:var(--red)}
+
+/* ═══ Platform supplier list ═══ */
+.plat-sup{border:1px dashed var(--border);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.plat-sup:hover{border-color:rgba(139,92,246,0.3)}
+.plat-sup .ps-avatar{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:rgba(139,92,246,0.1);flex-shrink:0}
+.plat-sup .ps-info{flex:1}
+.plat-sup .ps-name{font-weight:700;font-size:0.85rem}
+
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.frow,.frow3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="mod-header">
+  <h2>🛡️ 采购监管 <span class="community-badge">阳光花园 · 业委会</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">采购委员 · 李主任</span>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+
+</div>
+
+<script>
+var curTab='approve';
+
+var tabs=[
+  {id:'approve',label:'📋 采购审批'},
+  {id:'suppliers',label:'🏢 供应商管理'},
+  {id:'budget',label:'💰 预算总览'},
+  {id:'contracts',label:'📄 合同管理'},
+  {id:'compliance',label:'🔍 合规审查'}
+];
+
+function rtabs(){
+  var h='';var pc=PREFIX;
+  tabs.forEach(function(t){
+    var bd='';
+    if(t.id==='approve'){
+      var p=D.orders.filter(function(o){return o.status==='审批中'}).length;
+      if(p) bd='<span class="badge">'+p+'</span>';
+    }
+    if(t.id==='suppliers'){
+      var a=D.t2.filter(function(s){return s.status==='申请中'}).length;
+      if(a) bd='<span class="badge">'+a+'</span>';
+    }
+    h+='<div class="tab'+(t.id===curTab?' active':'')+'" onclick="sw(\''+t.id+'\')">'+t.label+bd+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+
+function sw(id){curTab=id;rtabs();render(id)}
+
+// ═══════════ DATA ═══════════
+var PREFIX='sgzf_oc_proc_';
+var D={orders:[],t2:[],budget:{},platformSuppliers:[]};
+
+function load(){
+  try{var d=localStorage.getItem(PREFIX+'data');if(d)D=JSON.parse(d)}
+  catch(e){seed()}
+  if(!D.orders.length) seed();
+}
+function save(){localStorage.setItem(PREFIX+'data',JSON.stringify(D))}
+
+function seed(){
+  D.orders=[
+    {id:'OC001',item:'电梯钢丝绳更换',supplier:'通力电梯',cat:'电梯维保',amount:28000,date:'2026-07-20',status:'审批中',from:'物业张经理',urgent:false,desc:'3栋客梯钢丝绳磨损严重'},
+    {id:'OC002',item:'保安制服×10套',supplier:'安保用品商城',cat:'制服装备',amount:4800,date:'2026-07-22',status:'已拒绝',from:'物业张经理',urgent:false,desc:'安保团队换季制服',rejectReason:'预算不足，暂缓'},
+    {id:'OC003',item:'消防栓年检+充装',supplier:'安盾消防',cat:'消防检测',amount:15000,date:'2026-07-18',status:'已完成',from:'业委会李主任',urgent:false,desc:'年度消防设备检测'},
+    {id:'OC004',item:'草坪补种+绿化修剪',supplier:'绿城园林',cat:'绿化养护',amount:8500,date:'2026-07-25',status:'审批中',from:'物业张经理',urgent:true,desc:'小区主入口草坪大面积枯死，需紧急处理'},
+    {id:'OC005',item:'水管接头+密封圈',supplier:'日丰管业',cat:'管道材料',amount:1200,date:'2026-07-26',status:'审批中',from:'物业张经理',urgent:false,desc:'5栋地下室管道渗漏维修'}
+  ];
+  D.t2=[
+    {id:'V001',name:'通力电梯',cat:'电梯维保',credit:92,status:'已加入',joinDate:'2026-03-01'},
+    {id:'V002',name:'飞利浦照明',cat:'照明设备',credit:95,status:'已加入',joinDate:'2026-03-15'},
+    {id:'V003',name:'日丰管业',cat:'管道材料',credit:78,status:'已加入',joinDate:'2026-04-10'},
+    {id:'V005',name:'绿城园林',cat:'绿化养护',credit:88,status:'已加入',joinDate:'2026-05-20'},
+    {id:'V006',name:'安盾消防',cat:'消防检测',credit:96,status:'已加入',joinDate:'2026-06-01'},
+    {id:'V007',name:'锦绣清洁',cat:'清洁保洁',credit:72,status:'申请中',joinDate:'2026-07-22'}
+  ];
+  D.platformSuppliers=[
+    {id:'PS001',name:'锦绣清洁服务有限公司',cat:'清洁保洁',credit:72,t1Date:'2026-05-10',addr:'城东区'},
+    {id:'PS002',name:'长城防水工程有限公司',cat:'防水工程',credit:85,t1Date:'2026-04-20',addr:'城西区'},
+    {id:'PS003',name:'三安电梯维保有限公司',cat:'电梯维保',credit:65,t1Date:'2026-06-01',addr:'城南区'}
+  ];
+  D.budget={total:500000,used:168000,cats:[
+    {name:'日常维修',alloc:80000,used:35000},{name:'电梯维保',alloc:120000,used:28000},
+    {name:'消防检测',alloc:60000,used:15000},{name:'绿化养护',alloc:80000,used:42000},
+    {name:'清洁保洁',alloc:60000,used:18000},{name:'安防设备',alloc:50000,used:20000},
+    {name:'应急储备',alloc:50000,used:10000}
+  ]};
+  D.contracts=[
+    {id:'CT001',supplier:'通力电梯',type:'年度维保',start:'2026-01-01',end:'2026-12-31',amount:96000,status:'生效中'},
+    {id:'CT002',supplier:'安盾消防',type:'单次检测',start:'2026-07-18',end:'2026-08-18',amount:15000,status:'生效中'}
+  ];
+  save();
+}
+
+// ═══════════ RENDER ═══════════
+function render(t){
+  if(t==='approve') rapp();
+  else if(t==='suppliers') rsup();
+  else if(t==='budget') rbud();
+  else if(t==='contracts') rctr();
+  else if(t==='compliance') rcmp();
+}
+
+// ─── APPROVE ───
+function rapp(){
+  var pending=D.orders.filter(function(o){return o.status==='审批中'});
+  var done=D.orders.filter(function(o){return o.status==='已完成'}).length;
+  var rejected=D.orders.filter(function(o){return o.status==='已拒绝'}).length;
+  var totalAmt=D.orders.reduce(function(s,o){return s+o.amount},0);
+
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">'+D.orders.length+'</div><div class="l">总采购单</div></div>';
+  h+='<div class="stat"><div class="n" style="color:'+(pending.length?'var(--amber)':'var(--text))+'">'+pending.length+'</div><div class="l">待审批</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--green)">'+done+'</div><div class="l">已完成</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--red)">'+rejected+'</div><div class="l">已拒绝</div></div>';
+  h+='<div class="stat"><div class="n">¥'+Math.round(totalAmt/10000)+'万</div><div class="l">采购总额</div></div>';
+  h+='</div>';
+
+  if(!pending.length){
+    h+='<div class="card" style="text-align:center;padding:40px"><p style="font-size:2rem;margin-bottom:8px">✅</p><p style="color:var(--muted)">暂无待审批采购单</p></div>';
+    document.getElementById('content').innerHTML=h;return;
+  }
+
+  h+='<div class="card-hd" style="margin-top:8px"><h3>待审批（'+pending.length+'单）</h3></div>';
+
+  pending.forEach(function(o){
+    var maxStep=o.amount>=20000?4:o.amount>=5000?3:2;
+    var route=o.amount<=2000?'物业经理':o.amount<=5000?'物业经理→采购委员':o.amount<=20000?'物业经理→采购委员→业委会会议':'物业经理→业委会会议→社区备案';
+    h+='<div class="approval-card'+(o.urgent?' urgent':'')+'">';
+    h+='<div class="ac-header"><div><strong style="font-size:0.95rem">'+o.item+'</strong>'+(o.urgent?' <span class="tag tag-red">紧急</span>':'')+'</div><span class="tag tag-amber">待审批</span></div>';
+    h+='<div class="ac-meta">';
+    h+='<div><strong>供应商：</strong>'+o.supplier+'</div><div><strong>金额：</strong>¥'+o.amount.toLocaleString()+'</div><div><strong>品类：</strong>'+o.cat+'</div>';
+    h+='<div><strong>日期：</strong>'+o.date+'</div><div><strong>发起人：</strong>'+o.from+'</div><div><strong>审批链：</strong><span style="font-size:0.7rem;color:var(--muted)">'+route+'</span></div>';
+    h+='</div>';
+    h+='<div style="font-size:0.76rem;color:var(--muted);padding:8px 12px;background:var(--card2);border-radius:6px">'+o.desc+'</div>';
+    // 合规闸门
+    h+='<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">';
+    h+='<span class="tag tag-green">✓ 预算余额充足</span>';
+    h+='<span class="tag tag-green">✓ 供应商在T2池</span>';
+    h+=(o.amount<=5000?'<span class="tag tag-muted">— 比价闸（<5000免）</span>':'<span class="tag tag-cyan">待确认·比价≥3家</span>');
+    h+='<span class="tag tag-green">✓ 拆单检测通过</span>';
+    h+='<span class="tag tag-green">✓ 无利益冲突</span>';
+    h+='</div>';
+    h+='<div class="ac-actions">';
+    h+='<button class="btn btn-g" onclick="doApprove(\''+o.id+'\')">✅ 通过</button>';
+    h+='<button class="btn btn-r" onclick="doReject(\''+o.id+'\')">❌ 拒绝</button>';
+    h+='<button class="btn btn-o btn-sm">查看详情</button>';
+    h+='</div></div>';
+  });
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function doApprove(id){
+  var o=D.orders.find(function(x){return x.id===id});if(!o)return;
+  o.status='已完成';save();rapp();rtabs();
+}
+
+function doReject(id){
+  var reason=prompt('拒绝理由：');if(!reason)return;
+  var o=D.orders.find(function(x){return x.id===id});if(!o)return;
+  o.status='已拒绝';o.rejectReason=reason;save();rapp();rtabs();
+}
+
+// ─── SUPPLIERS ───
+function rsup(){
+  var h='<div class="card"><div class="card-hd"><h3>🏘️ 本小区供应商池（T2）</h3><span style="font-size:0.75rem;color:var(--muted)">'+D.t2.length+'家</span></div>';
+
+  h+='<div class="alert alert-i">T2供应商管理：只有已通过数治理方平台审核（T1）的供应商才能加入本小区。你可以从平台供应商库中邀请，也可以移除不合格的供应商。</div>';
+
+  h+='<table><tr><th>名称</th><th>品类</th><th>信用分</th><th>状态</th><th>加入日期</th><th>操作</th></tr>';
+  D.t2.forEach(function(s){
+    var stTag=s.status==='已加入'?'tag-green':'tag-amber';
+    var act=s.status==='申请中'?'<button class="btn btn-g btn-sm" onclick="approveT2(\''+s.id+'\')">批准</button> <button class="btn btn-r btn-sm" onclick="rejectT2(\''+s.id+'\')">拒绝</button>':'<button class="btn btn-r btn-sm" onclick="removeT2(\''+s.id+'\')">移出</button>';
+    h+='<tr><td><strong>'+s.name+'</strong></td><td>'+s.cat+'</td><td>'+s.credit+'</td><td><span class="tag '+stTag+'">'+s.status+'</span></td><td>'+s.joinDate+'</td><td>'+act+'</td></tr>';
+  });
+  h+='</table></div>';
+
+  // Platform suppliers available for invite
+  h+='<div class="card"><div class="card-hd"><h3>🌐 平台供应商库（T1·可邀请）</h3></div>';
+  h+='<div class="alert alert-w">以下供应商已通过数治理方平台审核（T1），尚未加入本小区供应链（T2）。邀请后他们将收到通知并可参与本小区采购。</div>';
+
+  var inT2=D.t2.map(function(s){return s.name});
+  D.platformSuppliers.forEach(function(p){
+    if(inT2.indexOf(p.name)>=0) return;
+    h+='<div class="plat-sup">';
+    h+='<div class="ps-avatar">🏢</div>';
+    h+='<div class="ps-info"><div class="ps-name">'+p.name+'</div><div style="font-size:0.7rem;color:var(--muted)">'+p.cat+' | 信用 '+p.credit+' | '+p.addr+' | T1通过：'+p.t1Date+'</div></div>';
+    h+='<button class="btn btn-p btn-sm" onclick="inviteT2(\''+p.id+'\')">邀请加入</button></div>';
+  });
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function approveT2(id){
+  var s=D.t2.find(function(x){return x.id===id});if(!s)return;
+  s.status='已加入';s.joinDate=new Date().toISOString().slice(0,10);save();rsup();rtabs();
+}
+function rejectT2(id){
+  var s=D.t2.find(function(x){return x.id===id});if(!s)return;
+  D.t2=D.t2.filter(function(x){return x.id!==id});save();rsup();rtabs();
+}
+function removeT2(id){
+  if(!confirm('确定将该供应商移出本小区供应链？'))return;
+  D.t2=D.t2.filter(function(x){return x.id!==id});save();rsup();
+}
+function inviteT2(id){
+  var p=D.platformSuppliers.find(function(x){return x.id===id});if(!p)return;
+  D.t2.push({id:p.id,name:p.name,cat:p.cat,credit:p.credit,status:'已加入',joinDate:new Date().toISOString().slice(0,10)});
+  save();rsup();rtabs();
+  alert('已邀请 '+p.name+' 加入本小区供应链');
+}
+
+// ─── BUDGET ───
+function rbud(){
+  var b=D.budget;
+  var pct=Math.round(b.used/b.total*100);
+
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">¥'+Math.round(b.total/10000)+'万</div><div class="l">年度总预算</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--amber)">¥'+Math.round(b.used/10000)+'万</div><div class="l">已使用</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--green)">¥'+Math.round((b.total-b.used)/10000)+'万</div><div class="l">剩余</div></div>';
+  h+='<div class="stat"><div class="n">'+pct+'%</div><div class="l">使用率</div></div>';
+  h+='<div class="stat"><div class="n">'+b.cats.length+'</div><div class="l">预算科目</div></div>';
+  h+='</div>';
+
+  h+='<div class="card"><h3 style="margin-bottom:12px">各科目明细</h3>';
+  b.cats.forEach(function(c){
+    var p=Math.round(c.used/c.alloc*100);
+    var fillCls=p>90?'bf-over':p>70?'bf-warn':'bf-ok';
+    h+='<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:4px"><strong>'+c.name+'</strong><span>¥'+c.used.toLocaleString()+' / ¥'+c.alloc.toLocaleString()+'（'+p+'%）</span></div>';
+    h+='<div class="budget-bar"><div class="budget-fill '+fillCls+'" style="width:'+p+'%"></div></div></div>';
+  });
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+// ─── CONTRACTS ───
+function rctr(){
+  var h='<div class="card"><div class="card-hd"><h3>📄 合同管理</h3><span style="font-size:0.75rem;color:var(--muted)">'+D.contracts.length+'份</span></div>';
+  h+='<table><tr><th>编号</th><th>供应商</th><th>类型</th><th>起始</th><th>截止</th><th>金额</th><th>状态</th></tr>';
+  D.contracts.forEach(function(c){
+    var st=c.status==='生效中'?'tag-green':c.status==='即将到期'?'tag-amber':'tag-muted';
+    h+='<tr><td>'+c.id+'</td><td>'+c.supplier+'</td><td>'+c.type+'</td><td>'+c.start+'</td><td>'+c.end+'</td><td>¥'+c.amount.toLocaleString()+'</td><td><span class="tag '+st+'">'+c.status+'</span></td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+// ─── COMPLIANCE ───
+function rcmp(){
+  var h='<div class="card"><div class="card-hd"><h3>🔍 合规审查</h3></div>';
+
+  h+='<div class="alert alert-s">✅ 本小区当前合规状态良好——所有采购单均通过五道合规闸门检查</div>';
+
+  h+='<h3 style="margin:16px 0 12px;font-size:0.85rem">合规闸门状态</h3>';
+  var gates=[
+    {icon:'💰',name:'预算闸',status:'pass',desc:'年度预算使用率33.6%，各科目均在安全线内'},
+    {icon:'📄',name:'审批闸',status:'pass',desc:'所有>2000元采购均经对应层级审批'},
+    {icon:'📊',name:'比价闸',status:'warn',desc:'OC004仅2家报价，建议补充至3家（≥5000元要求）'},
+    {icon:'🚫',name:'拆单闸',status:'pass',desc:'近期无拆单预警'},
+    {icon:'👁️',name:'利益冲突闸',status:'pass',desc:'供应商与审批人无关联关系'}
+  ];
+
+  gates.forEach(function(g){
+    var icon=g.status==='pass'?'✅':g.status==='warn'?'⚠️':'❌';
+    var borderCls=g.status==='pass'?'border-left:3px solid var(--green)':g.status==='warn'?'border-left:3px solid var(--amber)':'border-left:3px solid var(--red)';
+    h+='<div style="padding:12px 16px;margin-bottom:8px;background:var(--card2);border-radius:8px;'+borderCls+'">';
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span>'+g.icon+'</span><strong>'+g.name+'</strong><span>'+icon+'</span></div>';
+    h+='<div style="font-size:0.75rem;color:var(--muted)">'+g.desc+'</div></div>';
+  });
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+// ═══════════ INIT ═══════════
+load();rtabs();render('approve');
+</script>
+</body>
+</html>

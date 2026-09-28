@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个信催收 · 管理者看板</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;
+  --text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --f:#8b5cf6;--e:#ef4444;--a:#f59e0b;--b:#10b981;--d:#f97316;--c:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',system-ui;display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;min-width:220px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0;overflow-y:auto}
+.sidebar .brand{padding:20px;border-bottom:1px solid var(--border)}
+.sidebar .brand h2{font-size:16px;color:var(--green);margin-bottom:4px}
+.sidebar .brand p{font-size:11px;color:var(--dim)}
+.sidebar .nav-group{padding:12px 0}
+.sidebar .nav-label{padding:4px 20px 8px;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.nav-item{padding:10px 20px;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.nav-item.active{background:rgba(16,185,129,.08);color:var(--green);border-left-color:var(--green);font-weight:600}
+.nav-item .icon{width:18px;text-align:center;font-size:14px}
+.nav-item .badge2{background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:auto}
+.sidebar .bottom{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;font-size:11px;color:var(--dim)}
+.main{flex:1;overflow-y:auto;padding:0}
+.page{display:none;padding:28px 32px}
+.page.active{display:block}
+.ap{display:none}
+.ap.active{display:block}
+h1{font-size:22px;margin-bottom:6px}
+.subtitle{color:var(--dim);font-size:13px;margin-bottom:28px}
+.stats{display:grid;gap:14px;margin-bottom:24px}
+.stats.c4{grid-template-columns:repeat(4,1fr)}
+.stats.c5{grid-template-columns:repeat(5,1fr)}
+.stats.c6{grid-template-columns:repeat(6,1fr)}
+.stats.c7{grid-template-columns:repeat(7,1fr)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;overflow:hidden}
+.stat-card .val{font-size:32px;font-weight:800;line-height:1;margin:6px 0 2px}
+.stat-card .val-sm{font-size:22px;font-weight:700}
+.stat-card .label{font-size:12px;color:var(--dim)}
+.stat-card .sub{font-size:11px;color:var(--dim);margin-top:4px}
+.stat-card .trend{font-size:11px;margin-top:4px}
+.stat-card .accent{position:absolute;top:0;right:0;width:4px;height:100%}
+.stat-card.f{border-left:3px solid var(--f)}.stat-card.e{border-left:3px solid var(--e)}.stat-card.a{border-left:3px solid var(--a)}.stat-card.b{border-left:3px solid var(--b)}.stat-card.d{border-left:3px solid var(--d)}.stat-card.c{border-left:3px solid var(--c)}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--card2);padding:10px 14px;text-align:left;font-weight:600;color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--muted)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.tag{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;display:inline-block}
+.tg{background:rgba(16,185,129,.12);color:var(--green)}.tr{background:rgba(239,68,68,.12);color:var(--red)}.ty{background:rgba(245,158,11,.12);color:var(--amber)}.tp{background:rgba(139,92,246,.12);color:var(--purple)}.to{background:rgba(249,115,22,.12);color:var(--d)}.tm{background:rgba(100,116,139,.12);color:var(--c)}
+.bar{height:5px;border-radius:3px;background:var(--card2);margin-top:4px;overflow:hidden}
+.bar-in{height:100%;border-radius:3px;transition:width .5s}
+.funnel{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.funnel-step{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;text-align:center;min-width:100px;flex:1}
+.funnel-step .fs-num{font-size:22px;font-weight:800}
+.funnel-step .fs-label{font-size:10px;color:var(--dim);margin-top:2px}
+.funnel-step .fs-rate{font-size:10px;color:var(--amber);margin-top:2px}
+.funnel-arrow{color:var(--dim);font-size:16px;font-weight:700}
+.alerts{margin-bottom:24px}
+.alert{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.alert.crit{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.3)}
+.alert.warn{background:rgba(245,158,11,.04);border-color:rgba(245,158,11,.2)}
+.alert .dot{width:8px;height:8px;border-radius:50%;min-width:8px}
+.alert.crit .dot{background:var(--red);animation:pulse 2s infinite}
+.alert.warn .dot{background:var(--amber)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.alert .info{flex:1;font-size:13px}
+.alert .act{font-size:12px;color:var(--green);cursor:pointer;white-space:nowrap}
+.sec{margin-bottom:32px}
+.sec-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-title:after{content:'';flex:1;height:1px;background:var(--border)}
+.row{display:grid;gap:16px;margin-bottom:24px}
+.row2{grid-template-columns:1fr 1fr}
+.row3{grid-template-columns:1fr 1fr 1fr}
+.ct{color:var(--green)}.ce{color:var(--red)}.ca{color:var(--amber)}.cp{color:var(--purple)}.co{color:var(--d)}.cm{color:var(--c)}
+.ptabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.ptab{padding:10px 22px;font-size:13px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.ptab:hover{color:var(--text)}
+.ptab.active{color:var(--green);border-bottom-color:var(--green);font-weight:600}
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:8px}
+.mini-chart span{flex:1;border-radius:2px 2px 0 0;min-width:6px}
+.flow-arrow{display:inline-block;margin:0 3px;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<!-- 侧边栏 -->
+<div class="sidebar">
+<div class="brand"><h2>个信催收管理</h2><p>管理者看板 v1.1</p></div>
+<div class="nav-group">
+  <div class="nav-label">总览</div>
+  <div class="nav-item active" onclick="go('dash')"><span class="icon">📊</span>仪表盘</div>
+</div>
+<div class="nav-group">
+  <div class="nav-label">客服</div>
+  <div class="nav-item" onclick="go('agents')"><span class="icon">👥</span>5人对比</div>
+  <div class="nav-item" onclick="go('detail')"><span class="icon">👤</span>单人详情</div>
+</div>
+<div class="nav-group">
+  <div class="nav-label">池管理</div>
+  <div class="nav-item" onclick="go('pools')"><span class="icon">🔄</span>四池监控</div>
+  <div class="nav-item" onclick="go('flow')"><span class="icon">📋</span>流转日志</div>
+</div>
+<div class="nav-group">
+  <div class="nav-label">标签与评分</div>
+  <div class="nav-item" onclick="go('labels')"><span class="icon">🏷️</span>标签分布</div>
+  <div class="nav-item" onclick="go('scores')"><span class="icon">📈</span>评分分析</div>
+</div>
+<div class="nav-group">
+  <div class="nav-label">数据分析</div>
+  <div class="nav-item" onclick="go('amounts')"><span class="icon">💰</span>金额分析</div>
+  <div class="nav-item" onclick="go('trends')"><span class="icon">📉</span>趋势</div>
+</div>
+<div class="nav-group">
+  <div class="nav-label">运营</div>
+  <div class="nav-item" onclick="go('actions')"><span class="icon">⚙️</span>操作中心</div>
+</div>
+<div class="bottom">总池5000户 · 5人 · 周三轮换<br>2026-08-05 14:32</div>
+</div>
+
+<!-- 主区域 -->
+<div class="main">
+
+<!-- ====== 仪表盘 ====== -->
+<div id="dash" class="page active">
+<h1>📊 仪表盘</h1>
+<p class="subtitle">全局概览 · 本周累计 · 月度跟踪</p>
+
+<div class="sec">
+<div class="sec-title">本周核心指标</div>
+<div class="stats c4">
+  <div class="stat-card"><div class="sub">本周拨打</div><div class="val">3,125<span style="font-size:16px;color:var(--dim)">/12,500</span></div><div class="bar"><div class="bar-in" style="width:25%;background:var(--green)"></div></div><div class="trend ct">↑ 4% vs 上周</div></div>
+  <div class="stat-card a"><div class="sub">本周接通</div><div class="val ct">550</div><div class="bar"><div class="bar-in" style="width:17.6%;background:var(--amber)"></div></div><div class="trend cm">接通率 17.6%</div></div>
+  <div class="stat-card b"><div class="sub">本周意向</div><div class="val ct">260</div><div class="trend ct">意向转化率 47.3%</div></div>
+  <div class="stat-card e"><div class="sub">本周回款</div><div class="val ct">¥11.5万</div><div class="trend ct">↑ 9.5% vs 上周</div></div>
+</div>
+</div>
+
+<!-- 转化漏斗 -->
+<div class="sec">
+<div class="sec-title">本周转化漏斗</div>
+<div class="funnel">
+  <div class="funnel-step" style="border-left:3px solid var(--blue)"><div class="fs-num">3,125</div><div class="fs-label">拨打</div></div>
+  <div class="funnel-arrow">→</div>
+  <div class="funnel-step" style="border-left:3px solid var(--amber)"><div class="fs-num ct">550</div><div class="fs-label">接通</div><div class="fs-rate">17.6%</div></div>
+  <div class="funnel-arrow">→</div>
+  <div class="funnel-step" style="border-left:3px solid var(--green)"><div class="fs-num ct">260</div><div class="fs-label">意向</div><div class="fs-rate">47.3%</div></div>
+  <div class="funnel-arrow">→</div>
+  <div class="funnel-step" style="border-left:3px solid var(--e)"><div class="fs-num ct">¥11.5万</div><div class="fs-label">回款</div><div class="fs-rate">44.2%</div></div>
+</div>
+<div style="font-size:11px;color:var(--dim)">拨打→回款 <b class="ct">2.1%</b> &nbsp;|&nbsp; 接通→回款 <b class="ct">11.8%</b> &nbsp;|&nbsp; 意向→回款 <b class="ct">44.2%</b></div>
+</div>
+
+<!-- 意向池概览 -->
+<div class="sec">
+<div class="sec-title">意向池概览</div>
+<div class="stats c4">
+  <div class="stat-card f"><div class="sub">意向池总户数</div><div class="val cp">125<span style="font-size:16px">/250</span></div><div class="trend cm">5人·人均25户</div></div>
+  <div class="stat-card a"><div class="sub">本周新增入池</div><div class="val ct">+50</div><div class="trend ct">客服手动拉入</div></div>
+  <div class="stat-card b"><div class="sub">意向转回款</div><div class="val ct">+8</div><div class="trend ct">自动移出</div></div>
+  <div class="stat-card e"><div class="sub">意向池月转化率</div><div class="val ct">18.5%</div><div class="trend ct">入池→回款</div></div>
+</div>
+</div>
+
+<div class="sec">
+<div class="sec-title">预警</div>
+<div class="alerts">
+  <div class="alert warn"><div class="dot"></div><div class="info"><b>12户E类复查到期</b><span class="cm"> · 60天观察期满 · 需分配给S/A级复查</span></div><div class="act">查看名单 →</div></div>
+</div>
+</div>
+</div>
+
+<!-- ====== 5人对比 ====== -->
+<div id="agents" class="page">
+<h1>👥 5人实时对比</h1>
+<p class="subtitle">所有客服的工作状态 · 池状态 · 标签分布 · 评分分布</p>
+
+<div class="sec">
+<div class="sec-title">核心运营指标</div>
+<div class="table-wrap">
+<table>
+<tr><th>客服</th><th>能力</th><th>个人池</th><th>意向池</th><th>日拨/125</th><th>日接通</th><th>日意向</th><th>月回款金额</th><th>本轮拨打进度</th><th>月回款率</th><th>状态</th></tr>
+<tr><td><b class="ct">客服A(组长)</b></td><td><span class="tag tg">S</span></td><td>250</td><td class="cp">30</td><td>125</td><td>25</td><td>12</td><td class="ct">¥32,000</td><td class="ct">180/250</td><td class="ct">9.2%</td><td><span class="tag tg">正常</span></td></tr>
+<tr><td><b>客服B</b></td><td><span class="tag ty">A</span></td><td>250</td><td>25</td><td>125</td><td>22</td><td>11</td><td class="ct">¥18,000</td><td class="ct">170/250</td><td class="ct">5.0%</td><td><span class="tag tg">正常</span></td></tr>
+<tr><td>客服C</td><td><span class="tag ty">B</span></td><td>250</td><td>20</td><td>120</td><td>20</td><td>10</td><td>¥12,000</td><td>155/250</td><td>3.5%</td><td><span class="tag tg">正常</span></td></tr>
+<tr><td>客服D</td><td>C</td><td>250</td><td>18</td><td>118</td><td>18</td><td>9</td><td>¥8,000</td><td>150/250</td><td>2.8%</td><td><span class="tag ty">注意</span></td></tr>
+<tr><td>客服E</td><td>C</td><td>250</td><td>16</td><td>118</td><td>17</td><td>9</td><td>¥6,500</td><td>150/250</td><td>2.5%</td><td><span class="tag tg">正常</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- 效率与质量维度（已隐藏）
+<div class="sec">
+<div class="sec-title">效率与质量维度</div>
+<div class="table-wrap">
+<table>
+<tr><th>客服</th><th>通话均长(分)</th><th>有效沟通率</th><th>本周拒接</th><th>人均待收(元)</th><th>承诺履约率</th></tr>
+<tr><td><b class="ct">客服A(组长)</b></td><td class="ct">5.8</td><td class="ct">82%</td><td>42</td><td class="ce">¥8,200</td><td class="ct">72%</td></tr>
+<tr><td><b>客服B</b></td><td>4.5</td><td class="ct">75%</td><td>58</td><td class="ce">¥7,500</td><td class="ct">68%</td></tr>
+<tr><td>客服C</td><td>3.8</td><td>68%</td><td>85</td><td class="ce">¥6,800</td><td>60%</td></tr>
+<tr><td>客服D</td><td>3.2</td><td>62%</td><td>105</td><td class="ce">¥5,500</td><td>52%</td></tr>
+<tr><td>客服E</td><td>3.5</td><td>65%</td><td>95</td><td class="ce">¥5,000</td><td>55%</td></tr>
+</table>
+</div>
+</div>
+-->
+
+<!-- 5人标签分布（已隐藏）
+<div class="sec">
+<div class="sec-title">5人标签分布</div>
+<div class="table-wrap">
+<table>
+<tr><th>客服</th><th>E·对抗</th><th>A·争议</th><th>D·失约</th><th>B·困难</th><th>C·观望</th><th>F·排除</th></tr>
+<tr><td><b class="ct">客服A</b></td><td class="ce">30</td><td class="ca">35</td><td class="co">25</td><td class="ct">15</td><td class="cm">20</td><td>0</td></tr>
+<tr><td>客服B</td><td class="ce">9</td><td class="ca">15</td><td class="co">38</td><td class="ct">20</td><td class="cm">43</td><td>0</td></tr>
+<tr><td>客服C</td><td class="ce">0</td><td class="ca">2</td><td class="co">25</td><td class="ct">23</td><td class="cm">75</td><td>0</td></tr>
+<tr><td>客服D</td><td class="ce">0</td><td class="ca">0</td><td class="co">5</td><td class="ct">12</td><td class="cm">108</td><td>0</td></tr>
+<tr><td>客服E</td><td>0</td><td>0</td><td>5</td><td>12</td><td>108</td><td>0</td></tr>
+</table>
+</div>
+</div>
+-->
+</div>
+
+<!-- ====== 单人详情 ====== -->
+<div id="detail" class="page">
+<h1>👤 单人详情</h1>
+<p class="subtitle">选择客服查看完整工作面板（管理者只读·不操作意向池）</p>
+
+<div class="ptabs" id="agentTabs">
+  <div class="ptab active" onclick="showA(0)">客服A · S级</div>
+  <div class="ptab" onclick="showA(1)">客服B · A级</div>
+  <div class="ptab" onclick="showA(2)">客服C · B级</div>
+  <div class="ptab" onclick="showA(3)">客服D · C级</div>
+  <div class="ptab" onclick="showA(4)">客服E · C级</div>
+</div>
+
+<div class="ap active" id="ap0">
+<div class="stats c6">
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val">250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">30<span style="font-size:14px">/50</span></div></div>
+  <div class="stat-card"><div class="sub">月拨打进度</div><div class="val ct">2,112<span style="font-size:14px">/2,500</span></div></div>
+  <div class="stat-card a"><div class="sub">月回款金额</div><div class="val ct">¥32,000</div></div>
+  <div class="stat-card"><div class="sub">月回款率</div><div class="val ct">9.2%</div></div>
+  <div class="stat-card"><div class="sub">人均待收</div><div class="val ce">¥8,200</div></div>
+</div>
+<div class="table-wrap"><table>
+<tr><th colspan="2">周次</th><th>拨打</th><th>接通</th><th>接通率</th><th>意向</th><th>回款(元)</th></tr>
+<tr><td>W1</td><td>7/7-7/11</td><td>617</td><td>102</td><td>16.5%</td><td class="ct">50</td><td class="ct">¥9,200</td></tr>
+<tr><td>W2</td><td>7/14-7/18</td><td>625</td><td>108</td><td>17.3%</td><td class="ct">53</td><td class="ct">¥10,500</td></tr>
+<tr><td>W3</td><td>7/21-7/25</td><td>620</td><td>105</td><td>16.9%</td><td class="ct">48</td><td class="ct">¥8,800</td></tr>
+<tr style="background:rgba(16,185,129,.04)"><td colspan="2"><b>▾ W4 7/28-8/1</b></td><td colspan="5" style="font-size:11px;color:var(--dim)">进行中 · 每日明细：</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">一 7/28</td><td>125</td><td>20</td><td>16%</td><td>10</td><td class="ct">¥2,000</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">二 7/29</td><td>125</td><td>22</td><td>18%</td><td>11</td><td class="ct">¥1,500</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">三 7/30</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">四 7/31</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">五 8/1</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr style="font-weight:700"><td colspan="2">本月合计</td><td>2,112</td><td>357</td><td>16.9%</td><td>172</td><td class="ct">¥32,000</td></tr>
+</table></div></div>
+
+<div class="ap" id="ap1">
+<div class="stats c6">
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val">250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">25/50</div></div>
+  <div class="stat-card"><div class="sub">月拨打进度</div><div class="val ct">2,095<span style="font-size:14px">/2,500</span></div></div>
+  <div class="stat-card a"><div class="sub">月回款金额</div><div class="val ct">¥18,000</div></div>
+  <div class="stat-card"><div class="sub">月回款率</div><div class="val ct">5.0%</div></div>
+  <div class="stat-card"><div class="sub">人均待收</div><div class="val ce">¥7,500</div></div>
+</div>
+<div class="table-wrap"><table>
+<tr><th colspan="2">周次</th><th>拨打</th><th>接通</th><th>接通率</th><th>意向</th><th>回款(元)</th></tr>
+<tr><td>W1</td><td>7/7-7/11</td><td>610</td><td>98</td><td>16.1%</td><td>48</td><td class="ct">¥5,000</td></tr>
+<tr><td>W2</td><td>7/14-7/18</td><td>620</td><td>105</td><td>16.9%</td><td>52</td><td class="ct">¥5,500</td></tr>
+<tr><td>W3</td><td>7/21-7/25</td><td>615</td><td>100</td><td>16.3%</td><td>46</td><td class="ct">¥4,800</td></tr>
+<tr style="background:rgba(16,185,129,.04)"><td colspan="2"><b>▾ W4 7/28-8/1</b></td><td colspan="5" style="font-size:11px;color:var(--dim)">进行中</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">一 7/28</td><td>125</td><td>20</td><td>16%</td><td>10</td><td class="ct">¥1,200</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">二 7/29</td><td>125</td><td>19</td><td>15%</td><td>9</td><td class="ct">¥1,500</td></tr>
+<tr style="font-weight:700"><td colspan="2">本月合计</td><td>2,095</td><td>342</td><td>16.3%</td><td>165</td><td class="ct">¥18,000</td></tr>
+</table></div></div>
+
+<div class="ap" id="ap2">
+<div class="stats c6">
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val">250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">20/50</div></div>
+  <div class="stat-card"><div class="sub">月拨打进度</div><div class="val ct">2,055<span style="font-size:14px">/2,500</span></div></div>
+  <div class="stat-card a"><div class="sub">月回款金额</div><div class="val">¥12,000</div></div>
+  <div class="stat-card"><div class="sub">月回款率</div><div class="val">3.5%</div></div>
+  <div class="stat-card"><div class="sub">人均待收</div><div class="val ce">¥6,800</div></div>
+</div>
+<div class="table-wrap"><table>
+<tr><th colspan="2">周次</th><th>拨打</th><th>接通</th><th>接通率</th><th>意向</th><th>回款(元)</th></tr>
+<tr><td>W1</td><td>7/7-7/11</td><td>598</td><td>90</td><td>15.1%</td><td>40</td><td>¥3,500</td></tr>
+<tr><td>W2</td><td>7/14-7/18</td><td>605</td><td>95</td><td>15.7%</td><td>42</td><td class="ct">¥3,800</td></tr>
+<tr><td>W3</td><td>7/21-7/25</td><td>600</td><td>92</td><td>15.3%</td><td>38</td><td>¥3,000</td></tr>
+<tr style="background:rgba(16,185,129,.04)"><td colspan="2"><b>▾ W4 7/28-8/1</b></td><td colspan="5" style="font-size:11px;color:var(--dim)">进行中</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">一 7/28</td><td>120</td><td>18</td><td>15%</td><td>8</td><td class="ct">¥900</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">二 7/29</td><td>122</td><td>19</td><td>16%</td><td>9</td><td class="ct">¥800</td></tr>
+<tr style="font-weight:700"><td colspan="2">本月合计</td><td>2,055</td><td>314</td><td>15.3%</td><td>137</td><td>¥12,000</td></tr>
+</table></div></div>
+
+<div class="ap" id="ap3">
+<div class="stats c6">
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val">250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">18/50</div></div>
+  <div class="stat-card"><div class="sub">月拨打进度</div><div class="val ct">2,025<span style="font-size:14px">/2,500</span></div></div>
+  <div class="stat-card a"><div class="sub">月回款金额</div><div class="val">¥8,000</div></div>
+  <div class="stat-card"><div class="sub">月回款率</div><div class="val">2.8%</div></div>
+  <div class="stat-card"><div class="sub">人均待收</div><div class="val ce">¥5,500</div></div>
+</div>
+<div class="table-wrap"><table>
+<tr><th colspan="2">周次</th><th>拨打</th><th>接通</th><th>接通率</th><th>意向</th><th>回款(元)</th></tr>
+<tr><td>W1</td><td>7/7-7/11</td><td>585</td><td>82</td><td>14.0%</td><td>35</td><td>¥2,500</td></tr>
+<tr><td>W2</td><td>7/14-7/18</td><td>590</td><td>85</td><td>14.4%</td><td>38</td><td class="ct">¥2,600</td></tr>
+<tr><td>W3</td><td>7/21-7/25</td><td>588</td><td>83</td><td>14.1%</td><td>34</td><td>¥1,800</td></tr>
+<tr style="background:rgba(16,185,129,.04)"><td colspan="2"><b>▾ W4 7/28-8/1</b></td><td colspan="5" style="font-size:11px;color:var(--dim)">进行中</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">一 7/28</td><td>115</td><td>16</td><td>14%</td><td>7</td><td>¥600</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">二 7/29</td><td>118</td><td>18</td><td>15%</td><td>8</td><td class="ct">¥500</td></tr>
+<tr style="font-weight:700"><td colspan="2">本月合计</td><td>2,025</td><td>284</td><td>14.0%</td><td>122</td><td>¥8,000</td></tr>
+</table></div></div>
+
+<div class="ap" id="ap4">
+<div class="stats c6">
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val">250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">16/50</div></div>
+  <div class="stat-card"><div class="sub">月拨打进度</div><div class="val ct">2,010<span style="font-size:14px">/2,500</span></div></div>
+  <div class="stat-card a"><div class="sub">月回款金额</div><div class="val">¥6,500</div></div>
+  <div class="stat-card"><div class="sub">月回款率</div><div class="val">2.5%</div></div>
+  <div class="stat-card"><div class="sub">人均待收</div><div class="val ce">¥5,000</div></div>
+</div>
+<div class="table-wrap"><table>
+<tr><th colspan="2">周次</th><th>拨打</th><th>接通</th><th>接通率</th><th>意向</th><th>回款(元)</th></tr>
+<tr><td>W1</td><td>7/7-7/11</td><td>580</td><td>80</td><td>13.8%</td><td>32</td><td>¥2,000</td></tr>
+<tr><td>W2</td><td>7/14-7/18</td><td>588</td><td>83</td><td>14.1%</td><td>35</td><td class="ct">¥2,100</td></tr>
+<tr><td>W3</td><td>7/21-7/25</td><td>585</td><td>80</td><td>13.7%</td><td>30</td><td>¥1,500</td></tr>
+<tr style="background:rgba(16,185,129,.04)"><td colspan="2"><b>▾ W4 7/28-8/1</b></td><td colspan="5" style="font-size:11px;color:var(--dim)">进行中</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">一 7/28</td><td>115</td><td>16</td><td>14%</td><td>7</td><td>¥500</td></tr>
+<tr style="background:rgba(16,185,129,.02)"><td></td><td style="font-size:11px">二 7/29</td><td>118</td><td>17</td><td>14%</td><td>8</td><td>¥400</td></tr>
+<tr style="font-weight:700"><td colspan="2">本月合计</td><td>2,010</td><td>276</td><td>13.7%</td><td>112</td><td>¥6,500</td></tr>
+</table></div></div>
+</div>
+
+<!-- ====== 四池监控 ====== -->
+<div id="pools" class="page">
+<h1>🔄 四池实时监控</h1>
+<p class="subtitle">主池 · 流动池 · 个人池 · 意向池</p>
+
+<div class="stats c4">
+  <div class="stat-card c"><div class="sub">主池</div><div class="val cm">3,750</div><div class="trend cm">未触达·等机器人</div></div>
+  <div class="stat-card a"><div class="sub">流动池</div><div class="val ca">150</div><div class="trend cm">AI接通·排队中</div></div>
+  <div class="stat-card b"><div class="sub">个人池</div><div class="val ct">1,250</div><div class="trend cm">5人各250</div></div>
+  <div class="stat-card f"><div class="sub">意向池</div><div class="val cp">125</div><div class="trend cm">5人各约25</div></div>
+</div>
+
+<div class="sec"><div class="sec-title">今日池间流转</div>
+<div class="table-wrap"><table><tr><th>流向</th><th>数量</th><th>触发</th><th>时间</th></tr>
+<tr><td>主池→流动池</td><td class="ct">+50</td><td>AI外呼接通</td><td>持续</td></tr>
+<tr><td>流动池→个人池</td><td class="ct">+1,250</td><td>周一初始分配</td><td>08:35</td></tr>
+<tr><td>个人池→意向池</td><td class="cp">+50</td><td>客服手动拉入</td><td>持续</td></tr>
+<tr><td>个人池→流动池</td><td class="ce">+5</td><td>不跟进回收</td><td>持续</td></tr>
+<tr><td>意向池→回款</td><td class="ct">+8</td><td>自动移出</td><td>持续</td></tr></table></div></div>
+
+<div class="sec"><div class="sec-title">周三轮换追踪</div>
+<div class="table-wrap"><table><tr><th>时刻</th><th>动作</th><th>数量</th></tr>
+<tr><td>14:00</td><td>回收个人池→流动池</td><td>~1,200户回收。意向池~100户保留</td></tr>
+<tr><td>14:05</td><td>流动池重评分</td><td>~1,350户重排(回收+AI新接通)</td></tr>
+<tr><td>14:10</td><td>轮流重分→个人池</td><td class="ct">每人250到账</td></tr></table></div></div>
+</div>
+
+<!-- ====== 流转日志 ====== -->
+<div id="flow" class="page">
+<h1>📋 流转日志</h1>
+<p class="subtitle">最近50条池间流转记录</p>
+<div class="table-wrap"><table><tr><th>时间</th><th>业主</th><th>从</th><th>到</th><th>客服</th><th>触发原因</th></tr>
+<tr><td>14:32</td><td>张XX·1203</td><td>流动池</td><td class="ct">个人池(客服A)</td><td>客服A</td><td>周三轮换分配</td></tr>
+<tr><td>14:30</td><td>李XX·805</td><td>个人池(客服C)</td><td class="ce">流动池</td><td>—</td><td>轮换回收</td></tr>
+<tr><td>11:15</td><td>王XX·1502</td><td>个人池(客服A)</td><td class="cp">意向池(客服A)</td><td>客服A</td><td>客服手动拉入</td></tr>
+<tr><td>10:42</td><td>赵XX·301</td><td>主池</td><td class="ct">流动池</td><td>—</td><td>AI外呼接通</td></tr>
+<tr><td>10:30</td><td>孙XX·2201</td><td class="cp">意向池(客服B)</td><td>已回款</td><td>客服B</td><td>回款自动移出</td></tr>
+<tr><td>09:15</td><td>陈XX·1108</td><td>个人池(客服D)</td><td class="ce">流动池</td><td>—</td><td>客服标记不跟进</td></tr></table></div>
+</div>
+
+<!-- ====== 标签分布 ====== -->
+<div id="labels" class="page">
+<h1>🏷️ 标签分布</h1>
+<p class="subtitle">全池标签分布 · 各池标签构成 · 标签×评分交叉</p>
+
+<div class="sec"><div class="sec-title">全池标签总分布（5000户）</div>
+<div class="stats c6">
+  <div class="stat-card f"><div class="sub">F·历史复杂</div><div class="val cp">400</div><div class="trend cm">8%</div></div>
+  <div class="stat-card e"><div class="sub">E·对抗失信</div><div class="val ce">600</div><div class="trend cm">12%</div></div>
+  <div class="stat-card a"><div class="sub">A·合理争议</div><div class="val ca">750</div><div class="trend cm">15%</div></div>
+  <div class="stat-card b"><div class="sub">B·现实困难</div><div class="val ct">500</div><div class="trend cm">10%</div></div>
+  <div class="stat-card d"><div class="sub">D·惯性失约</div><div class="val co">1,000</div><div class="trend cm">20%</div></div>
+  <div class="stat-card c"><div class="sub">C·观望拖延</div><div class="val cm">1,750</div><div class="trend cm">35%</div></div>
+</div>
+</div>
+
+<div class="sec"><div class="sec-title">标签在各池中的排序权重</div>
+<div class="table-wrap"><table><tr><th>标签</th><th>主池</th><th>流动池</th><th>个人池</th><th>意向池</th></tr>
+<tr><td><span class="tag tp">F</span> 历史复杂</td><td class="ce">排除</td><td class="ce">排除</td><td class="ce">排除</td><td class="ce">排除</td></tr>
+<tr><td><span class="tag tr">E</span> 对抗失信</td><td>底部保留</td><td class="ce">-50</td><td class="ce">-50</td><td>手动加入</td></tr>
+<tr><td><span class="tag ty">A</span> 合理争议</td><td>正常</td><td class="ca">-20</td><td class="ca">-20</td><td>手动加入</td></tr>
+<tr><td><span class="tag to">D</span> 惯性失约</td><td>正常</td><td>-5</td><td>-5</td><td class="ct">高优先级</td></tr>
+<tr><td><span class="tag tg">B</span> 现实困难</td><td>正常</td><td class="ct">+5</td><td class="ct">+5</td><td>加入</td></tr>
+<tr><td><span class="tag tm">C</span> 观望拖延</td><td>正常</td><td>0</td><td>0</td><td class="ct">最有潜力</td></tr></table></div></div>
+</div>
+
+<!-- ====== 评分分析 ====== -->
+<div id="scores" class="page">
+<h1>📈 评分分析</h1>
+<p class="subtitle">AI评分与客服感受分 · 双维度分布 · AI准确率验证</p>
+
+<div class="row row2">
+<div class="sec"><div class="sec-title">AI评分分布（已接通·全池）</div>
+<div class="table-wrap"><table><tr><th>区间</th><th>数量</th><th>占比</th><th>含义</th></tr>
+<tr><td class="ct">81-100</td><td class="ct">450</td><td>18%</td><td>极大概率还款</td></tr>
+<tr><td class="ct">61-80</td><td class="ct">600</td><td>24%</td><td>较大概率</td></tr>
+<tr><td class="ca">41-60</td><td class="ca">500</td><td>20%</td><td>倾向不明</td></tr>
+<tr><td class="ce">21-40</td><td class="ce">550</td><td>22%</td><td>可能性低</td></tr>
+<tr><td class="ce">1-20</td><td class="ce">400</td><td>16%</td><td>几乎不可能</td></tr></table></div></div>
+<div class="sec"><div class="sec-title">感受分分布（全池）</div>
+<div class="table-wrap"><table><tr><th>分值</th><th>数量</th><th>占比</th></tr>
+<tr><td>5(积极)</td><td class="ct">500</td><td>20%</td></tr>
+<tr><td>4(配合)</td><td class="ct">750</td><td>30%</td></tr>
+<tr><td>3(中性)</td><td>700</td><td>28%</td></tr>
+<tr><td>2(消极)</td><td class="ca">300</td><td>12%</td></tr>
+<tr><td>1(对抗)</td><td class="ce">250</td><td>10%</td></tr></table></div></div>
+</div>
+
+<div class="sec"><div class="sec-title">AI评分准确率验证（AI评分 vs 实际回款）</div>
+<div class="table-wrap"><table><tr><th>AI评分区间</th><th>总数</th><th>实际回款</th><th>回款率</th><th>准确率评价</th></tr>
+<tr><td>81-100</td><td class="ct">450</td><td class="ct">108</td><td class="ct">24.0%</td><td><span class="tag tg">高准确</span></td></tr>
+<tr><td>61-80</td><td class="ct">600</td><td class="ct">84</td><td class="ct">14.0%</td><td><span class="tag tg">较准确</span></td></tr>
+<tr><td>41-60</td><td class="ca">500</td><td>30</td><td>6.0%</td><td><span class="tag ty">一般</span></td></tr>
+<tr><td>21-40</td><td class="ce">550</td><td class="ce">11</td><td class="ce">2.0%</td><td><span class="tag tr">低</span></td></tr>
+<tr><td>1-20</td><td class="ce">400</td><td class="ce">2</td><td class="ce">0.5%</td><td><span class="tag tr">极低</span></td></tr></table></div>
+</div>
+
+<div class="sec"><div class="sec-title">AI评分模型</div>
+<div class="table-wrap"><table><tr><th>分析维度</th><th>权重</th><th>低分信号</th><th>高分信号</th></tr>
+<tr><td>还款态度</td><td>最高</td><td class="ce">不交/随便/再说</td><td class="ct">我会交/怎么交/分期</td></tr>
+<tr><td>沟通配合度</td><td>高</td><td class="ce">敷衍/挂断</td><td class="ct">主动询问/谢谢</td></tr>
+<tr><td>问题性质</td><td>中</td><td>无理由拒缴</td><td class="ct">有困难或争议</td></tr>
+<tr><td>历史验证</td><td>中</td><td class="ce">多次答应未履约</td><td class="ct">工单闭环+好评</td></tr></table></div>
+</div>
+
+<div class="sec"><div class="sec-title">5人感受分偏差分析</div>
+<div class="table-wrap"><table><tr><th>客服</th><th>AI均分</th><th>感受均分</th><th>偏差</th><th>习惯倾向</th></tr>
+<tr><td>客服A</td><td class="ct">72</td><td class="ct">4.2</td><td>+0.3</td><td>略偏高<span class="cm"> · 较乐观</span></td></tr>
+<tr><td>客服B</td><td class="ct">65</td><td class="ct">3.8</td><td>0.0</td><td><span class="tag tg">均衡</span></td></tr>
+<tr><td>客服C</td><td>58</td><td>3.2</td><td>-0.1</td><td><span class="tag tg">均衡</span></td></tr>
+<tr><td>客服D</td><td>50</td><td>2.8</td><td class="ce">-0.4</td><td>略偏低<span class="cm"> · 较严苛</span></td></tr>
+<tr><td>客服E</td><td>52</td><td>2.9</td><td>-0.3</td><td>略偏低<span class="cm"> · 偏保守</span></td></tr></table></div>
+</div>
+
+<div class="sec"><div class="sec-title">两分数在流动池排序中的权重</div>
+<div class="table-wrap"><table><tr><th>排序因子</th><th>权重</th><th>说明</th></tr>
+<tr><td>金额等级</td><td class="ct">40%</td><td>首要因子。大金额优先</td></tr>
+<tr><td>AI评分</td><td class="ct">35%</td><td>仅接通时产生。无评分的排后面</td></tr>
+<tr><td>感受分增益</td><td>15%</td><td>1→-30 / 2→-15 / 3→0 / 4→+15 / 5→+30</td></tr>
+<tr><td>标签修正</td><td>10%</td><td>F排除 / E-50 / A-20 / D-5 / B+5 / C基准</td></tr></table></div></div>
+</div>
+
+<!-- ====== 金额分析 ====== -->
+<div id="amounts" class="page">
+<h1>💰 金额分析</h1>
+<p class="subtitle">欠费分层 · 回款结构 · 人均待收</p>
+
+<div class="sec"><div class="sec-title">全池欠费分层统计</div>
+<div class="table-wrap"><table><tr><th>欠费区间</th><th>户数</th><th>占比</th><th>总金额</th><th>人均</th><th>已回款</th><th>回款率</th></tr>
+<tr><td>&lt; 1个月</td><td class="ct">350</td><td>7%</td><td>¥525,000</td><td>¥1,500</td><td class="ct">¥68,250</td><td class="ct">13.0%</td></tr>
+<tr><td>1-3个月</td><td class="ct">800</td><td>16%</td><td>¥2,400,000</td><td>¥3,000</td><td class="ct">¥264,000</td><td class="ct">11.0%</td></tr>
+<tr><td>3-6个月</td><td>1,200</td><td>24%</td><td>¥6,000,000</td><td>¥5,000</td><td>¥480,000</td><td>8.0%</td></tr>
+<tr><td>6-12个月</td><td>1,350</td><td>27%</td><td>¥10,800,000</td><td>¥8,000</td><td>¥540,000</td><td>5.0%</td></tr>
+<tr><td>12-24个月</td><td>800</td><td>16%</td><td>¥9,600,000</td><td>¥12,000</td><td class="ce">¥288,000</td><td class="ce">3.0%</td></tr>
+<tr><td>≥ 24个月</td><td class="ce">500</td><td>10%</td><td class="ce">¥9,000,000</td><td class="ce">¥18,000</td><td class="ce">¥90,000</td><td class="ce">1.0%</td></tr>
+<tr style="background:rgba(16,185,129,.04);font-weight:700"><td>合计</td><td>5,000</td><td>100%</td><td>¥38,325,000</td><td>¥7,665</td><td class="ct">¥1,730,250</td><td class="ct">4.5%</td></tr></table></div>
+</div>
+
+<div class="row row2">
+<div class="sec"><div class="sec-title">回款金额结构（本周）</div>
+<div class="table-wrap"><table><tr><th>金额档</th><th>笔数</th><th>金额</th><th>占比</th></tr>
+<tr><td>大额(≥5,000)</td><td class="ct">8</td><td class="ct">¥52,000</td><td class="ct">45%</td></tr>
+<tr><td>中额(2,000-5,000)</td><td>18</td><td>¥38,000</td><td>33%</td></tr>
+<tr><td>小额(＜2,000)</td><td>39</td><td>¥25,000</td><td>22%</td></tr>
+<tr style="font-weight:700"><td>合计</td><td class="ct">65</td><td class="ct">¥115,000</td><td>100%</td></tr></table></div>
+</div>
+<div class="sec"><div class="sec-title">5人人均待收金额</div>
+<div class="table-wrap"><table><tr><th>客服</th><th>个人池(户)</th><th>总待收</th><th>人均待收</th><th>vs平均</th></tr>
+<tr><td>客服A</td><td>250</td><td class="ce">¥2,050,000</td><td class="ce">¥8,200</td><td class="ce">↑7%</td></tr>
+<tr><td>客服B</td><td>250</td><td class="ce">¥1,875,000</td><td class="ce">¥7,500</td><td>↓2%</td></tr>
+<tr><td>客服C</td><td>250</td><td>¥1,700,000</td><td>¥6,800</td><td>↓11%</td></tr>
+<tr><td>客服D</td><td>250</td><td>¥1,375,000</td><td>¥5,500</td><td class="ct">↓28%</td></tr>
+<tr><td>客服E</td><td>250</td><td>¥1,250,000</td><td>¥5,000</td><td class="ct">↓35%</td></tr>
+<tr style="font-weight:700"><td>合计</td><td>1,250</td><td>¥8,250,000</td><td>¥6,600</td><td>—</td></tr></table></div>
+</div>
+</div>
+
+<!-- ====== 趋势 ====== -->
+<div id="trends" class="page">
+<h1>📉 趋势</h1>
+<p class="subtitle">周环比 · 标签流转路径</p>
+
+<div class="sec"><div class="sec-title">本周 vs 上周 核心指标对比</div>
+<div class="table-wrap"><table><tr><th>指标</th><th>上周</th><th>本周</th><th>变化</th><th>趋势</th></tr>
+<tr><td>总拨打</td><td>3,000</td><td>3,125</td><td class="ct">+125</td><td><span class="tag tg">↑ 4.2%</span></td></tr>
+<tr><td>总接通</td><td>520</td><td class="ct">550</td><td class="ct">+30</td><td><span class="tag tg">↑ 5.8%</span></td></tr>
+<tr><td>接通率</td><td>17.3%</td><td>17.6%</td><td class="ct">+0.3pp</td><td><span class="tag tg">↑</span></td></tr>
+<tr><td>总意向</td><td>240</td><td class="ct">260</td><td class="ct">+20</td><td><span class="tag tg">↑ 8.3%</span></td></tr>
+<tr><td>总承诺</td><td>125</td><td>130</td><td class="ct">+5</td><td><span class="tag tg">↑ 4.0%</span></td></tr>
+<tr><td>总回款</td><td>60</td><td class="ct">65</td><td class="ct">+5</td><td><span class="tag tg">↑ 8.3%</span></td></tr>
+<tr><td>回款金额</td><td>¥105,000</td><td class="ct">¥115,000</td><td class="ct">+¥10,000</td><td><span class="tag tg">↑ 9.5%</span></td></tr>
+<tr><td>拒接次数</td><td>370</td><td class="ce">380</td><td class="ce">+10</td><td><span class="tag tr">↑ 2.7%</span></td></tr>
+<tr><td>空号/停机新增</td><td>8</td><td>8</td><td>0</td><td><span class="tag tm">→</span></td></tr>
+</table></div>
+</div>
+
+<div class="row row2">
+<div class="sec"><div class="sec-title">5人周回款环比</div>
+<div class="table-wrap"><table><tr><th>客服</th><th>上周金额</th><th>本周金额</th><th>变化</th></tr>
+<tr><td>客服A</td><td>¥30,000</td><td class="ct">¥32,000</td><td class="ct">+6.7%</td></tr>
+<tr><td>客服B</td><td>¥17,000</td><td class="ct">¥18,000</td><td class="ct">+5.9%</td></tr>
+<tr><td>客服C</td><td>¥11,500</td><td>¥12,000</td><td class="ct">+4.3%</td></tr>
+<tr><td>客服D</td><td>¥8,500</td><td class="ce">¥8,000</td><td class="ce">-5.9%</td></tr>
+<tr><td>客服E</td><td>¥6,200</td><td>¥6,500</td><td class="ct">+4.8%</td></tr></table></div>
+</div>
+<div class="sec"><div class="sec-title">标签流转路径（本周·Top10）</div>
+<div class="table-wrap"><table><tr><th>流转路径</th><th>数量</th><th>含义</th></tr>
+<tr><td>C<span class="flow-arrow">→</span>D</td><td class="ce">85</td><td>观望→失约：承诺未兑现</td></tr>
+<tr><td>C<span class="flow-arrow">→</span>A</td><td>52</td><td>观望→争议：客服触发了问题</td></tr>
+<tr><td>D<span class="flow-arrow">→</span>C</td><td>38</td><td>失约→观望：回款后重新观察</td></tr>
+<tr><td>E<span class="flow-arrow">→</span>E</td><td>35</td><td>对抗保持：60天观察期中</td></tr>
+<tr><td>A<span class="flow-arrow">→</span>C</td><td class="ct">28</td><td>争议→观望：问题解决后正常化</td></tr>
+<tr><td>C<span class="flow-arrow">→</span>B</td><td>22</td><td>观望→困难：发现实际经济问题</td></tr>
+<tr><td>D<span class="flow-arrow">→</span>E</td><td class="ce">18</td><td>失约→对抗：多次失约升级</td></tr>
+<tr><td>B<span class="flow-arrow">→</span>C</td><td>15</td><td>困难→观望：困难缓解</td></tr>
+<tr><td>A<span class="flow-arrow">→</span>D</td><td class="ce">12</td><td>争议→失约：争议未解决+停止履约</td></tr>
+<tr><td>新增F</td><td class="ce">8</td><td>本周新增不可触达户</td></tr></table></div>
+</div>
+</div>
+
+<!-- ====== 操作中心 ====== -->
+<div id="actions" class="page">
+<h1>⚙️ 操作中心</h1>
+<p class="subtitle">管理者可执行的操作</p>
+
+<div class="sec"><div class="sec-title">池管理操作</div>
+<div class="table-wrap"><table><tr><th>操作</th><th>说明</th><th>权限</th></tr>
+<tr><td>强制释放个人池</td><td>将指定客服个人池中某户释放回流动池</td><td><span class="tag tg">可用</span></td></tr>
+<tr><td>调整客服日配额</td><td>临时调整某客服日拨打上限(±25通)</td><td><span class="tag tg">可用</span></td></tr>
+<tr><td>查看意向池(只读)</td><td>查看任意客服的意向池列表。不可修改(客服私有)</td><td><span class="tag tp">只读</span></td></tr>
+<tr><td>触发紧急轮换</td><td>非周三强制全员轮换(需二次确认)</td><td><span class="tag tr">需确认</span></td></tr>
+<tr><td>批量调整标签</td><td>手动修正AI判定错误的标签</td><td><span class="tag tg">可用</span></td></tr></table></div></div>
+
+<div class="sec"><div class="sec-title">数据查看</div>
+<div class="table-wrap"><table><tr><th>操作</th><th>说明</th></tr>
+<tr><td>查看通话记录</td><td>查看任意客服与任意业主的完整通话记录+AI评分+感受分</td></tr>
+<tr><td>查看标签变更历史</td><td>查看任意业主的标签变更时间线</td></tr>
+<tr><td>查看评分变化趋势</td><td>查看任意业主的AI评分变化曲线</td></tr>
+<tr><td>导出周报</td><td>导出本周催收数据报告(xlsx)</td></tr></table></div></div>
+</div>
+
+</div><!-- main -->
+
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+  document.getElementById(id).classList.add('active')
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    n.classList.toggle('active', n.onclick && n.onclick.toString().includes("'"+id+"'"))
+  })
+}
+function showA(i){
+  document.querySelectorAll('.ap').forEach(p=>p.classList.remove('active'))
+  document.getElementById('ap'+i).classList.add('active')
+  document.querySelectorAll('.ptab').forEach((t,j)=>t.classList.toggle('active',j===i))
+}
+</script>
+</body>
+</html>

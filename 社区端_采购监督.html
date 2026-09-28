@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>社区端 · 采购监督</title>
+<style>
+:root {
+  --bg:#0b1120;--card:#0f172a;--card2:#131d33;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;
+  --cyan:#06b6d4;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;--r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px}
+.container{max-width:1200px;margin:0 auto}
+.mod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.mod-header h2{font-size:1.3rem;font-weight:700}
+.mod-header .badge{padding:4px 12px;border-radius:12px;font-size:0.72rem;background:rgba(16,185,129,0.12);color:var(--green)}
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--card);border-radius:var(--r);padding:4px;border:1px solid var(--border)}
+.tab{padding:8px 18px;border-radius:6px;font-size:0.82rem;cursor:pointer;color:var(--muted);transition:.15s}
+.tab:hover{color:var(--text)}.tab.active{background:var(--green);color:#fff;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.stat .n{font-size:1.5rem;font-weight:800;color:var(--green)}.stat .l{font-size:0.65rem;color:var(--muted);margin-top:4px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card-hd h3{font-size:0.95rem;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:0.79rem}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:rgba(30,41,59,0.5);font-weight:600;color:var(--muted);font-size:0.7rem}
+tr:hover td{background:rgba(16,185,129,0.02)}
+.tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.68rem;font-weight:600}
+.tag-green{background:rgba(16,185,129,0.12);color:var(--green)}.tag-red{background:rgba(239,68,68,0.12);color:var(--red)}
+.tag-amber{background:rgba(245,158,11,0.12);color:var(--amber)}.tag-cyan{background:rgba(6,182,212,0.12);color:var(--cyan)}
+.tag-muted{background:rgba(100,116,139,0.12);color:var(--muted)}
+.btn{display:inline-block;padding:7px 16px;border-radius:6px;border:none;cursor:pointer;font-size:0.78rem;font-family:inherit}
+.btn:hover{opacity:.85}.btn-p{background:var(--green);color:#fff;font-weight:600}.btn-o{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-sm{padding:4px 10px;font-size:0.68rem}
+.alert{padding:10px 14px;border-radius:6px;font-size:0.76rem;margin-bottom:12px}
+.alert-i{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:var(--blue)}
+.alert-w{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);color:var(--amber)}
+.alert-r{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:var(--red)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:800px){.stats,.frow{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="mod-header">
+  <h2>🏛️ 采购监督 <span class="badge">社区端 · 街道/网格员</span></h2>
+  <span style="font-size:0.78rem;color:var(--muted)">辖区：城东区 | 覆盖3个小区</span>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+
+</div>
+
+<script>
+var cur='dash';
+var tabs=[
+  {id:'dash',label:'📊 辖区总览'},
+  {id:'records',label:'📋 大额备案'},
+  {id:'fund',label:'💰 维修基金'},
+  {id:'complaints',label:'📩 供应商投诉'},
+  {id:'cross',label:'🔍 跨小区预警'}
+];
+
+function rt(){
+  var h='';
+  tabs.forEach(function(t){
+    var bd='';
+    if(t.id==='complaints'){
+      var pc=D.complaints.filter(function(x){return x.status==='待处理'}).length;
+      if(pc) bd='<span style="margin-left:6px;padding:1px 7px;border-radius:8px;font-size:0.65rem;background:rgba(239,68,68,0.3);color:var(--red)">'+pc+'</span>';
+    }
+    h+='<div class="tab'+(t.id===cur?' active':'')+'" onclick="sw(\''+t.id+'\')">'+t.label+bd+'</div>';
+  });
+  document.getElementById('tabs').innerHTML=h;
+}
+function sw(id){cur=id;rt();r(id)}
+
+var P='sgzf_cm_sc_';
+var D={records:[],funds:[],complaints:[],crossAlerts:[]};
+function load(){
+  try{var d=localStorage.getItem(P+'data');if(d)D=JSON.parse(d)}catch(e){seed()}
+  if(!D.records.length) seed();
+}
+function save(){localStorage.setItem(P+'data',JSON.stringify(D))}
+function seed(){
+  D.records=[
+    {id:'RC001',community:'阳光花园',item:'电梯钢丝绳更换',amount:28000,date:'2026-07-20',status:'已备案',supplier:'通力电梯'},
+    {id:'RC002',community:'翠苑新村',item:'配电房改造',amount:45000,date:'2026-06-15',status:'已备案',supplier:'—'},
+    {id:'RC003',community:'阳光花园',item:'消防栓年检+充装',amount:15000,date:'2026-07-18',status:'待备案',supplier:'安盾消防'}
+  ];
+  D.funds=[
+    {community:'阳光花园',total:380000,used:168000,pct:44,lastUse:'2026-07-18',lastItem:'消防栓检测',status:'正常'},
+    {community:'翠苑新村',total:250000,used:195000,pct:78,lastUse:'2026-06-15',lastItem:'配电房改造',status:'关注'},
+    {community:'锦绣家园',total:300000,used:60000,pct:20,lastUse:'2026-05-10',lastItem:'门禁系统',status:'正常'}
+  ];
+  D.complaints=[
+    {id:'CP001',community:'阳光花园',supplier:'通力电梯',content:'电梯维保后仍有异响，业主反映3次未解决',date:'2026-07-22',status:'待处理',from:'业主张建国'},
+    {id:'CP002',community:'翠苑新村',supplier:'—',content:'绿化修剪后树枝未清运，堆在单元门口2天',date:'2026-07-15',status:'已处理',from:'业主李芳'}
+  ];
+  D.crossAlerts=[
+    {supplier:'安保用品商城',issue:'阳光花园已将其移出T2（信用分58+经营异常），但仍在翠苑新村T2池中',date:'2026-07-20',action:'建议通知翠苑新村业委会'}
+  ];
+  save();
+}
+
+function r(t){
+  if(t==='dash') rd();else if(t==='records') rrc();else if(t==='fund') rfd();
+  else if(t==='complaints') rcp();else if(t==='cross') rcr();
+}
+
+function rd(){
+  var h='<div class="stats">';
+  h+='<div class="stat"><div class="n">3</div><div class="l">辖区小区</div></div>';
+  h+='<div class="stat"><div class="n">'+D.records.length+'</div><div class="l">大额备案</div></div>';
+  h+='<div class="stat"><div class="n">'+D.funds.reduce(function(s,f){return s+f.total},0).toLocaleString()+'</div><div class="l">维修基金总额</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--amber)">'+D.complaints.filter(function(x){return x.status==='待处理'}).length+'</div><div class="l">待处理投诉</div></div>';
+  h+='<div class="stat"><div class="n" style="color:var(--red)">'+D.crossAlerts.length+'</div><div class="l">跨小区预警</div></div>';
+  h+='</div>';
+
+  // 待备案
+  var pending=D.records.filter(function(x){return x.status==='待备案'});
+  h+='<div class="card"><div class="card-hd"><h3>📋 待备案采购</h3></div>';
+  if(!pending.length) h+='<p style="text-align:center;padding:20px;color:var(--muted)">暂无待备案</p>';
+  else pending.forEach(function(x){
+    h+='<div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">';
+    h+='<div><strong>'+x.item+'</strong><br><span style="font-size:0.72rem;color:var(--muted)">'+x.community+' | ¥'+x.amount.toLocaleString()+' | '+x.date+'</span></div>';
+    h+='<div><button class="btn btn-p btn-sm">确认备案</button></div></div>';
+  });
+  h+='</div>';
+
+  // 跨小区预警
+  D.crossAlerts.forEach(function(a){
+    h+='<div class="alert alert-r">🔴 <strong>跨小区预警：</strong>'+a.issue+'<br><span style="font-size:0.68rem">'+a.date+' | 建议：'+a.action+'</span></div>';
+  });
+  h+='</div>';
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function rrc(){
+  var h='<div class="card"><div class="card-hd"><h3>📋 大额采购备案（>20,000元）</h3></div>';
+  h+='<table><tr><th>编号</th><th>小区</th><th>项目</th><th>供应商</th><th>金额</th><th>日期</th><th>状态</th></tr>';
+  D.records.forEach(function(x){
+    var st=x.status==='已备案'?'tag-green':'tag-amber';
+    h+='<tr><td>'+x.id+'</td><td>'+x.community+'</td><td>'+x.item+'</td><td>'+x.supplier+'</td><td>¥'+x.amount.toLocaleString()+'</td><td>'+x.date+'</td><td><span class="tag '+st+'">'+x.status+'</span></td></tr>';
+  });
+  h+='</table></div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function rfd(){
+  var h='<div class="card"><h3 style="margin-bottom:12px">💰 维修基金使用监督</h3>';
+  D.funds.forEach(function(f){
+    var barCls=f.pct>80?'#ef4444':f.pct>60?'#f59e0b':'#10b981';
+    var tagCls=f.status==='正常'?'tag-green':f.status==='关注'?'tag-amber':'tag-red';
+    h+='<div style="border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:8px"><strong>'+f.community+'</strong><span class="tag '+tagCls+'">'+f.status+'</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px"><span>使用率</span><span>'+f.pct+'%（¥'+f.used.toLocaleString()+' / ¥'+f.total.toLocaleString()+'）</span></div>';
+    h+='<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+f.pct+'%;background:'+barCls+';border-radius:4px"></div></div>';
+    h+='<div style="font-size:0.7rem;color:var(--muted);margin-top:6px">最近使用：'+f.lastUse+' | '+f.lastItem+'</div></div>';
+  });
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function rcp(){
+  var h='<div class="card"><div class="card-hd"><h3>📩 供应商投诉</h3></div>';
+  D.complaints.forEach(function(c){
+    var st=c.status==='待处理'?'tag-red':'tag-green';
+    h+='<div style="border-left:3px solid '+(c.status==='待处理'?'var(--red)':'var(--green)')+';padding:12px 16px;margin-bottom:10px;background:var(--card2);border-radius:0 8px 8px 0">';
+    h+='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><strong>'+c.supplier||'未指定供应商'+'</strong><span class="tag '+st+'">'+c.status+'</span></div>';
+    h+='<div style="font-size:0.78rem;margin-bottom:4px">'+c.content+'</div>';
+    h+='<div style="font-size:0.7rem;color:var(--muted)">'+c.community+' | '+c.from+' | '+c.date+'</div>';
+    if(c.status==='待处理') h+='<button class="btn btn-p btn-sm" style="margin-top:8px">受理</button>';
+    h+='</div>';
+  });
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+function rcr(){
+  var h='<div class="card"><div class="card-hd"><h3>🔍 跨小区供应商预警</h3></div>';
+  h+='<div class="alert alert-w">⚠️ 以下供应商在一个小区出现问题，但在其他小区仍处于正常状态——社区端需要协调处理。</div>';
+  D.crossAlerts.forEach(function(a){
+    h+='<div class="alert alert-r">🔴 '+a.issue+'<br><span style="font-size:0.68rem">'+a.date+' | '+a.action+'</span></div>';
+  });
+  if(!D.crossAlerts.length) h+='<p style="text-align:center;padding:30px;color:var(--muted)">暂无跨小区预警</p>';
+  h+='</div>';
+  document.getElementById('content').innerHTML=h;
+}
+
+load();rt();r('dash');
+</script>
+</body>
+</html>

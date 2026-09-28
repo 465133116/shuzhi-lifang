@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>意向池功能 · 思维导图</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;--orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;overflow:auto}
+svg{width:100%;height:auto;display:block}
+.node text{font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+.edge{stroke:var(--border);stroke-width:1.5;fill:none}
+.edge.green{stroke:rgba(16,185,129,.4)}
+.edge.purple{stroke:rgba(139,92,246,.4)}
+.edge.amber{stroke:rgba(245,158,11,.4)}
+.edge.blue{stroke:rgba(59,130,246,.4)}
+.edge.orange{stroke:rgba(249,115,22,.4)}
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 1010" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <linearGradient id="g0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+  <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+</defs>
+
+<!-- ====== ROOT ====== -->
+<rect x="660" y="24" width="280" height="64" rx="14" fill="url(#g0)" filter="url(#glow)"/>
+<text x="800" y="48" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">⭐ 意向池 · 功能总览</text>
+<text x="800" y="70" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.75)">≤50户 · 私有资产 · 唯一留人通道 · 周三不回收 · 跟人走</text>
+
+<line x1="700" y1="88" x2="160" y2="140" class="edge green"/>
+<line x1="730" y1="88" x2="480" y2="140" class="edge purple"/>
+<line x1="800" y1="88" x2="800" y2="140" class="edge blue"/>
+<line x1="870" y1="88" x2="1120" y2="140" class="edge amber"/>
+<line x1="900" y1="88" x2="1440" y2="140" class="edge orange"/>
+
+<!-- ====== 1. 计数规则 ====== -->
+<g transform="translate(20,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#10b981" font-weight="700">🔢 计数规则</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge green"/>
+
+  <rect x="0" y="60" width="280" height="88" rx="8" fill="#131d33" stroke="rgba(16,185,129,.5)" stroke-width="1"/>
+  <text x="140" y="84" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">上限 50户</text>
+  <text x="140" y="104" text-anchor="middle" font-size="9" fill="#94a3b8">只数三态</text>
+  <text x="140" y="122" text-anchor="middle" font-size="10" fill="#e2e8f0">催收中 · 暂停 · 部分还款</text>
+
+  <rect x="0" y="158" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="184" text-anchor="middle" font-size="12" fill="#e2e8f0" font-weight="600">其他状态</text>
+  <text x="140" y="206" text-anchor="middle" font-size="10" fill="#94a3b8">一律不占名额</text>
+
+  <rect x="0" y="234" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="260" text-anchor="middle" font-size="12" fill="#e2e8f0" font-weight="600">界面显示</text>
+  <text x="140" y="282" text-anchor="middle" font-size="10" fill="#94a3b8">计入名额 X/50 + 回款取消 N户</text>
+
+  <rect x="0" y="310" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="336" text-anchor="middle" font-size="12" fill="#e2e8f0" font-weight="600">实际持有</text>
+  <text x="140" y="358" text-anchor="middle" font-size="10" fill="#94a3b8">个人池250 + 意向池（互不挤占）</text>
+
+  <rect x="0" y="386" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
+  <text x="140" y="412" text-anchor="middle" font-size="12" fill="#10b981" font-weight="600">池内排序</text>
+  <text x="140" y="434" text-anchor="middle" font-size="10" fill="#94a3b8">按欠费金额大小（大额在前）</text>
+
+  <text x="140" y="470" text-anchor="middle" font-size="9" fill="#64748b">池内户全局锁定 · 不参与任何流转分配</text>
+</g>
+
+<!-- ====== 2. 拉入 ====== -->
+<g transform="translate(340,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#8b5cf6" font-weight="700">📥 拉入</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge purple"/>
+
+  <rect x="0" y="60" width="280" height="88" rx="8" fill="#131d33" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+  <text x="140" y="84" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="700">无门槛</text>
+  <text x="140" y="104" text-anchor="middle" font-size="9" fill="#94a3b8">任何接通户都可以拉</text>
+  <text x="140" y="122" text-anchor="middle" font-size="10" fill="#e2e8f0">E·F 类也可拉入</text>
+
+  <rect x="0" y="158" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="184" text-anchor="middle" font-size="12" fill="#e2e8f0" font-weight="600">时机</text>
+  <text x="140" y="206" text-anchor="middle" font-size="10" fill="#94a3b8">挂断后 · 分流弹窗操作（通话中不弹）</text>
+
+  <rect x="0" y="234" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(139,92,246,.4)" stroke-width="1"/>
+  <text x="140" y="260" text-anchor="middle" font-size="12" fill="#8b5cf6" font-weight="600">动作：移入</text>
+  <text x="140" y="282" text-anchor="middle" font-size="10" fill="#94a3b8">从个人池移入 · 唯一归属（非复制）</text>
+
+  <rect x="0" y="310" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="336" text-anchor="middle" font-size="12" fill="#e2e8f0" font-weight="600">拨打节奏</text>
+  <text x="140" y="358" text-anchor="middle" font-size="10" fill="#94a3b8">客服自行安排 · 无强制回访日</text>
+</g>
+
+<!-- ====== 3. 在池四态 ====== -->
+<g transform="translate(660,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#3b82f6" font-weight="700">📊 在池四态</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge blue"/>
+
+  <rect x="0" y="60" width="280" height="80" rx="8" fill="#132033" stroke="rgba(16,185,129,.45)" stroke-width="1"/>
+  <text x="140" y="86" text-anchor="middle" font-size="12" fill="#10b981" font-weight="700">✅ 催收中 · 计数</text>
+  <text x="140" y="110" text-anchor="middle" font-size="10" fill="#94a3b8">正常跟进中</text>
+
+  <rect x="0" y="150" width="280" height="80" rx="8" fill="#132033" stroke="rgba(16,185,129,.45)" stroke-width="1"/>
+  <text x="140" y="176" text-anchor="middle" font-size="12" fill="#10b981" font-weight="700">✅ 暂停 · 计数</text>
+  <text x="140" y="200" text-anchor="middle" font-size="10" fill="#94a3b8">管理员触发 · 期间不拨打</text>
+  <text x="140" y="218" text-anchor="middle" font-size="9" fill="#64748b">恢复由客服跟进 · 可手动移出</text>
+
+  <rect x="0" y="240" width="280" height="80" rx="8" fill="#132033" stroke="rgba(16,185,129,.45)" stroke-width="1"/>
+  <text x="140" y="266" text-anchor="middle" font-size="12" fill="#10b981" font-weight="700">✅ 部分还款 · 计数</text>
+  <text x="140" y="290" text-anchor="middle" font-size="10" fill="#94a3b8">还1分也算 · 剩余继续跟</text>
+  <text x="140" y="308" text-anchor="middle" font-size="9" fill="#64748b">回款数据群内沟通确认</text>
+
+  <rect x="0" y="330" width="280" height="80" rx="8" fill="#1a1420" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+  <text x="140" y="356" text-anchor="middle" font-size="12" fill="#8b5cf6" font-weight="700">❌ 回款取消 · 不计数</text>
+  <text x="140" y="380" text-anchor="middle" font-size="10" fill="#94a3b8">管理员标记放回 · 标签不变 · 可超50</text>
+
+  <text x="140" y="440" text-anchor="middle" font-size="9" fill="#64748b">池内户被判E/F → 继续预留 · 不自动移出</text>
+  <text x="140" y="458" text-anchor="middle" font-size="9" fill="#64748b">放回后标签照常更新（非冻结）</text>
+</g>
+
+<!-- ====== 4. 移出通道 ====== -->
+<g transform="translate(980,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">🚪 移出通道</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge amber"/>
+
+  <rect x="0" y="60" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
+  <text x="140" y="86" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">回款（物业报数为准）</text>
+  <text x="140" y="108" text-anchor="middle" font-size="10" fill="#94a3b8">→ 自动移出 · 记入业绩</text>
+
+  <rect x="0" y="136" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(16,185,129,.4)" stroke-width="1"/>
+  <text x="140" y="162" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">剩余减免结清</text>
+  <text x="140" y="184" text-anchor="middle" font-size="10" fill="#94a3b8">→ 算回款 · 自动移出</text>
+
+  <rect x="0" y="212" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(139,92,246,.45)" stroke-width="1"/>
+  <text x="140" y="238" text-anchor="middle" font-size="11" fill="#8b5cf6" font-weight="600">回款又取消</text>
+  <text x="140" y="260" text-anchor="middle" font-size="10" fill="#94a3b8">→ 放回池 · 不计上限（可超50）</text>
+
+  <rect x="0" y="288" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(245,158,11,.45)" stroke-width="1"/>
+  <text x="140" y="314" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">手动移出（判断无望）</text>
+  <text x="140" y="336" text-anchor="middle" font-size="10" fill="#94a3b8">→ 回流动池 · 下次流转给其他人</text>
+
+  <rect x="0" y="364" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(245,158,11,.45)" stroke-width="1"/>
+  <text x="140" y="390" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">满50拉新被踢</text>
+  <text x="140" y="412" text-anchor="middle" font-size="10" fill="#94a3b8">只踢计数的 · 正常回流动池</text>
+
+  <rect x="0" y="440" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(59,130,246,.4)" stroke-width="1"/>
+  <text x="140" y="466" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">业主声称已缴</text>
+  <text x="140" y="488" text-anchor="middle" font-size="10" fill="#94a3b8">先入意向池等物业确认 · 期间自定联系</text>
+</g>
+
+<!-- ====== 5. 归属与边界 ====== -->
+<g transform="translate(1300,140)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f97316" font-weight="700">🛡️ 归属与边界</text>
+  <line x1="140" y1="45" x2="140" y2="60" class="edge orange"/>
+
+  <rect x="0" y="60" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(139,92,246,.45)" stroke-width="1"/>
+  <text x="140" y="86" text-anchor="middle" font-size="11" fill="#8b5cf6" font-weight="600">周三轮换</text>
+  <text x="140" y="108" text-anchor="middle" font-size="10" fill="#94a3b8">→ 不回收 · 永远跟人走</text>
+
+  <rect x="0" y="136" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="162" text-anchor="middle" font-size="11" fill="#e2e8f0" font-weight="600">独立</text>
+  <text x="140" y="184" text-anchor="middle" font-size="10" fill="#94a3b8">不算在个人池250内</text>
+
+  <rect x="0" y="212" width="280" height="66" rx="8" fill="#131d33" stroke="#1e293b" stroke-width="1"/>
+  <text x="140" y="238" text-anchor="middle" font-size="11" fill="#e2e8f0" font-weight="600">前期</text>
+  <text x="140" y="260" text-anchor="middle" font-size="10" fill="#94a3b8">无自动移出（但别囤着不打）</text>
+
+  <rect x="0" y="288" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(249,115,22,.45)" stroke-width="1"/>
+  <text x="140" y="314" text-anchor="middle" font-size="11" fill="#f97316" font-weight="600">客服离职</text>
+  <text x="140" y="336" text-anchor="middle" font-size="10" fill="#94a3b8">→ 管理员回收后分派给客服</text>
+
+  <rect x="0" y="364" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(249,115,22,.45)" stroke-width="1"/>
+  <text x="140" y="390" text-anchor="middle" font-size="11" fill="#f97316" font-weight="600">项目结案</text>
+  <text x="140" y="412" text-anchor="middle" font-size="10" fill="#94a3b8">→ 该小区意向户自动终止</text>
+
+  <rect x="0" y="440" width="280" height="66" rx="8" fill="#131d33" stroke="rgba(249,115,22,.45)" stroke-width="1"/>
+  <text x="140" y="466" text-anchor="middle" font-size="11" fill="#f97316" font-weight="600">投诉缓联</text>
+  <text x="140" y="488" text-anchor="middle" font-size="10" fill="#94a3b8">仅物业通知或管理员操作暂停</text>
+</g>
+
+<!-- ====== 底部：生命周期 ====== -->
+<rect x="40" y="600" width="1520" height="45" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+<text x="800" y="628" text-anchor="middle" font-size="15" fill="#8b5cf6" font-weight="700">🔄 生命周期：一个户怎么进出意向池</text>
+
+<!-- 主流程 -->
+<rect x="40" y="665" width="240" height="85" rx="10" fill="#131d33" stroke="rgba(16,185,129,.5)" stroke-width="1"/>
+<text x="160" y="694" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">✅ 个人池 250户</text>
+<text x="160" y="716" text-anchor="middle" font-size="10" fill="#94a3b8">系统分配 · 我的名单</text>
+
+<line x1="280" y1="707" x2="376" y2="707" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="328" y="692" text-anchor="middle" font-size="9" fill="#8b5cf6">拉入：无门槛·挂断后·移入</text>
+
+<rect x="380" y="655" width="440" height="105" rx="12" fill="#131d33" stroke="#8b5cf6" stroke-width="2"/>
+<text x="600" y="684" text-anchor="middle" font-size="14" fill="#8b5cf6" font-weight="700">⭐ 意向池 · 上限50户（只数三态）</text>
+<text x="600" y="708" text-anchor="middle" font-size="10" fill="#e2e8f0">催收中 · 暂停 · 部分还款（计数）</text>
+<text x="600" y="728" text-anchor="middle" font-size="10" fill="#94a3b8">＋ 回款取消超额（不计数 · 标签不变 · 可超50）</text>
+
+<line x1="820" y1="707" x2="916" y2="707" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="868" y="692" text-anchor="middle" font-size="9" fill="#10b981">回款到账（物业报数）</text>
+
+<rect x="920" y="665" width="260" height="85" rx="10" fill="#132033" stroke="rgba(16,185,129,.6)" stroke-width="1.5"/>
+<text x="1050" y="694" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">💰 回款 · 自动移出</text>
+<text x="1050" y="716" text-anchor="middle" font-size="10" fill="#94a3b8">以物业公司报回款为准 · 记入业绩</text>
+
+<text x="1400" y="707" text-anchor="middle" font-size="10" fill="#64748b">剩余减免结清 → 同样算回款自动移出</text>
+
+<!-- 意向池底部四个出口 -->
+<line x1="600" y1="760" x2="600" y2="788" stroke="#64748b" stroke-width="1.2"/>
+<line x1="335" y1="788" x2="1245" y2="788" stroke="#64748b" stroke-width="1.2"/>
+
+<line x1="335" y1="788" x2="335" y2="806" stroke="#8b5cf6" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="625" y1="788" x2="625" y2="806" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="915" y1="788" x2="915" y2="806" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="1245" y1="788" x2="1245" y2="806" stroke="#10b981" stroke-width="1.2" marker-end="url(#arr)"/>
+
+<rect x="200" y="810" width="270" height="72" rx="8" fill="#131d33" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+<text x="335" y="838" text-anchor="middle" font-size="11" fill="#8b5cf6" font-weight="600">🔄 回款又取消</text>
+<text x="335" y="860" text-anchor="middle" font-size="10" fill="#94a3b8">管理员标记放回 · 标签不变 · 不计数</text>
+
+<rect x="490" y="810" width="270" height="72" rx="8" fill="#131d33" stroke="rgba(245,158,11,.5)" stroke-width="1"/>
+<text x="625" y="838" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">🚪 手动移出</text>
+<text x="625" y="860" text-anchor="middle" font-size="10" fill="#94a3b8">回流动池 · 下次流转给其他人</text>
+
+<rect x="780" y="810" width="270" height="72" rx="8" fill="#131d33" stroke="rgba(245,158,11,.5)" stroke-width="1"/>
+<text x="915" y="838" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">👢 满50拉新被踢</text>
+<text x="915" y="860" text-anchor="middle" font-size="10" fill="#94a3b8">只踢计入名额的 · 正常回流动池</text>
+
+<rect x="1070" y="810" width="270" height="72" rx="8" fill="#131d33" stroke="rgba(16,185,129,.5)" stroke-width="1"/>
+<text x="1205" y="838" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">🔒 周三轮换</text>
+<text x="1205" y="860" text-anchor="middle" font-size="10" fill="#94a3b8">不回收 · 永远跟我走</text>
+
+<!-- ====== 图例 ====== -->
+<g transform="translate(40,918)">
+  <rect width="1520" height="40" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="18" y="25" font-size="11" fill="#64748b">图例:</text>
+  <rect x="70" y="13" width="14" height="14" rx="3" fill="#10b981" opacity=".3"/>
+  <text x="90" y="25" font-size="10" fill="#64748b">计数/回款</text>
+  <rect x="175" y="13" width="14" height="14" rx="3" fill="#8b5cf6" opacity=".3"/>
+  <text x="195" y="25" font-size="10" fill="#64748b">拉入/私有</text>
+  <rect x="280" y="13" width="14" height="14" rx="3" fill="#3b82f6" opacity=".3"/>
+  <text x="300" y="25" font-size="10" fill="#64748b">在池状态</text>
+  <rect x="385" y="13" width="14" height="14" rx="3" fill="#f59e0b" opacity=".3"/>
+  <text x="405" y="25" font-size="10" fill="#64748b">移出通道</text>
+  <rect x="490" y="13" width="14" height="14" rx="3" fill="#f97316" opacity=".3"/>
+  <text x="510" y="25" font-size="10" fill="#64748b">归属/异常</text>
+  <text x="1510" y="25" text-anchor="end" font-size="9" fill="#475569">口径：意向池规则_定稿.md（2026-08-14 · 18条逐条拍板）</text>
+</g>
+
+<text x="800" y="992" text-anchor="middle" font-size="9" fill="#475569">拉入无门槛 · 挂断后移入 · 三态计数 · 回款以物业报数为准 · 周三不回收 · 唯一留人通道 · 离职回收后分派</text>
+
+</svg>
+</body>
+</html>

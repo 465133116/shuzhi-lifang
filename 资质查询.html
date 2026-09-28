@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>数治理方 · 资质查询</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --p:#2563eb;--pd:#1e40af;--bg:#f0f2f5;--card:#fff;--t:#1e293b;--sub:#64748b;
+  --b:#e2e8f0;--g:#059669;--o:#d97706;--r:#dc2626;--gy:#94a3b8;
+}
+body{background:var(--bg);font-family:'PingFang SC','Microsoft YaHei',sans-serif;color:var(--t);min-height:100vh}
+/* ===== 顶部 ===== */
+.top{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;padding:30px 20px 64px}
+.top-in{max-width:920px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .logo{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:19px}
+.brand .nm{font-size:20px;font-weight:700;letter-spacing:1px}
+.brand .tag{font-size:11px;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:20px;margin-left:6px;letter-spacing:2px}
+.brand .slogan{font-size:12px;color:rgba(255,255,255,.75);margin-top:6px;padding-left:46px;letter-spacing:1px}
+.search{margin-top:18px;background:#fff;border-radius:14px;padding:7px;display:flex;align-items:center;box-shadow:0 10px 28px rgba(15,23,42,.25);position:relative;z-index:30}
+.search .s-ic{font-size:17px;padding:0 4px 0 12px;color:var(--gy)}
+.search input{flex:1;border:0;outline:0;font-size:15px;padding:9px 8px;color:var(--t);background:transparent;min-width:0}
+.search input::placeholder{color:#a8b3c4}
+.search button{background:var(--p);color:#fff;border:0;border-radius:9px;padding:10px 24px;font-size:14px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.search button:hover{background:var(--pd)}
+.qtabs{display:flex;gap:8px;margin-top:14px}
+.qtabs span{padding:5px 16px;border-radius:18px;font-size:12.5px;cursor:pointer;background:rgba(255,255,255,.14);color:rgba(255,255,255,.85);transition:.15s;user-select:none}
+.qtabs span.on{background:#fff;color:var(--p);font-weight:600}
+.qchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.qchips span{font-size:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:4px 12px;border-radius:14px;cursor:pointer;color:rgba(255,255,255,.9)}
+.qchips span:hover{background:rgba(255,255,255,.24)}
+/* ===== 搜索建议 ===== */
+.sug{position:absolute;top:calc(100% + 8px);left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 16px 40px rgba(15,23,42,.28);overflow:hidden;max-height:400px;overflow-y:auto;text-align:left}
+.sug .g{font-size:11px;color:var(--gy);padding:9px 16px 3px;letter-spacing:1px}
+.sug .it{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;border-bottom:1px solid #f1f5f9}
+.sug .it:last-child{border-bottom:0}
+.sug .it:hover{background:#eff6ff}
+.sug .it .l{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--t)}
+.sug .it .l .tp{font-size:11px;color:var(--sub);background:#f1f5f9;padding:1px 8px;border-radius:4px}
+.sug .it .sc{font-weight:700;font-size:13px}
+.sug .none{padding:16px;color:var(--gy);font-size:13px;text-align:center}
+/* ===== 主体 ===== */
+.main{max-width:920px;margin:-36px auto 0;padding:0 20px}
+.card{background:var(--card);border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.07);padding:20px;margin-bottom:16px}
+.card h3{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card h3 .cnt{font-size:11px;color:var(--gy);font-weight:400;margin-left:auto}
+/* 统计条 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.st{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(15,23,42,.07)}
+.st .n{font-size:26px;font-weight:700}
+.st .l{font-size:12px;color:var(--sub);margin-top:3px}
+/* 两大入口 */
+.entries{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.entry{background:var(--card);border-radius:14px;padding:22px;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.07);border:1px solid transparent;transition:.18s;position:relative;overflow:hidden}
+.entry:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(15,23,42,.12);border-color:var(--p)}
+.entry .ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:23px;margin-bottom:12px}
+.entry.m .ic{background:#eff6ff}.entry.p .ic{background:#ecfdf5}
+.entry .tt{font-size:17px;font-weight:700}
+.entry .ds{font-size:12.5px;color:var(--sub);margin-top:5px;line-height:1.7}
+.entry .go{position:absolute;right:16px;bottom:14px;font-size:12px;color:var(--p)}
+/* 筛选 chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chips span{padding:6px 14px;border-radius:16px;font-size:12.5px;cursor:pointer;background:#fff;border:1px solid var(--b);color:var(--sub);transition:.15s;user-select:none}
+.chips span.on{background:var(--p);border-color:var(--p);color:#fff;font-weight:600}
+/* 列表卡片 */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gcard{background:var(--card);border-radius:12px;padding:16px;cursor:pointer;box-shadow:0 1px 3px rgba(15,23,42,.07);transition:.18s;border:1px solid transparent;display:flex;flex-direction:column;gap:8px}
+.gcard:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.12);border-color:var(--p)}
+.gcard .r1{display:flex;align-items:center;gap:8px}
+.gcard .nm{font-size:15px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcard .tp{font-size:11px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.gcard .r2{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--sub);flex-wrap:wrap}
+.gcard .r3{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:4px}
+.gcard .sc{font-size:22px;font-weight:800}
+.gcard .gd{font-size:11px;color:var(--gy)}
+.gcard .xq{font-size:11px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 标签 */
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:4px;font-weight:600;white-space:nowrap}
+.tag.g{background:#ecfdf5;color:#047857}.tag.b{background:#eff6ff;color:#1d4ed8}.tag.r{background:#fef2f2;color:#b91c1c}
+.tag.o{background:#fffbeb;color:#b45309}.tag.y{background:#f8fafc;color:#64748b}
+/* ===== 详情 ===== */
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--sub);cursor:pointer;margin-bottom:14px;padding:6px 12px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.07);user-select:none}
+.back:hover{color:var(--p)}
+.dh{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.dh .info{flex:1;min-width:220px}
+.dh .nm{font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dh .sub{font-size:12.5px;color:var(--sub);margin-top:7px;line-height:1.8}
+.ring{position:relative;width:96px;height:96px;flex-shrink:0}
+.ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .num b{font-size:24px;font-weight:800}
+.ring .num span{font-size:10.5px;color:var(--sub)}
+.funnel{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.fn{border-radius:10px;padding:11px 8px;text-align:center;font-size:11px;border:1px solid;line-height:1.5}
+.fn .st{font-weight:700}
+.fn.ok{background:#ecfdf5;border-color:#a7f3d0;color:#047857}
+.fn.ing{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.fn.warn{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+.fn.wait{background:#f8fafc;border-color:#e2e8f0;color:#94a3b8}
+.quals{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ql{border:1px solid var(--b);border-radius:10px;padding:12px}
+.ql .k{font-size:11px;color:var(--gy);margin-bottom:5px;letter-spacing:1px}
+.ql .v{font-size:13px;font-weight:600;line-height:1.5}
+.ql .v.ok{color:var(--g)}.ql .v.warn{color:var(--r)}.ql .v.ing{color:#1d4ed8}
+.perfs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pf{border-radius:10px;padding:13px;background:#f8fafc}
+.pf .k{font-size:11px;color:var(--sub)}
+.pf .v{font-size:19px;font-weight:800;margin-top:3px}
+.pf .bar{height:5px;background:#e2e8f0;border-radius:3px;margin-top:7px;overflow:hidden}
+.pf .bar i{display:block;height:100%;border-radius:3px;background:var(--p)}
+.tl{position:relative;padding-left:8px}
+.tl:before{content:'';position:absolute;left:14px;top:6px;bottom:6px;width:2px;background:var(--b)}
+.tl-it{position:relative;padding:7px 0 7px 26px}
+.tl-it:before{content:'';position:absolute;left:9px;top:14px;width:10px;height:10px;border-radius:50%;background:#cbd5e1;border:2px solid #fff;box-shadow:0 0 0 2px #cbd5e1}
+.tl-it.plus:before{background:#10b981;box-shadow:0 0 0 2px #a7f3d0}
+.tl-it.minus:before{background:#f87171;box-shadow:0 0 0 2px #fecaca}
+.tl-it .row{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.tl-it .ev{font-size:13px;line-height:1.6}
+.tl-it .dt{font-size:11px;color:var(--gy);white-space:nowrap}
+.tl-it .pt{font-size:12px;font-weight:700}
+.tl-it.plus .pt{color:#059669}.tl-it.minus .pt{color:#dc2626}.tl-it .pt.zero{color:#94a3b8}
+.trend{display:flex;align-items:flex-end;gap:10px;height:110px;padding-top:6px}
+.trend .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.trend .bar{width:100%;max-width:34px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#60a5fa,#2563eb);min-height:4px}
+.trend .val{font-size:10.5px;color:var(--sub)}
+.trend .mo{font-size:10px;color:var(--gy)}
+.xqtags{display:flex;flex-wrap:wrap;gap:8px}
+.xqtags span{font-size:12px;background:#eff6ff;color:#1d4ed8;padding:4px 12px;border-radius:14px}
+.vetob{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:11px 14px;font-size:12.5px;color:#92400e;line-height:1.7}
+.vetob.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.notice{background:#f8fafc;border:1px dashed var(--b);border-radius:10px;padding:12px 15px;font-size:12px;color:var(--sub);line-height:1.8}
+/* 人员详情 */
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ps{border:1px solid var(--b);border-radius:10px;padding:13px;text-align:center}
+.ps .v{font-size:20px;font-weight:800}
+.ps .k{font-size:11px;color:var(--sub);margin-top:3px}
+.stars{color:#f59e0b;font-size:13px;letter-spacing:1px}
+/* 页脚 */
+.footer{max-width:920px;margin:30px auto 40px;padding:0 20px;color:#94a3b8;font-size:11.5px;line-height:2}
+.footer b{color:#64748b}
+.empty{padding:40px;text-align:center;color:var(--gy);font-size:13.5px}
+.empty .big{font-size:34px;margin-bottom:10px}
+@media(max-width:760px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .entries{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .funnel{grid-template-columns:repeat(3,1fr)}
+  .quals{grid-template-columns:repeat(2,1fr)}
+  .perfs{grid-template-columns:repeat(2,1fr)}
+  .pstats{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============ 数据 ============ */
+var MERCHANTS=[
+ {id:'V01',name:'通力电梯',type:'电梯维保',tier:'T2',status:'在池',xqs:['阳光花园','翠苑新村'],hist:'12单·履约率100%',
+  score:88,grade:'A-',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用A级',qual:'特种设备维保资质A类',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:96.5,close:94,sat:4.6,comp:100},
+  events:[['2026-08','电梯年检配合验收 · 评分4.8/5 · 信用+2','+'],['2026-06','政府采购中标记录 · L4业绩加分','+'],['2026-05','纳税信用A级确认 · 稳定性加分','+'],['2026-03','投诉2起 · 全部闭环 · 零残留','·'],['2025-12','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.2,4.3,4.5,4.4,4.6,4.6],
+  eco:'T1平台池 2025-12 → T2小区池 2026-01',veto:'无'},
+ {id:'V06',name:'金盾消防',type:'消防维保',tier:'T2',status:'在池',xqs:['阳光花园','锦绣家园'],hist:'6单·履约率100%',
+  score:86,grade:'B+',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'消防维保检测资质',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:94,close:92,sat:4.5,comp:100},
+  events:[['2026-08','消防维保续签 · 报价低于市价5% · 信用+1','+'],['2026-04','年度消防演练配合完成','+'],['2026-01','入驻T2小区池（阳光花园/锦绣家园）','·'],['2025-10','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.3,4.4,4.5,4.4,4.5,4.5],
+  eco:'T1平台池 2025-10 → T2小区池 2026-01',veto:'无'},
+ {id:'V02',name:'飞利浦照明',type:'照明设备',tier:'T2',status:'在池',xqs:['阳光花园','锦绣家园'],hist:'8单·履约率98%',
+  score:85,grade:'B+',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用A级',qual:'照明产品CCC认证',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:97,close:98,sat:4.6,comp:100},
+  events:[['2026-07','楼道LED灯×50 · 已公示闭环 · 评分4.7/5 · 信用+2','+'],['2026-06','政府采购中标记录 · L4业绩加分','+'],['2026-01','入驻T2小区池（阳光花园/翠苑新村）','·'],['2025-06','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.4,4.5,4.5,4.6,4.6,4.7],
+  eco:'T1平台池 2025-06 → T2小区池 2026-01',veto:'无'},
+ {id:'V09',name:'安泊停车系统',type:'停车系统',tier:'T2',status:'在池',xqs:['阳光花园','翠苑新村','锦绣家园'],hist:'7单·履约率97%',
+  score:84,grade:'B+',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'停车场系统集成资质',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:92,close:95,sat:4.4,comp:97},
+  events:[['2026-08','地下车库停车系统验收 · 评分4.7/5 · 信用+2','+'],['2026-03','政府采购中标记录 · L4业绩加分','+'],['2026-01','入驻T2小区池','·'],['2025-11','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.2,4.3,4.4,4.4,4.5,4.6],
+  eco:'T1平台池 2025-11 → T2小区池 2026-01',veto:'无'},
+ {id:'V03',name:'日丰管业',type:'管道材料',tier:'T2',status:'在池',xqs:['阳光花园','锦绣家园'],hist:'5单·履约率96%',
+  score:82,grade:'B+',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'管材生产许可',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:95,close:96,sat:4.7,comp:100},
+  events:[['2026-07','水管接头+密封圈 · 验收完成 · 评分4.8/5 · 信用+1','+'],['2026-01','入驻T2小区池（阳光花园）','·'],['2025-08','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.4,4.5,4.6,4.6,4.7,4.7],
+  eco:'T1平台池 2025-08 → T2小区池 2026-01',veto:'无'},
+ {id:'V04',name:'安盾保安',type:'安保服务',tier:'T2',status:'在池',xqs:['阳光花园'],hist:'4单·履约率95%',
+  score:80,grade:'B',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'保安服务许可',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:93,close:95,sat:4.3,comp:95},
+  events:[['2026-08','保安制服采购询价 · 报价响应','+'],['2026-05','投诉1起 · 已闭环 · 零残留','·'],['2026-02','入驻T2小区池（阳光花园/锦绣家园）','·'],['2025-09','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.1,4.2,4.1,4.3,4.2,4.3],
+  eco:'T1平台池 2025-09 → T2小区池 2026-02',veto:'无'},
+ {id:'V05',name:'绿之源绿化',type:'绿化养护',tier:'T2',status:'在池',xqs:['阳光花园','翠苑新村'],hist:'3单·履约率93%',
+  score:78,grade:'B-',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'绿化养护资质',
+  funnel:[1,1,1,1,1,1],fLabel:'',
+  perf:{resp:92,close:93,sat:4.5,comp:90},
+  events:[['2026-08','绿化修剪服务(年度)报价 · 低于市价8% · 比价中','+'],['2026-03','春季绿化养护 · 验收通过 · 评分4.6/5','+'],['2026-02','入驻T2小区池（阳光花园）','·'],['2025-10','通过六层漏斗 · 入驻T1平台池','·']],
+  trend:[4.2,4.3,4.4,4.4,4.5,4.5],
+  eco:'T1平台池 2025-10 → T2小区池 2026-02',veto:'无'},
+ {id:'V07',name:'百洁保洁',type:'保洁服务',tier:'T1',status:'候选',xqs:['阳光花园','翠苑新村','锦绣家园'],hist:'新入池·无历史',
+  score:71,grade:'B-',ext:'工商正常存续',jud:'无涉诉风险',tax:'纳税信用B级',qual:'保洁服务资质',
+  funnel:[1,1,0,2,2,2],fLabel:'L3行政合规审核中',
+  perf:{resp:0,close:0,sat:0,comp:0},
+  events:[['2026-09','申请T1入驻 · L3行政合规审核中','·'],['2026-09','通过L1地理/L2工商核验','+']],
+  trend:[0,0,0,0,0,0],
+  eco:'T1平台池审核中（L3） · 尚未进入小区',veto:'审核中'},
+ {id:'V08',name:'安保用品商城',type:'制服装备',tier:'T1',status:'预警',xqs:['阳光花园','翠苑新村','锦绣家园'],hist:'3单·投诉2起',
+  score:58,grade:'C',ext:'工商正常存续',jud:'涉诉1起（劳务纠纷·审理中）',tax:'纳税信用B级',qual:'资质待补全',
+  funnel:[1,1,1,-1,1,-1],fLabel:'L4司法风险 · L6口碑预警',
+  perf:{resp:82,close:76,sat:3.4,comp:50},
+  events:[['2026-08','投诉2起 · 仅闭环1起 · 信用-10','-'],['2026-06','L6口碑预警：投诉闭环率50%','-'],['2026-02','入驻T1候选池（未入T2）','·']],
+  trend:[3.9,3.8,3.6,3.5,3.4,3.4],
+  eco:'T1候选池（未入T2） · L6口碑预警 · 不建议进入小区池',veto:'无（信用预警，未至排除）'}
+];
+var PERSONNEL=[
+ {id:'W001',name:'张师傅',type:'水电',zone:'阳光花园',score:87,grade:'良好',status:'正常',orders:28,avgTime:32,sat:4.8,
+  events:[['2026-06-25','#1001水管漏水 · 24分钟完成 · 五星好评','+2'],['2026-06-24','#1003门禁维修 · 超时2小时','-1'],['2026-06-23','#1005楼道照明 · 15分钟完成 · 四星好评','+2'],['2026-06-22','业主文字表扬「终于修好了」','+3'],['2026-06-20','公区垃圾清运 · 超时4小时','-3']]},
+ {id:'W003',name:'王师傅',type:'综合维修',zone:'阳光花园',score:90,grade:'优秀',status:'正常',orders:35,avgTime:28,sat:4.6,
+  events:[['2026-08','业主表扬「王师傅手艺好」','+3'],['2026-07','夜间应急抢修 · 20分钟到场','+2'],['2026-06','连续10单零超时','+2'],['2026-05','月度工单全部按时完成','+1']]},
+ {id:'S001',name:'小周',type:'管家',zone:'阳光花园 1-3栋',score:92,grade:'优秀',status:'正常',orders:0,avgTime:0,sat:0,units:360,
+  events:[['2026-08','业主联名表扬 · 沟通及时','+3'],['2026-07','暴雨预警逐户提醒 · 服务到位','+2'],['2026-06','邻里纠纷调解成功 · 双方认可','+2'],['2026-05','月度回访全部完成','+1']]},
+ {id:'S003',name:'小陈',type:'管家',zone:'阳光花园 7-9栋',score:88,grade:'良好',status:'正常',orders:0,avgTime:0,sat:0,units:400,
+  events:[['2026-08','业主表扬「沟通能力强」','+3'],['2026-07','汛期防水排查 · 主动发现隐患','+2'],['2026-06','满意度回访 4.9/5','+2'],['2026-05','月度回访全部完成','+1']]},
+ {id:'W006',name:'孙阿姨',type:'保洁',zone:'阳光花园 公区',score:84,grade:'良好',status:'正常',orders:0,avgTime:0,sat:0,
+  events:[['2026-08','公区保洁质量抽检合格','+1'],['2026-07','业主表扬楼道整洁','+2'],['2026-06','月度任务全部按时完成','+1']]},
+ {id:'W002',name:'李师傅',type:'电梯',zone:'阳光花园',score:82,grade:'良好',status:'正常',orders:22,avgTime:45,sat:4.2,
+  events:[['2026-08','电梯年检配合 · 按时完成','+1'],['2026-07','电梯故障报修 · 25分钟到场 · 五星好评','+2'],['2026-06','月度维保 · 按时完成','+1'],['2026-05','例行检修 · 超时1小时','-1']]},
+ {id:'W007',name:'刘队',type:'安保',zone:'阳光花园 门岗',score:79,grade:'一般',status:'正常',orders:0,avgTime:0,sat:0,
+  events:[['2026-08','台风天防汛值守 · 通宵在岗','+2'],['2026-07','大门值守脱岗一次 · 已提醒','-1'],['2026-06','月度巡逻按时完成','+1'],['2026-05','协助寻回走失宠物 · 业主感谢','+2']]},
+ {id:'S002',name:'小吴',type:'管家',zone:'阳光花园 4-6栋',score:75,grade:'一般',status:'正常',orders:0,avgTime:0,sat:0,units:440,
+  events:[['2026-08','业主反馈响应及时','+1'],['2026-07','回访遗漏2户 · 已补访','-1'],['2026-06','新入职培训完成 · 正式上岗','·']]},
+ {id:'W004',name:'赵师傅',type:'水电',zone:'阳光花园',score:62,grade:'关注',status:'关注',orders:15,avgTime:65,sat:3.5,
+  events:[['2026-08','水管维修 · 严重超时6小时','-3'],['2026-07','地面验证未通过','-5'],['2026-06','例行维修 · 超时2小时','-1'],['2026-05','按时完成','+1']]}
+];
+var LAYERS=['L1 地理·存在','L2 工商·存活','L3 行政·合规','L4 司法·风险','L5 经营·能力','L6 口碑·评价'];
+var MTYPES=['电梯维保','消防维保','消防器材','照明设备','管道材料','给排水维修','防水工程','墙面修缮','电力维保','空调维保','弱电智能化','监控安防','门禁系统','停车系统','安保服务','保洁服务','绿化养护','环卫清运','白蚁防治','制服装备','标识标牌','健身器材','保洁耗材'];
+var PTYPES=['水电','电梯','综合维修','管家','保洁','安保'];
+
+/* ============ 状态 ============ */
+var S={view:'home',cat:'全部',idx:0,qt:'all',q:'',nores:''};
+
+function noresBar(){
+  if(!S.nores)return '';
+  return '<div class="vetob" style="margin-bottom:12px">🔍 未找到与「'+esc(S.nores)+'」精确匹配的'+(S.view==='plist'?'服务人员':'商家')+'，以下为全部'+(S.view==='plist'?'服务人员':'商家')+'列表</div>';
+}
+
+function scoreColor(sc){return sc>=85?'#059669':(sc>=80?'#2563eb':(sc>=70?'#d97706':'#dc2626'));}
+function mStatusTag(st){
+  if(st==='在池')return '<span class="tag g">在池</span>';
+  if(st==='候选')return '<span class="tag b">候选</span>';
+  return '<span class="tag r">预警</span>';
+}
+function pStatusTag(st){return st==='正常'?'<span class="tag g">正常</span>':'<span class="tag o">关注</span>';}
+function tierTag(t){return t==='T2'?'<span class="tag b">T2小区池</span>':'<span class="tag y">T1平台池</span>';}
+function stars(n){var h='',f=Math.floor(n);for(var i=0;i<5;i++){h+=i<f?'★':'☆';}return '<span class="stars">'+h+'</span> '+n.toFixed(1);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+/* ============ 渲染 ============ */
+function render(){
+  var body;
+  if(S.view==='home')body=vHome();
+  else if(S.view==='mlist')body=vMList();
+  else if(S.view==='mdetail')body=vMDetail();
+  else if(S.view==='plist')body=vPList();
+  else body=vPDetail();
+  document.getElementById('app').innerHTML=topBar()+body+footerHTML();
+}
+
+/* --- 顶部搜索栏 --- */
+function topBar(){
+  var chips='';
+  if(S.view==='home'&&!S.q){
+    chips='<div class="qchips"><span onclick="goSearch(&#39;通力电梯&#39;)">通力电梯</span><span onclick="goSearch(&#39;金盾消防&#39;)">金盾消防</span><span onclick="goSearch(&#39;安泊停车系统&#39;)">安泊停车系统</span><span onclick="goSearch(&#39;张师傅&#39;)">张师傅</span><span onclick="goSearch(&#39;小周&#39;)">小周</span></div>';
+  }
+  var t=['all','m','p'].map(function(k){
+    return '<span class="'+(S.qt===k?'on':'')+'" onclick="setQt(&#39;'+k+'&#39;)">'+(k==='all'?'全部':(k==='m'?'商家资质':'服务人员'))+'</span>';
+  }).join('');
+  return '<div class="top"><div class="top-in">'
+    +'<div class="brand"><div class="logo">🛡</div><div class="nm">数治理方</div><span class="tag">资质查询</span></div>'
+    +'<div class="slogan">让每一次服务都有证据 · 每一次履约都有记录</div>'
+    +'<div class="search"><span class="s-ic">🔍</span><input id="qin" placeholder="输入商家名称或服务人员姓名…" value="'+esc(S.q)+'" oninput="onInput(this.value)" onfocus="onInput(this.value)" onkeydown="onKey(event)"><button onclick="doSearch()">查询</button><div id="sug" class="sug" style="display:none"></div></div>'
+    +'<div class="qtabs">'+t+'</div>'
+    +chips
+    +'</div></div>';
+}
+
+/* --- 搜索 --- */
+function searchItems(q){
+  q=(q||'').trim();
+  if(!q)return {m:[],p:[]};
+  var lm=function(k){return q.length>=2&&MERCHANTS[k].name.indexOf(q)>=0;};
+  var fm=[];for(var k=0;k<MERCHANTS.length;k++){if(lm(k))fm.push(k);}
+  // 类型关键词匹配
+  if(!fm.length){for(var k2=0;k2<MERCHANTS.length;k2++){if(MERCHANTS[k2].type.indexOf(q)>=0)fm.push(k2);}}
+  var fp=[];for(var j=0;j<PERSONNEL.length;j++){if(q.length>=2&&(PERSONNEL[j].name.indexOf(q)>=0||PERSONNEL[j].type.indexOf(q)>=0))fp.push(j);}
+  return {m:fm,p:fp};
+}
+function onInput(v){
+  S.q=v;
+  var sug=document.getElementById('sug');
+  if(!sug)return;
+  if(!v||v.trim().length<2){sug.style.display='none';return;}
+  var r=searchItems(v),h='';
+  if(S.qt==='all'||S.qt==='m'){
+    if(r.m.length){h+='<div class="g">商家</div>';
+      r.m.slice(0,5).forEach(function(i){var m=MERCHANTS[i];h+='<div class="it" onclick="goDetail(&#39;m&#39;,'+i+')"><div class="l">'+esc(m.name)+'<span class="tp">'+m.type+'</span></div><span class="sc" style="color:'+scoreColor(m.score)+'">'+m.score+'分</span></div>';});
+    }
+  }
+  if(S.qt==='all'||S.qt==='p'){
+    if(r.p.length){h+='<div class="g">服务人员</div>';
+      r.p.slice(0,5).forEach(function(i){var p=PERSONNEL[i];h+='<div class="it" onclick="goDetail(&#39;p&#39;,'+i+')"><div class="l">'+p.name+'<span class="tp">'+p.type+'</span><span class="tp">'+p.id+'</span></div><span class="sc" style="color:'+scoreColor(p.score)+'">'+p.score+'分</span></div>';});
+    }
+  }
+  if(!h)h='<div class="none">未找到相关商家或服务人员</div>';
+  sug.innerHTML=h;
+  sug.style.display='block';
+}
+function doSearch(){
+  var v=document.getElementById('qin').value;S.q=v;
+  var r=searchItems(v);
+  var sug=document.getElementById('sug');if(sug)sug.style.display='none';
+  if(S.qt==='p'){
+    if(r.p.length){goDetail('p',r.p[0]);return;}
+  }else{
+    if(r.m.length){goDetail('m',r.m[0]);return;}
+    if(r.p.length){goDetail('p',r.p[0]);return;}
+  }
+  // 无精确匹配：进入列表并提示
+  S.cat='全部';
+  S.nores=v||'';
+  S.view=S.qt==='p'?'plist':'mlist';
+  render();
+}
+function onKey(e){if(e.key==='Enter')doSearch();}
+function setQt(k){S.qt=k;S.q='';S.nores='';render();}
+function goSearch(name){S.q=name;S.view='home';render();var r=searchItems(name);if(r.m.length){goDetail('m',r.m[0]);}else if(r.p.length){goDetail('p',r.p[0]);}}
+
+/* --- 首页 --- */
+function vHome(){
+  var inPool=MERCHANTS.filter(function(m){return m.status==='在池';}).length;
+  var t2=MERCHANTS.filter(function(m){return m.tier==='T2';}).length;
+  var ev=0;MERCHANTS.forEach(function(m){ev+=m.events.length;});PERSONNEL.forEach(function(p){ev+=p.events.length;});
+  var mt=MTYPES.map(function(t){
+    var c=MERCHANTS.filter(function(m){return m.type===t;}).length;
+    if(!c)return '';
+    return '<span class="'+(S.cat===t?'on':'')+'" onclick="goMList(&#39;'+t+'&#39;)">'+t+' '+c+'</span>';
+  }).join('');
+  var pt=PTYPES.map(function(t){
+    var c=PERSONNEL.filter(function(p){return p.type===t;}).length;
+    if(!c)return '';
+    return '<span class="'+(S.cat===t?'on':'')+'" onclick="goPList(&#39;'+t+'&#39;)">'+t+' '+c+'</span>';
+  }).join('');
+  return '<div class="main">'
+    +'<div class="stats">'
+    +'<div class="st"><div class="n" style="color:#2563eb">'+inPool+'</div><div class="l">小区在池商家</div></div>'
+    +'<div class="st"><div class="n" style="color:#059669">'+t2+'</div><div class="l">T2 小区供应链</div></div>'
+    +'<div class="st"><div class="n" style="color:#d97706">'+PERSONNEL.length+'</div><div class="l">在管服务人员</div></div>'
+    +'<div class="st"><div class="n" style="color:#64748b">'+ev+'</div><div class="l">履约留痕记录</div></div>'
+    +'</div>'
+    +'<div class="entries">'
+    +'<div class="entry m" onclick="goMList(&#39;全部&#39;)"><div class="ic">🏢</div><div class="tt">商家资质</div><div class="ds">工商状态 · 行政合规 · 司法风险 · 行业资质<br>六层漏斗核验 · 履约表现留痕</div><span class="go">查询商家 →</span></div>'
+    +'<div class="entry p" onclick="goPList(&#39;全部&#39;)"><div class="ic">👷</div><div class="tt">服务人员信用</div><div class="ds">信用分 · 工单记录 · 响应时效 · 满意度<br>服务履约留痕 · 公开透明</div><span class="go">查询人员 →</span></div>'
+    +'</div>'
+    +'<div class="card"><h3>🏢 按服务类型查询商家</h3><div class="chips">'+mt+'</div></div>'
+    +'<div class="card"><h3>👷 按岗位查询服务人员</h3><div class="chips">'+pt+'</div></div>'
+    +'<div class="card"><h3>📖 查询说明</h3>'
+    +'<div class="notice">商家资质信息来源于公开政务数据（工商登记 / 司法涉诉 / 纳税信用 / 行业资质）与平台履约记录；服务人员信用分为服务履约留痕（工单完成质量 / 时效 / 满意度）滚动汇总。'
+    +'<br>平台对任何主体只做行为事实留痕，不构成评价性画像；查询结果仅供了解服务履约情况，不构成任何推荐或评级意见。</div></div>'
+    +'</div>';
+}
+
+/* --- 商家列表 --- */
+function goMList(cat){S.view='mlist';S.cat=cat;S.q='';S.nores='';render();}
+function vMList(){
+  var list=MERCHANTS.filter(function(m){return S.cat==='全部'||m.type===S.cat;});
+  var chips='<span class="'+(S.cat==='全部'?'on':'')+'" onclick="goMList(&#39;全部&#39;)">全部 '+MERCHANTS.length+'</span>'
+    +MTYPES.map(function(t){var c=MERCHANTS.filter(function(m){return m.type===t;}).length;return c?'<span class="'+(S.cat===t?'on':'')+'" onclick="goMList(&#39;'+t+'&#39;)">'+t+' '+c+'</span>':'';}).join('');
+  var cards=list.map(function(m,i){
+    return '<div class="gcard" onclick="goDetail(&#39;m&#39;,'+MERCHANTS.indexOf(m)+')">'
+      +'<div class="r1"><span class="nm">'+esc(m.name)+'</span>'+tierTag(m.tier)+'</div>'
+      +'<div class="r2"><span class="tp">'+m.type+'</span>'+mStatusTag(m.status)+'</div>'
+      +'<div class="xq">🏘 '+m.xqs.join(' / ')+'</div>'
+      +'<div class="xq">'+m.hist+'</div>'
+      +'<div class="r3"><span class="sc" style="color:'+scoreColor(m.score)+'">'+m.score+'</span><span class="gd">信用分 · '+m.grade+'级</span><span style="font-size:11px;color:#94a3b8">查看档案 →</span></div>'
+      +'</div>';
+  }).join('');
+  if(!cards)cards='<div class="empty"><div class="big">🔍</div>该分类下暂无商家</div>';
+  return '<div class="main"><span class="back" onclick="S.view=&#39;home&#39;;render()">← 返回首页</span>'
+    +'<div class="card"><h3>🏢 商家资质查询 <span class="cnt">'+S.cat+' · '+list.length+' 家</span></h3>'
+    +noresBar()
+    +'<div class="chips">'+chips+'</div><div class="grid">'+cards+'</div></div></div>';
+}
+
+/* --- 商家详情 --- */
+function goDetail(kind,idx){S.view=kind==='m'?'mdetail':'pdetail';S.idx=idx;S.nores='';render();}
+function ringSVG(sc,color){
+  var C=2*Math.PI*40,off=C*(1-sc/100);
+  return '<div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="40" fill="none" stroke="#e8eef5" stroke-width="8"/><circle cx="48" cy="48" r="40" fill="none" stroke="'+color+'" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 48 48)"/></svg><div class="num"><b style="color:'+color+'">'+sc+'</b><span>信用分</span></div></div>';
+}
+function vMDetail(){
+  var m=MERCHANTS[S.idx];
+  var fn=m.funnel.map(function(s,i){
+    var cls=s===1?'ok':(s===0?'ing':(s===-1?'warn':'wait'));
+    var st=s===1?'✓ 通过':(s===0?'⏳ 审核中':(s===-1?'⚠ 风险':'— 待核验'));
+    return '<div class="fn '+cls+'"><div class="st">'+st+'</div>'+LAYERS[i]+'</div>';
+  }).join('');
+  var quals='<div class="ql"><div class="k">工商状态</div><div class="v ok">'+m.ext+'</div></div>'
+    +'<div class="ql"><div class="k">司法风险</div><div class="v '+(m.jud.indexOf('涉诉')>=0?'warn':'ok')+'">'+m.jud+'</div></div>'
+    +'<div class="ql"><div class="k">纳税信用</div><div class="v ok">'+m.tax+'</div></div>'
+    +'<div class="ql"><div class="k">行业资质</div><div class="v '+(m.qual.indexOf('待')>=0?'ing':'ok')+'">'+m.qual+'</div></div>';
+  var pf=[['响应率',m.perf.resp,'%'],['闭环率',m.perf.close,'%'],['满意度',m.perf.sat,'/5'],['履约完成率',m.perf.comp,'%']].map(function(x){
+    var v=x[1];
+    var val=(x[2]==='/5')?(v/5*100):v;
+    var display=(x[2]==='/5')?v.toFixed(1)+' / 5':v+(v===0?' — 尚无履约数据':'%');
+    return '<div class="pf"><div class="k">'+x[0]+'</div><div class="v" style="color:'+(v===0?'#94a3b8':'#1e293b')+'">'+display+'</div><div class="bar"><i style="width:'+val+'%"></i></div></div>';
+  }).join('');
+  var tl=m.events.map(function(e){
+    var t=e[2];
+    var cls=t==='+'?'plus':(t==='-'?'minus':'');
+    var ptTxt=t==='+'?'＋':(t==='-'?'－':'·');
+    var ptCls=t==='+'?'':'zero';
+    return '<div class="tl-it '+cls+'"><div class="row"><span class="ev">'+e[1]+'</span><span class="dt">'+e[0]+'</span></div><div class="pt '+ptCls+'">'+ptTxt+'</div></div>';
+  }).join('');
+  var maxT=Math.max.apply(null,m.trend);var minT=Math.min.apply(null,m.trend);var spanT=maxT-minT||1;
+  var tr=m.trend.map(function(v,i){
+    var hh=v===0?3:(8+(v-minT)/spanT*76);
+    return '<div class="col"><span class="val">'+(v===0?'—':v.toFixed(1))+'</span><div class="bar" style="height:'+hh+'px;background:'+(v===0?'#e2e8f0':'linear-gradient(180deg,#60a5fa,#2563eb)')+'"></div><span class="mo">'+(i+3)+'月</span></div>';
+  }).join('');
+  var veto=m.veto==='无'
+    ?'<div class="vetob ok">✓ 无一票否决项 · 未触发任何排除规则</div>'
+    :(m.veto==='审核中'
+      ?'<div class="vetob">⏳ 审核中：六层漏斗核验未完成，暂不对外推荐</div>'
+      :'<div class="vetob">⚠ '+m.veto+'</div>');
+  return '<div class="main"><span class="back" onclick="S.view=&#39;mlist&#39;;render()">← 返回商家列表</span>'
+    +'<div class="card"><div class="dh">'
+    +'<div class="info"><div class="nm">'+esc(m.name)+tierTag(m.tier)+mStatusTag(m.status)+'</div>'
+    +'<div class="sub"><span class="tp" style="font-size:11px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:4px">'+m.type+'</span> 信用等级 '+m.grade+' · 档案编号 '+m.id+'</div></div>'
+    +ringSVG(m.score,scoreColor(m.score))
+    +'</div></div>'
+    +'<div class="card"><h3>🛡 六层漏斗核验</h3>'+((m.fLabel)?'<div class="vetob" style="margin-bottom:10px">'+m.fLabel+'</div>':'')+'<div class="funnel">'+fn+'</div></div>'
+    +'<div class="card"><h3>📋 资质信息</h3><div class="quals">'+quals+'</div></div>'
+    +'<div class="card"><h3>📈 履约表现</h3><div class="perfs">'+pf+'</div></div>'
+    +'<div class="card"><h3>🕐 信用记录时间线</h3><div class="tl">'+tl+'</div></div>'
+    +'<div class="card"><h3>📊 近6月履约满意度趋势</h3><div class="trend">'+tr+'</div></div>'
+    +'<div class="card"><h3>🏘 服务小区</h3><div class="xqtags">'+m.xqs.map(function(x){return '<span>'+x+'</span>';}).join('')+'</div>'
+    +'<div style="margin-top:10px;font-size:12px;color:#94a3b8">'+m.eco+'</div></div>'
+    +'<div class="card">'+veto+'</div>'
+    +'</div>';
+}
+
+/* --- 人员列表 --- */
+function goPList(cat){S.view='plist';S.cat=cat;S.q='';S.nores='';render();}
+function vPList(){
+  var list=PERSONNEL.filter(function(p){return S.cat==='全部'||p.type===S.cat;});
+  var chips='<span class="'+(S.cat==='全部'?'on':'')+'" onclick="goPList(&#39;全部&#39;)">全部 '+PERSONNEL.length+'</span>'
+    +PTYPES.map(function(t){var c=PERSONNEL.filter(function(p){return p.type===t;}).length;return c?'<span class="'+(S.cat===t?'on':'')+'" onclick="goPList(&#39;'+t+'&#39;)">'+t+' '+c+'</span>':'';}).join('');
+  var cards=list.map(function(p){
+    var idx=PERSONNEL.indexOf(p);
+    return '<div class="gcard" onclick="goDetail(&#39;p&#39;,'+idx+')">'
+      +'<div class="r1"><span class="nm">'+p.name+'</span><span class="tp">'+p.id+'</span></div>'
+      +'<div class="r2"><span class="tp">'+p.type+'</span>'+pStatusTag(p.status)+'</div>'
+      +'<div class="xq">🏘 '+p.zone+'</div>'
+      +(p.orders?'<div class="xq">'+p.orders+' 单工单 · 平均 '+p.avgTime+' 分钟 · '+p.sat.toFixed(1)+'★</div>':'<div class="xq">'+(p.units?p.units+' 户':'服务留痕中')+'</div>')
+      +'<div class="r3"><span class="sc" style="color:'+scoreColor(p.score)+'">'+p.score+'</span><span class="gd">信用分 · '+p.grade+'</span><span style="font-size:11px;color:#94a3b8">查看档案 →</span></div>'
+      +'</div>';
+  }).join('');
+  if(!cards)cards='<div class="empty"><div class="big">🔍</div>该岗位下暂无服务人员</div>';
+  return '<div class="main"><span class="back" onclick="S.view=&#39;home&#39;;render()">← 返回首页</span>'
+    +'<div class="card"><h3>👷 服务人员信用查询 <span class="cnt">'+S.cat+' · '+list.length+' 名</span></h3>'
+    +noresBar()
+    +'<div class="chips">'+chips+'</div><div class="grid">'+cards+'</div></div></div>';
+}
+
+/* --- 人员详情 --- */
+function vPDetail(){
+  var p=PERSONNEL[S.idx];
+  var tl=p.events.map(function(e){
+    var plus=e[1].charAt(0)==='+',minus=e[1].charAt(0)==='-';
+    var cls=plus?'plus':(minus?'minus':'');
+    return '<div class="tl-it '+cls+'"><div class="row"><span class="ev">'+e[0]+'</span><span class="dt">'+e[1]+'</span></div><div class="pt '+(plus?'':'zero')+'">'+(plus||minus?e[1]+' 分':'已记录')+'</div></div>';
+  }).join('');
+  var st=p.orders
+    ?'<div class="ps"><div class="v" style="color:#2563eb">'+p.orders+'</div><div class="k">累计工单数</div></div>'
+     +'<div class="ps"><div class="v" style="color:#2563eb">'+p.avgTime+'</div><div class="k">平均耗时（分钟）</div></div>'
+     +'<div class="ps"><div class="v" style="color:#d97706">'+p.sat.toFixed(1)+'</div><div class="k">业主满意度 '+stars(p.sat)+'</div></div>'
+    :'<div class="ps"><div class="v" style="color:#2563eb">'+(p.units||'—')+'</div><div class="k">服务户数</div></div>'
+     +'<div class="ps"><div class="v" style="color:#2563eb">'+p.zone.split(' ')[0]+'</div><div class="k">服务小区</div></div>'
+     +'<div class="ps"><div class="v" style="color:#2563eb">'+p.type+'</div><div class="k">服务岗位</div></div>';
+  return '<div class="main"><span class="back" onclick="S.view=&#39;plist&#39;;render()">← 返回人员列表</span>'
+    +'<div class="card"><div class="dh">'
+    +'<div class="info"><div class="nm">'+p.name+'<span class="tp" style="font-size:11px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:4px;font-weight:400">'+p.id+'</span>'+pStatusTag(p.status)+'</div>'
+    +'<div class="sub">'+p.type+' · '+p.zone+' · 信用等级 '+p.grade+'</div></div>'
+    +ringSVG(p.score,scoreColor(p.score))
+    +'</div></div>'
+    +'<div class="card"><h3>📈 服务履约数据</h3><div class="pstats">'+st+'</div></div>'
+    +'<div class="card"><h3>🕐 信用变动记录</h3>'
+    +'<div class="notice" style="margin-bottom:12px">信用分=服务履约留痕滚动汇总（按时完成+1 · 按时+好评+2 · 文字表扬+3 · 超时-1 · 严重超时-3 · 验证未通过-5），公开透明，业主可随时查询。</div>'
+    +'<div class="tl">'+tl+'</div></div>'
+    +'<div class="card"><div class="vetob ok">✓ 人员信息已脱敏展示：仅公开工号、岗位与履约留痕，不含个人联系方式</div></div>'
+    +'</div>';
+}
+
+/* --- 页脚 --- */
+function footerHTML(){
+  return '<div class="footer"><b>数治理方 · 资质查询</b> —— 数据来源：商家资质信息来自公开政务数据与平台六层漏斗核验留痕；服务人员信用分为平台服务履约留痕汇总。<br>'
+    +'平台对任何主体只做行为事实留痕，不做评价性画像；查询结果仅供业主了解服务履约情况，不构成任何推荐、评级或权利分配意见。'
+    +' 杭州个信数治信用管理有限公司 · mingjian.sh.cn</div>';
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个信催收系统 · 思维导图</title>
+<style>
+:root{
+  --bg:#0b1120;--card:#0f172a;--border:#1e293b;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;
+  --green:#10b981;--red:#ef4444;--amber:#f59e0b;--purple:#8b5cf6;--blue:#3b82f6;--orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'PingFang SC','Microsoft YaHei',sans-serif;overflow:auto}
+svg{width:100%;height:auto}
+.node text{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;fill:var(--text)}
+.node .title{font-size:18px;font-weight:700;fill:var(--green)}
+.node .sub{font-size:11px;fill:var(--dim)}
+.edge{stroke:var(--border);stroke-width:1.5;fill:none}
+.edge.green{stroke:rgba(16,185,129,.3)}
+.edge.purple{stroke:rgba(139,92,246,.3)}
+.edge.amber{stroke:rgba(245,158,11,.3)}
+.edge.red{stroke:rgba(239,68,68,.2)}
+.edge.blue{stroke:rgba(59,130,246,.3)}
+.edge.orange{stroke:rgba(249,115,22,.3)}
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1600 1350" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <linearGradient id="g0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>
+</defs>
+
+<!-- ====== ROOT ====== -->
+<rect x="660" y="20" width="280" height="60" rx="12" fill="url(#g0)" filter="url(#glow)"/>
+<text x="800" y="42" text-anchor="middle" class="title" fill="#fff">个信催收系统</text>
+<text x="800" y="62" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.7)">5000户 · 5人 · 每周1250 · 周三轮换</text>
+
+<!-- Lines from root -->
+<line x1="680" y1="80" x2="80" y2="130" class="edge green"/>
+<line x1="720" y1="80" x2="340" y2="130" class="edge purple"/>
+<line x1="800" y1="80" x2="800" y2="130" class="edge amber"/>
+<line x1="880" y1="80" x2="1260" y2="130" class="edge blue"/>
+<line x1="920" y1="80" x2="1520" y2="130" class="edge orange"/>
+
+<!-- ====== 1. 四池架构 ====== -->
+<g transform="translate(10,130)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#10b981" font-weight="700">🏊 四池架构</text>
+
+  <line x1="70" y1="45" x2="10" y2="90" class="edge green"/>
+  <line x1="140" y1="45" x2="60" y2="90" class="edge green"/>
+  <line x1="210" y1="45" x2="170" y2="90" class="edge green"/>
+  <line x1="245" y1="45" x2="260" y2="90" class="edge green"/>
+
+  <!-- 主池 -->
+  <rect x="5" y="90" width="120" height="60" rx="8" fill="#131d33" stroke="#64748b" stroke-width="1"/>
+  <text x="65" y="114" text-anchor="middle" font-size="12" fill="#94a3b8">主池</text>
+  <text x="65" y="132" text-anchor="middle" font-size="10" fill="#64748b">5000户·纯金额排序</text>
+  <text x="65" y="146" text-anchor="middle" font-size="9" fill="#64748b">F类排除·E类排底</text>
+
+  <!-- 流动池 -->
+  <rect x="135" y="90" width="120" height="60" rx="8" fill="#131d33" stroke="#f59e0b" stroke-width="1"/>
+  <text x="195" y="114" text-anchor="middle" font-size="12" fill="#f59e0b">流动池</text>
+  <text x="195" y="132" text-anchor="middle" font-size="10" fill="#64748b">AI外呼接通·综合排序</text>
+  <text x="195" y="146" text-anchor="middle" font-size="9" fill="#64748b">→分配个人池</text>
+
+  <!-- 个人池 -->
+  <rect x="5" y="160" width="120" height="60" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1"/>
+  <text x="65" y="184" text-anchor="middle" font-size="12" fill="#10b981">个人池</text>
+  <text x="65" y="202" text-anchor="middle" font-size="10" fill="#64748b">250户/人·系统分配</text>
+  <text x="65" y="216" text-anchor="middle" font-size="9" fill="#64748b">周三轮换回收</text>
+
+  <!-- 意向池 -->
+  <rect x="135" y="160" width="120" height="60" rx="8" fill="#131d33" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="195" y="184" text-anchor="middle" font-size="12" fill="#8b5cf6">意向客户池</text>
+  <text x="195" y="202" text-anchor="middle" font-size="10" fill="#64748b">≤50户/人·客服自建</text>
+  <text x="195" y="216" text-anchor="middle" font-size="9" fill="#64748b">不回收·满了踢</text>
+
+  <!-- 池间流转 -->
+  <text x="140" y="250" text-anchor="middle" font-size="10" fill="#64748b">
+    主池→流动池(AI接通) → 个人池(分配) → 意向池(手动)
+  </text>
+</g>
+
+<!-- ====== 2. 分配逻辑 ====== -->
+<g transform="translate(330,130)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#8b5cf6" font-weight="700">🔄 每周分配逻辑</text>
+
+  <line x1="140" y1="45" x2="140" y2="80" class="edge purple"/>
+
+  <rect width="280" height="50" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1"/>
+  <text x="140" y="22" text-anchor="middle" font-size="13" fill="#10b981" font-weight="600">每周1250 = 接通保留 + 补位新户</text>
+  <text x="140" y="40" text-anchor="middle" font-size="10" fill="#64748b">保留量逐周增长(0→100→200→400) · 补位逐周减少</text>
+
+  <line x1="80" y1="130" x2="30" y2="170" class="edge green"/>
+  <line x1="140" y1="130" x2="90" y2="170" class="edge green"/>
+  <line x1="200" y1="130" x2="190" y2="170" class="edge amber"/>
+  <line x1="240" y1="130" x2="260" y2="170" class="edge amber"/>
+
+  <!-- 保留层 -->
+  <rect x="5" y="170" width="130" height="95" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1"/>
+  <text x="70" y="192" text-anchor="middle" font-size="12" fill="#10b981" font-weight="600">保留层</text>
+  <text x="70" y="210" text-anchor="middle" font-size="10" fill="#94a3b8">接通+正标签</text>
+  <text x="70" y="225" text-anchor="middle" font-size="10" fill="#94a3b8">(C/D/B/A)保留</text>
+  <text x="70" y="242" text-anchor="middle" font-size="10" fill="#64748b">内排:意向池>AI>感受</text>
+  <text x="70" y="258" text-anchor="middle" font-size="9" fill="#ef4444">E类不保留·释放</text>
+
+  <!-- 补位层 -->
+  <rect x="145" y="170" width="130" height="95" rx="8" fill="#131d33" stroke="#f59e0b" stroke-width="1"/>
+  <text x="210" y="192" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="600">补位层</text>
+  <text x="210" y="210" text-anchor="middle" font-size="10" fill="#94a3b8">主池未触达新户</text>
+  <text x="210" y="225" text-anchor="middle" font-size="10" fill="#94a3b8">纯金额排序</text>
+  <text x="210" y="242" text-anchor="middle" font-size="10" fill="#64748b">1250-保留量=补位量</text>
+  <text x="210" y="258" text-anchor="middle" font-size="9" fill="#64748b">轮流分配给5人</text>
+
+  <!-- 四周覆盖 -->
+  <text x="140" y="290" text-anchor="middle" font-size="10" fill="#64748b">
+    W1:1250新 → W2:100留+1150新 → W3:200留+1050新 → W4:300留+950新
+  </text>
+</g>
+
+<!-- ====== 3. 四维排序 ====== -->
+<g transform="translate(750,130)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">📊 债权排序四维</text>
+
+  <line x1="50" y1="45" x2="30" y2="90" class="edge amber"/>
+  <line x1="120" y1="45" x2="110" y2="90" class="edge amber"/>
+  <line x1="190" y1="45" x2="190" y2="90" class="edge amber"/>
+  <line x1="250" y1="45" x2="270" y2="90" class="edge amber"/>
+
+  <!-- 金额 -->
+  <rect x="5" y="90" width="63" height="150" rx="8" fill="#131d33" stroke="#f59e0b" stroke-width="1"/>
+  <text x="36" y="112" text-anchor="middle" font-size="12" fill="#f59e0b" font-weight="600">金额</text>
+  <text x="36" y="135" text-anchor="middle" font-size="9" fill="#64748b">补位层</text>
+  <text x="36" y="155" text-anchor="middle" font-size="9" fill="#64748b">主导</text>
+  <text x="36" y="175" text-anchor="middle" font-size="9" fill="#64748b">区间</text>
+  <text x="36" y="195" text-anchor="middle" font-size="9" fill="#64748b">映射</text>
+  <text x="36" y="215" text-anchor="middle" font-size="8" fill="#64748b">&lt;1月=5</text>
+  <text x="36" y="228" text-anchor="middle" font-size="8" fill="#64748b">&gt;24=100</text>
+
+  <!-- 标签 -->
+  <rect x="75" y="90" width="63" height="150" rx="8" fill="#131d33" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="106" y="112" text-anchor="middle" font-size="12" fill="#8b5cf6" font-weight="600">标签</text>
+  <text x="106" y="135" text-anchor="middle" font-size="9" fill="#64748b">保留层</text>
+  <text x="106" y="155" text-anchor="middle" font-size="9" fill="#64748b">主导</text>
+  <text x="106" y="175" text-anchor="middle" font-size="9" fill="#10b981">C/D保留</text>
+  <text x="106" y="195" text-anchor="middle" font-size="9" fill="#10b981">B/A保留</text>
+  <text x="106" y="215" text-anchor="middle" font-size="9" fill="#ef4444">E释放</text>
+  <text x="106" y="228" text-anchor="middle" font-size="9" fill="#ef4444">F排除</text>
+
+  <!-- AI评分 -->
+  <rect x="145" y="90" width="63" height="150" rx="8" fill="#131d33" stroke="#3b82f6" stroke-width="1"/>
+  <text x="176" y="112" text-anchor="middle" font-size="12" fill="#3b82f6" font-weight="600">AI评分</text>
+  <text x="176" y="135" text-anchor="middle" font-size="9" fill="#64748b">保留内排</text>
+  <text x="176" y="155" text-anchor="middle" font-size="9" fill="#64748b">1-100</text>
+  <text x="176" y="175" text-anchor="middle" font-size="9" fill="#64748b">仅接通产生</text>
+  <text x="176" y="195" text-anchor="middle" font-size="9" fill="#64748b">ASR→NLP</text>
+  <text x="176" y="215" text-anchor="middle" font-size="8" fill="#10b981">高61+优先</text>
+  <text x="176" y="228" text-anchor="middle" font-size="8" fill="#ef4444">低40-靠后</text>
+
+  <!-- 感受分 -->
+  <rect x="215" y="90" width="63" height="150" rx="8" fill="#131d33" stroke="#f97316" stroke-width="1"/>
+  <text x="246" y="112" text-anchor="middle" font-size="12" fill="#f97316" font-weight="600">感受分</text>
+  <text x="246" y="135" text-anchor="middle" font-size="9" fill="#64748b">保留内排</text>
+  <text x="246" y="155" text-anchor="middle" font-size="9" fill="#64748b">1-5</text>
+  <text x="246" y="175" text-anchor="middle" font-size="9" fill="#64748b">客服录入</text>
+  <text x="246" y="195" text-anchor="middle" font-size="9" fill="#64748b">0延迟</text>
+  <text x="246" y="215" text-anchor="middle" font-size="8" fill="#10b981">4-5优先</text>
+  <text x="246" y="228" text-anchor="middle" font-size="8" fill="#ef4444">1-2靠后</text>
+</g>
+
+<!-- ====== 4. 六类标签 ====== -->
+<g transform="translate(1210,130)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#3b82f6" font-weight="700">🏷️ 六类标签</text>
+
+  <line x1="30" y1="45" x2="30" y2="85" class="edge blue"/>
+  <line x1="80" y1="45" x2="80" y2="85" class="edge blue"/>
+  <line x1="130" y1="45" x2="130" y2="85" class="edge blue"/>
+  <line x1="180" y1="45" x2="180" y2="85" class="edge blue"/>
+  <line x1="230" y1="45" x2="230" y2="85" class="edge blue"/>
+  <line x1="265" y1="45" x2="265" y2="85" class="edge blue"/>
+
+  <!-- F -->
+  <rect x="5" y="85" width="46" height="55" rx="6" fill="#1a1033" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="28" y="103" text-anchor="middle" font-size="13" fill="#8b5cf6" font-weight="700">F</text>
+  <text x="28" y="120" text-anchor="middle" font-size="7" fill="#64748b">历史复杂</text>
+  <text x="28" y="134" text-anchor="middle" font-size="7" fill="#ef4444">排除</text>
+
+  <!-- E -->
+  <rect x="54" y="85" width="46" height="55" rx="6" fill="#1a0a0a" stroke="#ef4444" stroke-width="1"/>
+  <text x="77" y="103" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">E</text>
+  <text x="77" y="120" text-anchor="middle" font-size="7" fill="#64748b">对抗失信</text>
+  <text x="77" y="134" text-anchor="middle" font-size="7" fill="#ef4444">不保留</text>
+
+  <!-- A -->
+  <rect x="103" y="85" width="46" height="55" rx="6" fill="#1a1408" stroke="#f59e0b" stroke-width="1"/>
+  <text x="126" y="103" text-anchor="middle" font-size="13" fill="#f59e0b" font-weight="700">A</text>
+  <text x="126" y="120" text-anchor="middle" font-size="7" fill="#64748b">合理争议</text>
+  <text x="126" y="134" text-anchor="middle" font-size="7" fill="#f59e0b">保留靠后</text>
+
+  <!-- D -->
+  <rect x="152" y="85" width="46" height="55" rx="6" fill="#1a0e08" stroke="#f97316" stroke-width="1"/>
+  <text x="175" y="103" text-anchor="middle" font-size="13" fill="#f97316" font-weight="700">D</text>
+  <text x="175" y="120" text-anchor="middle" font-size="7" fill="#64748b">惯性失约</text>
+  <text x="175" y="134" text-anchor="middle" font-size="7" fill="#10b981">保留</text>
+
+  <!-- B -->
+  <rect x="201" y="85" width="46" height="55" rx="6" fill="#081a10" stroke="#10b981" stroke-width="1"/>
+  <text x="224" y="103" text-anchor="middle" font-size="13" fill="#10b981" font-weight="700">B</text>
+  <text x="224" y="120" text-anchor="middle" font-size="7" fill="#64748b">现实困难</text>
+  <text x="224" y="134" text-anchor="middle" font-size="7" fill="#10b981">保留</text>
+
+  <!-- C -->
+  <rect x="250" y="85" width="46" height="55" rx="6" fill="#0f1115" stroke="#64748b" stroke-width="1"/>
+  <text x="273" y="103" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="700">C</text>
+  <text x="273" y="120" text-anchor="middle" font-size="7" fill="#64748b">观望拖延</text>
+  <text x="273" y="134" text-anchor="middle" font-size="7" fill="#10b981">保留</text>
+</g>
+
+<!-- ====== 5. 客服管理 ====== -->
+<g transform="translate(760,430)">
+  <rect width="280" height="45" rx="10" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+  <text x="140" y="28" text-anchor="middle" font-size="15" fill="#f97316" font-weight="700">👥 客服管理 (5人)</text>
+
+  <line x1="55" y1="45" x2="20" y2="90" class="edge orange"/>
+  <line x1="110" y1="45" x2="80" y2="90" class="edge orange"/>
+  <line x1="170" y1="45" x2="160" y2="90" class="edge orange"/>
+  <line x1="230" y1="45" x2="240" y2="90" class="edge orange"/>
+
+  <!-- 能力 -->
+  <rect x="5" y="90" width="62" height="90" rx="8" fill="#131d33" stroke="#10b981" stroke-width="1"/>
+  <text x="36" y="112" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">能力分级</text>
+  <text x="36" y="132" text-anchor="middle" font-size="8" fill="#64748b">S·A</text>
+  <text x="36" y="148" text-anchor="middle" font-size="8" fill="#64748b">多拿E/A</text>
+  <text x="36" y="164" text-anchor="middle" font-size="8" fill="#64748b">B·C·D</text>
+
+  <!-- 配额 -->
+  <rect x="75" y="90" width="62" height="90" rx="8" fill="#131d33" stroke="#f59e0b" stroke-width="1"/>
+  <text x="106" y="112" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">日配额</text>
+  <text x="106" y="132" text-anchor="middle" font-size="8" fill="#64748b">125通/天</text>
+  <text x="106" y="148" text-anchor="middle" font-size="8" fill="#64748b">625通/周</text>
+  <text x="106" y="164" text-anchor="middle" font-size="8" fill="#64748b">250户持有</text>
+
+  <!-- 工时 -->
+  <rect x="145" y="90" width="62" height="90" rx="8" fill="#131d33" stroke="#3b82f6" stroke-width="1"/>
+  <text x="176" y="112" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">工时</text>
+  <text x="176" y="132" text-anchor="middle" font-size="8" fill="#64748b">8:30-17:00</text>
+  <text x="176" y="148" text-anchor="middle" font-size="8" fill="#64748b">午休2h</text>
+  <text x="176" y="164" text-anchor="middle" font-size="8" fill="#64748b">有效320min</text>
+
+  <!-- 日节奏 -->
+  <rect x="215" y="90" width="62" height="90" rx="8" fill="#131d33" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="246" y="112" text-anchor="middle" font-size="11" fill="#8b5cf6" font-weight="600">日节奏</text>
+  <text x="246" y="132" text-anchor="middle" font-size="8" fill="#64748b">意向池先</text>
+  <text x="246" y="148" text-anchor="middle" font-size="8" fill="#64748b">个人池后</text>
+  <text x="246" y="164" text-anchor="middle" font-size="8" fill="#64748b">流动池余</text>
+</g>
+
+<!-- ====== 底部：管理者看板 & 周三轮换 ====== -->
+<g transform="translate(640,600)">
+  <line x1="160" y1="0" x2="100" y2="60" class="edge green"/>
+  <line x1="160" y1="0" x2="220" y2="60" class="edge green"/>
+
+  <!-- 周三轮换 -->
+  <rect x="5" y="60" width="150" height="105" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="80" y="85" text-anchor="middle" font-size="14" fill="#f59e0b" font-weight="700">周三轮换</text>
+  <text x="80" y="105" text-anchor="middle" font-size="10" fill="#94a3b8">周三12:00回收个人池</text>
+  <text x="80" y="122" text-anchor="middle" font-size="10" fill="#94a3b8">意向池保留不动</text>
+  <text x="80" y="139" text-anchor="middle" font-size="10" fill="#94a3b8">补位+重分</text>
+  <text x="80" y="156" text-anchor="middle" font-size="9" fill="#64748b">12:30新列表开工</text>
+
+  <!-- 管理者看板 -->
+  <rect x="165" y="60" width="150" height="105" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="240" y="85" text-anchor="middle" font-size="14" fill="#3b82f6" font-weight="700">管理者看板</text>
+  <text x="240" y="105" text-anchor="middle" font-size="10" fill="#94a3b8">仪表盘·5人对比</text>
+  <text x="240" y="122" text-anchor="middle" font-size="10" fill="#94a3b8">池监控·标签分布</text>
+  <text x="240" y="139" text-anchor="middle" font-size="10" fill="#94a3b8">评分分析·流转日志</text>
+  <text x="240" y="156" text-anchor="middle" font-size="9" fill="#64748b">操作中心</text>
+</g>
+
+<!-- ====== 底部补充说明 ====== -->
+<g transform="translate(60,600)">
+  <rect width="240" height="70" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="120" y="22" text-anchor="middle" font-size="11" fill="#64748b">AI评分四因子</text>
+  <text x="120" y="40" text-anchor="middle" font-size="10" fill="#94a3b8">还款态度·沟通配合度·问题性质·历史验证</text>
+  <text x="120" y="58" text-anchor="middle" font-size="9" fill="#64748b">仅接通产生·ASR→NLP·1-100分</text>
+</g>
+
+<g transform="translate(330,600)">
+  <rect width="240" height="70" rx="10" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="120" y="22" text-anchor="middle" font-size="11" fill="#64748b">感受分五档</text>
+  <text x="120" y="40" text-anchor="middle" font-size="10" fill="#94a3b8">1对抗→2消极→3中性→4配合→5积极</text>
+  <text x="120" y="58" text-anchor="middle" font-size="9" fill="#64748b">客服录入·0延迟·与AI独立</text>
+</g>
+
+<!-- ====== 图例 ====== -->
+<g transform="translate(40,720)">
+  <rect width="580" height="40" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+  <text x="15" y="25" font-size="11" fill="#64748b">图例:</text>
+  <rect x="65" y="12" width="14" height="14" rx="3" fill="#10b981" opacity=".3"/>
+  <text x="85" y="25" font-size="10" fill="#64748b">四池架构</text>
+  <rect x="160" y="12" width="14" height="14" rx="3" fill="#8b5cf6" opacity=".3"/>
+  <text x="180" y="25" font-size="10" fill="#64748b">分配逻辑</text>
+  <rect x="260" y="12" width="14" height="14" rx="3" fill="#f59e0b" opacity=".3"/>
+  <text x="280" y="25" font-size="10" fill="#64748b">排序维度</text>
+  <rect x="360" y="12" width="14" height="14" rx="3" fill="#3b82f6" opacity=".3"/>
+  <text x="380" y="25" font-size="10" fill="#64748b">标签体系</text>
+  <rect x="460" y="12" width="14" height="14" rx="3" fill="#f97316" opacity=".3"/>
+  <text x="480" y="25" font-size="10" fill="#64748b">客服管理</text>
+</g>
+</svg>
+</body>
+</html>

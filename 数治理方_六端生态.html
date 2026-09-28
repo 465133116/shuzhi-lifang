@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 六端生态</title>
+<style>
+  :root {
+    --bg:#0b1120; --card:rgba(255,255,255,0.03); --border:rgba(255,255,255,0.07);
+    --f:#8b5cf6; --e:#ef4444; --a:#f59e0b; --b:#10b981; --d:#f97316; --c:#64748b;
+    --blue:#3b82f6; --indigo:#6366f1; --cyan:#06b6d4; --pink:#ec4899;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:#e2e8f0;line-height:1.75}
+
+  /* Hero */
+  .hero{background:linear-gradient(160deg,#0f172a 0%,#152040 40%,#0a1628 100%);padding:60px 24px 44px;text-align:center;border-bottom:1px solid rgba(99,102,241,0.1)}
+  .hero h1{font-size:34px;font-weight:700;letter-spacing:3px}
+  .hero h1 em{font-style:normal;color:#818cf8}
+  .hero .tag{font-size:15px;color:#94a3b8;margin-top:10px;max-width:600px;margin-left:auto;margin-right:auto}
+  .hero .tag b{color:#c4b5fd}
+
+  /* Section */
+  .sec{max-width:1000px;margin:0 auto;padding:48px 24px}
+  .sec+.sec{border-top:1px solid rgba(255,255,255,0.04)}
+  .sec h2{font-size:21px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .sec h2 .n{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;background:rgba(99,102,241,0.18);color:#818cf8;font-size:12px;font-weight:700}
+  .sec .sub{font-size:13px;color:#64748b;margin-bottom:22px}
+
+  /* 生态总图 */
+  .eco-map{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px 20px;margin-bottom:28px;text-align:center;position:relative;overflow:hidden}
+  .eco-map::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(99,102,241,0.06) 0%,transparent 70%);pointer-events:none}
+  .eco-map .em-title{font-size:11px;color:#818cf8;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px;position:relative}
+  .em-ring{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;position:relative}
+  .em-node{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px 18px;text-align:center;min-width:100px;transition:all 0.2s;position:relative}
+  .em-node:hover{border-color:rgba(129,140,248,0.4);background:rgba(255,255,255,0.08)}
+  .em-node .en-icon{font-size:24px;margin-bottom:4px}
+  .em-node .en-name{font-size:12px;font-weight:600}
+  .em-node .en-role{font-size:9px;color:#64748b;margin-top:2px}
+  .em-arrow{color:#475569;font-size:16px;font-weight:700}
+  .em-arrow.down{display:block;text-align:center;margin:6px 0;font-size:18px}
+
+  /* 端口详情 */
+  .port{margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .ph{display:flex;align-items:center;gap:14px;padding:16px 20px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)}
+  .ph .pi{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .pi-o{background:var(--blue)} .pi-p{background:#059669} .pi-cs{background:var(--a)}
+  .pi-cl{background:var(--indigo)} .pi-cm{background:var(--cyan)} .pi-ai{background:linear-gradient(135deg,#8b5cf6,#ec4899)}
+  .ph h3{font-size:16px;flex:1}.ph .pw{font-size:11px;color:#64748b}
+  .pb{padding:0 20px 20px}
+
+  /* 生态链路块 */
+  .eco-link{background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:14px 18px;margin:14px 0}
+  .eco-link h5{font-size:10px;color:#60a5fa;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+  .el-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.el-grid{grid-template-columns:1fr}}
+  .el-col h6{font-size:10px;font-weight:600;margin-bottom:4px;letter-spacing:0.5px}
+  .h-in{color:#34d399}.h-out{color:#f59e0b}
+  .el-col ul{list-style:none;font-size:11px;color:#94a3b8}
+  .el-col ul li{padding:2px 0;display:flex;gap:6px}
+  .el-col ul li::before{content:'▸';color:#475569;flex-shrink:0}
+
+  /* 场景仅名称 */
+  .scenes{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .sc{font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.05);color:#94a3b8}
+
+  /* 生态角色总结 */
+  .role-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .role{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+  .role .ri{font-size:24px;margin-bottom:6px}
+  .role h4{font-size:14px;margin-bottom:4px}
+  .role p{font-size:12px;color:#94a3b8}
+
+  /* 断裂实验 */
+  .break{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.12);border-radius:10px;padding:16px 20px;margin:20px 0}
+  .break h5{font-size:10px;color:#f87171;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+  .break p{font-size:12px;color:#fca5a5;line-height:1.8}
+
+  /* 闭环 */
+  .flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;padding:20px 0}
+  .flow .fn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:10px 14px;font-size:12px;text-align:center;min-width:85px}
+  .flow .fn .fi{font-size:18px;display:block;margin-bottom:2px}
+  .flow .ar{color:#475569;font-size:14px}
+
+  /* 分类系统 */
+  .cls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+  .cls{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center}
+  .cls .cl{font-size:20px;font-weight:700;margin-bottom:2px}
+  .cls .cn{font-size:12px;font-weight:600}
+  .cls .cd{font-size:10px;color:#64748b;margin-top:3px}
+  .cl-f{color:var(--f)}.cl-e{color:var(--e)}.cl-a{color:var(--a)}.cl-b{color:var(--b)}.cl-d{color:var(--d)}.cl-c{color:var(--c)}
+
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+  .tbl th{text-align:left;padding:9px 12px;font-size:10px;font-weight:600;color:#60a5fa;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+  .tbl td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .tbl tr:hover td{background:rgba(255,255,255,0.015)}
+
+  .def{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:14px}
+  .def h4{font-size:11px;color:#818cf8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+  .def p{font-size:13px;color:#cbd5e1;line-height:1.8}
+  .def p b{color:#e2e8f0}
+
+  .ft{text-align:center;padding:28px;font-size:11px;color:#475569;border-top:1px solid rgba(255,255,255,0.04)}
+
+  @media(max-width:700px){.em-ring{flex-direction:column}.em-arrow{transform:rotate(90deg)}.flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- ═══ Hero ═══ -->
+<div class="hero">
+  <h1>数治理方<em> · 六端生态</em></h1>
+  <div class="tag">六个端口围成一个环，数据在中间流转。<b>每转一圈，系统就聪明一点。每多一个端口，链路就多一层交叉验证。</b></div>
+</div>
+
+<!-- ═══ 一、生态总图 ═══ -->
+<div class="sec">
+  <h2><span class="n">一</span> 生态总图</h2>
+  <p class="sub">六端不是六个独立功能模块。是六个生态位——各司其职、互相依存、数据贯通。</p>
+
+  <div class="eco-map">
+    <div class="em-title">六端生态 · 数据流向</div>
+    <div class="em-ring">
+      <div class="em-node">
+        <div class="en-icon">📱</div><div class="en-name">业主端</div><div class="en-role">数据起点 · 行为数据</div>
+      </div>
+      <div class="em-arrow">→</div>
+      <div class="em-node">
+        <div class="en-icon">🎧</div><div class="en-name">客服端</div><div class="en-role">治理中枢 · 通话数据</div>
+      </div>
+      <div class="em-arrow">→</div>
+      <div class="em-node">
+        <div class="en-icon">🧠</div><div class="en-name">AI端</div><div class="en-role">分类引擎 · 信号计算</div>
+      </div>
+      <div class="em-arrow">→</div>
+      <div class="em-node">
+        <div class="en-icon">🏢</div><div class="en-name">物业端</div><div class="en-role">执行层 · 工单落地</div>
+      </div>
+    </div>
+    <div class="em-arrow down">↕</div>
+    <div style="display:flex;justify-content:center;gap:40px;flex-wrap:wrap">
+      <div class="em-node" style="min-width:80px;padding:10px 14px">
+        <div class="en-icon" style="font-size:20px">🏛</div><div class="en-name" style="font-size:11px">业委会端</div><div class="en-role">监管层</div>
+      </div>
+      <div class="em-node" style="min-width:80px;padding:10px 14px">
+        <div class="en-icon" style="font-size:20px">🏘</div><div class="en-name" style="font-size:11px">社区端</div><div class="en-role">治理层 · 兜底</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#64748b;margin-top:20px;position:relative">
+      业主端和客服端是<b style="color:#60a5fa">数据入口</b> → AI端是<b style="color:#a78bfa">加工引擎</b> → 物业端是<b style="color:#34d399">执行层</b> → 业委会端和社区端是<b style="color:#818cf8">监管治理层</b>。<br>六个端口不是平行关系——是<b style="color:#fbbf24">上下游依赖</b>。每少一端，整个生态退化一层。
+    </p>
+  </div>
+</div>
+
+<!-- ═══ 二、逐端生态位 ═══ -->
+<div class="sec">
+  <h2><span class="n">二</span> 六端生态位</h2>
+  <p class="sub">每个端口的生态角色——它从哪接数据、往哪送数据、在链路中承担什么功能。</p>
+
+  <!-- 业主端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-o">📱</div><div><h3>业主端 · 数据起点</h3><div class="pw">生态位：一切数据的源头。没有业主端的行为数据，整个系统缺少行为数据通道。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>物业端推送：工单状态变更（已接单/处理中/待验收）</li><li>客服端推送：草稿待确认</li><li>AI端回传：个人信用档案（分类+履约记录）</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>报修行为 → AI端分类引擎（行为数据输入）</li><li>验收评价 → 客服端回访队列</li><li>登录/浏览/打开率 → 行为数据通道 → 自动标签（登录→D类消除）</li><li>工单评价 → 物业端数据看板 → 业委会端监管看板</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">一键报修</span><span class="sc">工单进度跟踪</span><span class="sc">验收与评价</span><span class="sc">服务记录存档</span><span class="sc">平台通知接收</span><span class="sc">社区公告与投票</span><span class="sc">个人中心</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客服端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-cs">🎧</div><div><h3>客服端 · 治理中枢</h3><div class="pw">生态位：全链路的数据中转站。所有端口的数据经过客服端进行人工研判和策略执行。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>业主端：工单验收结果 → 回访队列</li><li>AI端：六类分类+信号强度 → 话术引导+队列排序</li><li>物业端：工单闭环状态 → 待回访业主</li><li>业委会端：重点关注工单 → 标星跟踪</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>通话标注（接通/拒接/空号/需回访）→ AI端通话数据通道</li><li>通话备注（诉求/困难/情绪）→ AI端 → 标签生成</li><li>草稿 → 业主端确认 → 正式工单 → 物业端</li><li>短信发送 → 业主端通知 → 发送日志归档</li><li>回访结果 → 工单闭环 → 信用记录更新</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">任务队列驱动</span><span class="sc">来电弹屏</span><span class="sc">一键通话标注</span><span class="sc">通话记录追溯</span><span class="sc">内联草稿创建</span><span class="sc">草稿→正式工单</span><span class="sc">工单回访闭环</span><span class="sc">业主分类研判</span><span class="sc">短信发送</span><span class="sc">多小区切换</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-ai">🧠</div><div><h3>AI端 · 分类引擎</h3><div class="pw">生态位：数据的加工厂。多源数据进来，六类分类+信号强度出去。没有AI端，系统退化到经验驱动。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>业主端行为数据：登录频率/工单打开率/浏览深度/缴费行为</li><li>客服端通话数据：通话结果/通话备注/情绪标注</li><li>多源数据交叉比对 → 矛盾信号检测</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>六类分类（F/E/A/B/D/C）→ 客服端话术引导 + 外呼优先级</li><li>信号强度（0~4）→ 客服端队列排序 + 响应级别R0~R4</li><li>分类变更日志 → 客服端业主详情 + AI端监控大屏</li><li>交叉模式标记 → 人工研判队列</li><li>模型迭代 → 分类准确率持续提升</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">六类自动分类</span><span class="sc">信号强度计算</span><span class="sc">分类变更追踪</span><span class="sc">交叉模式检测</span><span class="sc">外呼队列管理</span><span class="sc">响应级别映射</span><span class="sc">规则引擎配置</span><span class="sc">模型训练迭代</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 物业端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-p">🏢</div><div><h3>物业端 · 执行层</h3><div class="pw">生态位：工单的最终落地者。分类信息从客服端和AI端流入，工单执行结果回传至全链路。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>客服端：正式工单（草稿→业主确认后）→ 待处理队列</li><li>客服端：业主标签+沟通记录 → 辅助上门策略</li><li>AI端：信用分+分类信息 → 自定义响应策略</li><li>业委会端：退管数据导入 → 旧工单存档+业主名册</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>工单处理结果 → 业主端验收 → 客服端回访队列</li><li>闭环率/响应时效/评价分布 → 数据看板 → 业委会端监管</li><li>超时工单 → 三端标红（物业+业委会+社区）→ 协同施压</li><li>超时记录 → 客服端信用档案 → 计入业主履约记录</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">工单接单分派</span><span class="sc">工单处理提交</span><span class="sc">超时工单预警</span><span class="sc">业主标签查看</span><span class="sc">信用分管理</span><span class="sc">数据看板</span><span class="sc">退管数据承接</span><span class="sc">人员排班管理</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 业委会端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-cl">🏛</div><div><h3>业委会端 · 监管层</h3><div class="pw">生态位：物业的监督者。不参与工单执行，但消费全链路数据做监管决策。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>物业端：工单闭环率/响应时效/评价分布 → 监管看板</li><li>客服端：业主分类标签+履约记录 → 业主档案（脱敏）</li><li>AI端：分类分布+信号趋势 → 社区治理决策参考</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>欠费明细+业主名册+物业合同 → 导入平台 → 物业端+AI端消费</li><li>接待日诉求 → 转工单 → 客服端 → 物业端</li><li>会议决议 → 事项追踪 → 物业端执行 → 社区端协同</li><li>合同到期提醒 → 续聘/选聘决策 → 物业端更替准备</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">物业监管看板</span><span class="sc">业主履约档案</span><span class="sc">接待日管理</span><span class="sc">数据上传导入</span><span class="sc">会议数字化</span><span class="sc">物业合同管理</span><span class="sc">数字秘书工作台</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 社区端 -->
+  <div class="port">
+    <div class="ph"><div class="pi pi-cm">🏘</div><div><h3>社区端 · 治理层</h3><div class="pw">生态位：最后的兜底者。当物业端失效、业委会端缺位时，社区端启动补位救济——保证治理链路不中断。</div></div></div>
+    <div class="pb">
+      <div class="eco-link">
+        <h5>生态链路</h5>
+        <div class="el-grid">
+          <div class="el-col"><h6 class="h-in">← 从哪接数据</h6><ul><li>物业端：多小区工单数据聚合 → 排名对比 → 超时预警</li><li>业委会端：联席会议纪要 → 决议事项 → 协同跟踪</li><li>AI端：辖区分类分布 → 欠费率趋势</li></ul></div>
+          <div class="el-col"><h6 class="h-out">→ 往哪送数据</h6><ul><li>网格员介入 → 物业端工单 → 客服端回访触达</li><li>补位救济启动 → 临时接管工单调度 → 填补物业空缺</li><li>政策文件库 → 业委会端+物业端 → 全链路合规基准</li><li>五因子社区级看板 → 治理决策 → 全链路优化方向</li></ul></div>
+        </div>
+      </div>
+      <div class="scenes">
+        <span class="sc">多小区聚合看板</span><span class="sc">物业表现排名</span><span class="sc">超时工单预警</span><span class="sc">联席会议协同</span><span class="sc">政策文件库</span><span class="sc">物业治理委员会补位</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 三、六端生态角色总览 ═══ -->
+<div class="sec">
+  <h2><span class="n">三</span> 六端生态角色总览</h2>
+  <p class="sub">不是功能归纳，是生态位的精确定义。</p>
+
+  <table class="tbl">
+    <tr><th style="width:10%">端口</th><th style="width:12%">生态位</th><th style="width:15%">核心问题</th><th style="width:28%">消费什么数据</th><th style="width:28%">生产什么数据</th><th style="width:7%">失效后果</th></tr>
+    <tr>
+      <td>📱 业主端</td><td>数据起点</td><td>服务体验如何</td>
+      <td>工单状态·草稿确认·信用档案</td>
+      <td>报修行为·验收评价·浏览轨迹</td>
+      <td>行为数据缺失</td>
+    </tr>
+    <tr>
+      <td>🎧 客服端</td><td>治理中枢</td><td>如何回应业主</td>
+      <td>分类结果·工单状态·回访队列·监管标记</td>
+      <td>通话标注·草稿工单·短信触达·分类研判</td>
+      <td>全链路停转</td>
+    </tr>
+    <tr>
+      <td>🧠 AI端</td><td>分类引擎</td><td>业主属于哪一类</td>
+      <td>业主端行为数据·客服端通话数据·多源快照</td>
+      <td>六类分类·信号强度·响应级别·交叉标记</td>
+      <td>分类退化</td>
+    </tr>
+    <tr>
+      <td>🏢 物业端</td><td>执行层</td><td>谁来处理工单</td>
+      <td>正式工单·业主标签·信用分·退管数据</td>
+      <td>处理结果·闭环率·超时记录·排班数据</td>
+      <td>工单无执行</td>
+    </tr>
+    <tr>
+      <td>🏛 业委会端</td><td>监管层</td><td>物业做得好不好</td>
+      <td>工单指标·业主画像·分类分布</td>
+      <td>监管结论·数据导入·会议决议·合同管理</td>
+      <td>物业无约束</td>
+    </tr>
+    <tr>
+      <td>🏘 社区端</td><td>治理兜底</td><td>谁来做最后保障</td>
+      <td>多小区聚合数据·超时预警·会议纪要</td>
+      <td>介入指令·补位调度·政策指引·五因子看板</td>
+      <td>制度无兜底</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ═══ 四、分类系统：生态的核心引擎 ═══ -->
+<div class="sec">
+  <h2><span class="n">四</span> 分类系统：生态的核心引擎</h2>
+  <p class="sub">六类业主分类是六端生态的数据心脏——多源数据泵入，六类判定泵出，驱动全链路差异化策略。</p>
+
+  <div class="cls-grid">
+    <div class="cls"><div class="cl cl-f">F</div><div class="cn">历史复杂型</div><div class="cd">独立通道 · R4最高响应</div></div>
+    <div class="cls"><div class="cl cl-e">E</div><div class="cn">对抗失信型</div><div class="cd">对抗信号合并 · R3响应</div></div>
+    <div class="cls"><div class="cl cl-a">A</div><div class="cn">合理争议型</div><div class="cd">暂停催缴 · 优先解决争议</div></div>
+    <div class="cls"><div class="cl cl-b">B</div><div class="cn">现实困难型</div><div class="cd">差异化方案 · R2响应</div></div>
+    <div class="cls"><div class="cl cl-d">D</div><div class="cn">惯性失约型</div><div class="cd">失约计数 · 衰减周期 · R2</div></div>
+    <div class="cls"><div class="cl cl-c">C</div><div class="cn">观望拖延型</div><div class="cd">兜底分类 · C1~C6子类型</div></div>
+  </div>
+  <p style="font-size:12px;color:#64748b;text-align:center;margin-top:14px">
+    判定流水线：F（独立通道）→ E → A → B → D → C（兜底）。命中即停。同一句话对E类和对B类完全不同——<b>分类决定策略，不是脚本统一念</b>。
+  </p>
+
+  <div class="flow" style="margin-top:18px">
+    <div class="fn"><span class="fi">📱🎧</span>多源数据</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🔀</span>独立处理</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🔗</span>交叉验证</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🏷</span>六类判定</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">📶</span>信号强度</div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🎯</span>策略输出</div>
+  </div>
+  <p style="font-size:12px;color:#64748b;text-align:center">
+    业主端行为数据 + 客服端通话数据 → 各自独立处理 → 交叉验证取更高级 → 六类判定 → 信号强度（0~4）→ R0~R4响应级别 → 驱动六端策略
+  </p>
+</div>
+
+<!-- ═══ 五、网络效应 ═══ -->
+<div class="sec">
+  <h2><span class="n">五</span> 生态的网络效应</h2>
+  <p class="sub">六个端口不是六个独立功能——每多一个端口，数据在更多节点之间交叉增强。这是网络效应，不是功能叠加。</p>
+
+  <div class="role-grid">
+    <div class="role"><div class="ri">🔗</div><h4>数据交叉增强</h4><p>业主端报修 → AI端判定A类 → 客服端暂停催缴 → 物业端优先处理 → 业委会端追踪闭环。数据每走一圈就多一层验证，每个端口既是消费者也是生产者。</p></div>
+    <div class="role"><div class="ri">🛡</div><h4>端口间互相纠错</h4><p>物业端标记"已处理"但业主端差评 → 客服端回访发现虚假闭环 → 业委会端超时标红 → 社区端介入。一个端口的数据造假会被另外两个端口交叉验证。造假成本极高。</p></div>
+    <div class="role"><div class="ri">📈</div><h4>数据飞轮</h4><p>客服通话标注 → AI模型训练 → 分类越来越准 → 客服效率提升 → 更多通话 → 更多标注数据 → 模型更强。每通电话都在给未来的AI提供训练素材。</p></div>
+    <div class="role"><div class="ri">🔒</div><h4>迁移成本锁定</h4><p>工单数据在物业端、通话数据在客服端、分类数据在AI端、监管数据在业委会端。要换系统？不是换一个SaaS——是换掉整个社区的治理记录和信用档案。</p></div>
+    <div class="role"><div class="ri">🌐</div><h4>多小区网络效应</h4><p>一个秘书服务十个小区 → 分类模型跨小区训练 → 一个小区遇到的F类案例变成所有小区的知识 → 数字秘书外聘合法性是法律基础。</p></div>
+    <div class="role"><div class="ri">⚡</div><h4>制度兜底不断链</h4><p>物业更替？退管数据承接。业委会空缺？社区端补位。业主不接电话？短信+小程序双通道。每个端口失效都有下一个端口兜底——系统设计上不允许单点故障。</p></div>
+  </div>
+</div>
+
+<!-- ═══ 六、链路断裂实验 ═══ -->
+<div class="sec">
+  <h2><span class="n">六</span> 链路断裂实验</h2>
+  <p class="sub">拿走任意一个端口，看整个生态如何退化。这不是功能缺失——是生态链断裂。</p>
+
+  <div class="break"><h5>拿走业主端</h5><p>行为数据消失 → AI端只剩客服端通话数据 → 无法产生A类（需工单数据）、E类（需差评数据）、C4/C5 — 六类退化。业主无法查看工单进度 → 只能靠客服口头告知 → 信息损耗 → 信任下降。</p></div>
+  <div class="break"><h5>拿走客服端</h5><p>通话数据消失 → AI端只剩业主端行为数据 → 无法产生B类（需通话表达困难）、D类（需通话记录失约）、C1~C3 — 六类退化。工单无人回访 → 差评无人跟进 → 闭环断裂 → 全链路停转。</p></div>
+  <div class="break"><h5>拿走AI端</h5><p>六类判定消失 → 客服只能凭经验 → 不同客服对同一业主判定不一致 → 数据污染 → 越用越脏。信号强度消失 → 外呼无优先级 → 客服随机拨打 → F类业主和C类业主同一策略。</p></div>
+  <div class="break"><h5>拿走物业端</h5><p>工单无人执行 → 业主报修石沉大海 → 差评率飙升 → A类业主激增 → 客服端压力暴增 → 业委会端监管看板全是红的 → 社区端被迫频繁介入补位 → 制度治理退回人情治理。</p></div>
+  <div class="break"><h5>拿走业委会端</h5><p>物业无人监管 → 超时工单无人追踪 → 闭环率自报自评 → 数据失真 → 客服端失去监管参考 → 业主投诉无人受理 → 满意度下降 → 履约意愿下降 → 收缴率下跌。</p></div>
+  <div class="break"><h5>拿走社区端</h5><p>物业失职无补位机制 → 退管交接无监督 → 老旧小区无人兜底 → 36号文第18条形同虚设 → 制度治理的最后防线消失。</p></div>
+
+  <div class="def" style="margin-top:16px">
+    <h4>结论</h4>
+    <p><b>六端不是可选的——每少一端，整个生态退化一层。</b>不是"少了这个功能还有其他替代方案"的问题。是拿走客服端→AI端无通话数据→分类退化→客服端策略退化（恶性循环）。拿走AI端→分类靠经验→数据污染→训练数据变脏→AI越来越差。六端生态的竞争力不在任何一个单端——在<b>六个端口围成的环</b>。</p>
+  </div>
+</div>
+
+<!-- ═══ 七、完整闭环 ═══ -->
+<div class="sec">
+  <h2><span class="n">七</span> 完整生态闭环</h2>
+  <p class="sub">一圈走完，数据不丢、信号更新、系统更聪明。</p>
+
+  <div class="flow">
+    <div class="fn"><span class="fi">📱🎧</span>数据入口<div style="font-size:10px;color:#64748b;">业主端+客服端</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🔀</span>多源处理<div style="font-size:10px;color:#64748b;">行为+通话数据</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🧠</span>AI加工<div style="font-size:10px;color:#64748b;">分类+信号</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">⚙</span>策略输出<div style="font-size:10px;color:#64748b;">话术+优先级+R级</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🏢📋</span>执行层<div style="font-size:10px;color:#64748b;">物业端工单</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🏛🏘</span>监管治理<div style="font-size:10px;color:#64748b;">业委会+社区</div></div><div class="ar">→</div>
+    <div class="fn"><span class="fi">🔄</span>闭环回传<div style="font-size:10px;color:#64748b;">评价+信用</div></div>
+  </div>
+
+  <table class="tbl" style="margin-top:16px">
+    <tr><th>步骤</th><th>环节</th><th>涉及端口</th><th>数据流向</th></tr>
+    <tr><td>①</td><td>数据采集</td><td>业主端 + 客服端</td><td>报修行为→行为数据通道；通话标注→通话数据通道。两条链路独立进入数据系统</td></tr>
+    <tr><td>②</td><td>独立处理</td><td>AI端</td><td>行为标签+通话标签分别处理 → 各自保留快照 → 互不污染</td></tr>
+    <tr><td>③</td><td>交叉验证</td><td>AI端</td><td>独立分类结果交叉验证取高值 → 统一分类 → 标注数据来源</td></tr>
+    <tr><td>④</td><td>六类判定</td><td>AI端 → 客服端</td><td>F>E>A>B>D>C流水线 → 命中即停 → 分类结果推送客服端话术引导</td></tr>
+    <tr><td>⑤</td><td>策略执行</td><td>客服端 → 物业端</td><td>分类决定话术 → 优先级决定队列 → R级决定响应 → 工单推送物业端</td></tr>
+    <tr><td>⑥</td><td>工单闭环</td><td>物业端 → 业主端 → 客服端</td><td>接单→处理→提交→业主验收→客服回访 → 四端全参与</td></tr>
+    <tr><td>⑦</td><td>监管反馈</td><td>业委会端 + 社区端</td><td>物业表现数据 → 业委会监管 → 超时预警 → 社区补位 → 回到客服端</td></tr>
+  </table>
+</div>
+
+<!-- ═══ 八、生态本质 ═══ -->
+<div class="sec">
+  <h2><span class="n">八</span> 生态的本质</h2>
+
+  <div class="def">
+    <h4>数治理方不是一套软件</h4>
+    <p>是一套<b>社区治理的生态基础设施</b>。六个端口各自对应社区治理中的一个真实角色——业主、物业、客服、业委会、街道、AI。这些角色在现实中本来就存在，但在传统模式下<b>各自为战、数据不通、互相猜疑</b>。数治理方做的事情很简单：<b>给他们每人一个端口，让数据在他们之间流转</b>。当数据开始流转——业主的报修变成物业的工单、客服的通话变成AI的分类、业委会的监管变成物业的压力、社区的补位变成制度的兜底——治理就从一个抽象概念变成了一个<b>运转中的生态</b>。</p>
+  </div>
+
+  <div class="def">
+    <h4>为什么是六个端口而不是五个或七个</h4>
+    <p>因为这六个角色<b>恰好构成社区治理的最小完整闭环</b>。少一个业主端——治理没有服务对象。少一个物业端——治理没有执行者。少一个客服端——治理没有连接者。少一个AI端——治理没有判断力。少一个业委会端——治理没有监督者。少一个社区端——治理没有兜底者。六个，不多不少，正好<b>覆盖社区治理的全部参与方</b>。这是生态设计，不是功能设计。</p>
+  </div>
+
+  <div class="def">
+    <h4>跟智慧物业的本质区别</h4>
+    <p>智慧物业做的是<b>效率工具</b>——让物业管得更快。摄像头识别垃圾满溢、传感器监测电梯故障、大屏展示能耗数据。这些都有用，但它们<b>没有改变社区治理的权力结构</b>。数治理方做的是<b>制度工具</b>——让每个角色有端口、让数据跨角色流转、让每一次交互都有记录、让制度和信用替代人情和催收。智慧物业优化的是<b>物业的效率</b>，数治理方优化的是<b>社区的治理结构</b>。这是两类完全不同的产品。</p>
+  </div>
+</div>
+
+<div class="ft">
+  数治理方 · 社区制度型信用治理系统平台 · 杭州个信数治信用管理有限公司 · mingjian.sh.cn<br>
+  六端不是一个产品功能清单 —— 是一个完整的社区治理生态。
+</div>
+
+</body>
+</html>

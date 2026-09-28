@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 社区端·补全</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px;gap:12px}
+.tn span{font-weight:700;font-size:15px}.tn .info{font-size:11px;opacity:0.7;margin-left:auto}
+.ct{max-width:1400px;margin:0 auto;padding:16px}
+.side{width:200px;background:var(--c);border-radius:var(--r);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.side a{display:block;padding:10px 20px;font-size:13px;color:var(--t);text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:.15s}
+.side a:hover,.side a.on{background:#eff6ff;color:var(--p);border-left-color:var(--p);font-weight:600}
+.main{flex:1;min-width:0}
+.card{background:var(--c);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.stat{text-align:center;padding:12px}.stat .n{font-size:24px;font-weight:700}.stat .l{font-size:11px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-r{background:#fef2f2;color:var(--d)}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}.tag-b{background:#eff6ff;color:var(--p)}
+.btn{display:inline-block;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;transition:.15s}.btn:hover{opacity:.85}.btn-p{background:var(--p);color:#fff}.btn-o{background:transparent;border:1px solid var(--b);color:var(--t)}
+.flex{display:flex;gap:16px}
+.bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-top:4px}.bar>div{height:100%;border-radius:3px}
+</style></head><body>
+<div class="tn"><span>数治理方 · 社区端（工作台+档案+双轨）</span><span class="info">社区街道 | 网格员</span></div>
+<div class="ct"><div class="flex">
+<div class="side">
+<a onclick="st('dashboard')" class="on" id="st-dashboard">工作台</a>
+<a onclick="st('directory')" id="st-directory">业主名录</a>
+<a onclick="st('archives')" id="st-archives">档案管理</a>
+<a onclick="st('dualtrack')" id="st-dualtrack">双轨治理</a>
+</div>
+<div class="main" id="main"></div>
+</div></div>
+<script>
+
+var D={
+communities:[
+{name:'阳光花园',type:'B',manager:'张经理',units:1200,arrears:5,rate:92,risk:'low'},
+{name:'翠苑新村',type:'A',manager:'李经理',units:800,arrears:8,rate:78,risk:'medium'},
+{name:'锦绣家园',type:'B',manager:'王经理',units:600,arrears:2,rate:96,risk:'low'}
+],
+owners:[
+{name:'张建国',room:'3-1502',phone:'138****1111',status:'正常',arrears:3600,community:'阳光花园'},
+{name:'李芳',room:'5-801',phone:'138****2222',status:'困难',arrears:1800,community:'阳光花园'},
+{name:'周大明',room:'3-502',phone:'139****1111',status:'争议',arrears:12000,community:'阳光花园',note:'前物业遗留'}
+],
+archives:[
+{id:'A001',name:'阳光花园物业服务合同',type:'合同',date:'2026-01',status:'生效中'},
+{id:'A002',name:'2026Q1物业服务报告',type:'报告',date:'2026-04',status:'已归档'},
+{id:'A003',name:'翠苑新村退管交接记录',type:'交接',date:'2024-03',status:'已归档'},
+{id:'A004',name:'阳光花园业委会议事决议-202605',type:'决议',date:'2026-05',status:'已公示'}
+],
+alerts:[
+{msg:'翠苑新村(A类)退管遗留争议3户，建议协调',time:'2026-06-25',level:'medium'},
+{msg:'周大明(3-502)前物业欠费12000元进入催收节点4',time:'2026-06-24',level:'high'}
+]
+};
+
+function st(t){
+document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('on')});
+document.getElementById('st-'+t).classList.add('on');
+if(t==='dashboard')sd();else if(t==='directory')sdir();else if(t==='archives')sa();else if(t==='dualtrack')sdt();
+}
+
+function sd(){
+var h='<h2 style="margin-bottom:16px">社区治理工作台</h2>'+
+'<div class="g4" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+D.communities.length+'</div><div class="l">管辖小区</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.communities.filter(function(c){return c.type==='A'}).length+'</div><div class="l">A类小区</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">'+D.alerts.length+'</div><div class="l">待办事项</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--s)">92%</div><div class="l">平均收缴率</div></div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">小区治理态势</h3><table><tr><th>小区</th><th>类型</th><th>欠费户</th><th>收缴率</th><th>风险</th></tr>';
+D.communities.forEach(function(c){
+var rs=c.risk==='low'?'tag-g':c.risk==='medium'?'tag-y':'tag-r';
+h+='<tr><td>'+c.name+'</td><td><span class="tag '+(c.type==='A'?'tag-y':'tag-g')+'">'+(c.type==='A'?'A类·已更替':'B类·在管')+'</span></td><td>'+c.arrears+'户</td><td>'+c.rate+'%</td><td><span class="tag '+rs+'">'+c.risk+'</span></td></tr>';
+});
+h+='</table></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">实时关注</h3>';
+D.alerts.forEach(function(a){
+h+='<div style="padding:6px 0;border-bottom:1px solid var(--b);font-size:12px"><span class="tag '+(a.level==='high'?'tag-r':'tag-y')+'">'+(a.level==='high'?'高':'中')+'</span> '+a.msg+' <span style="color:var(--sub)">'+a.time+'</span></div>';
+});
+h+='</div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sdir(){
+var h='<h2 style="margin-bottom:16px">业主名录</h2><div class="card"><table><tr><th>姓名</th><th>房号</th><th>联系方式</th><th>状态</th><th>欠费</th><th>小区</th><th>备注</th></tr>';
+D.owners.forEach(function(o){
+var ss=o.status==='正常'?'tag-g':o.status==='困难'?'tag-y':'tag-r';
+h+='<tr><td>'+o.name+'</td><td>'+o.room+'</td><td>'+o.phone+'</td><td><span class="tag '+ss+'">'+o.status+'</span></td><td>'+o.arrears+'</td><td>'+o.community+'</td><td>'+o.note+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sa(){
+var h='<h2 style="margin-bottom:16px">档案管理</h2><div class="card"><table><tr><th>编号</th><th>档案名称</th><th>类型</th><th>日期</th><th>状态</th></tr>';
+D.archives.forEach(function(a){
+var ss=a.status==='生效中'?'tag-g':a.status==='已公示'?'tag-b':'tag-gr';
+h+='<tr><td>'+a.id+'</td><td>'+a.name+'</td><td>'+a.type+'</td><td>'+a.date+'</td><td><span class="tag '+ss+'">'+a.status+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function sdt(){
+var h='<h2 style="margin-bottom:16px">双轨治理概览</h2>'+
+'<div class="g2" style="margin-bottom:16px">'+
+'<div class="card"><h3 style="margin-bottom:8px">在管轨</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 管辖小区：3个（2B+1A）<br>• 在管物业：3家<br>• 现行工单：12单<br>• 信用评级：良好</div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">退管轨</h3><div style="font-size:12px;color:var(--sub);line-height:1.8">• 退管小区：1个（翠苑新村A类）<br>• 退管物业：原天宏物业<br>• 历史欠费：3户<br>• 协商结论：2份已生效</div></div></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">跨期争议（需社区协调）</h3><table><tr><th>业主</th><th>类型</th><th>争议金额</th><th>状态</th></tr><tr><td>周大明(3-502)</td><td>前物业期间公区设施</td><td>¥8000</td><td><span class="tag tag-y">协商中</span></td></tr></table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+sd();
+
+</script></body></html>

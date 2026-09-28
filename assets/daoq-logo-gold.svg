@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="280" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg">
+    <!-- Definitions for gradients and filters -->
+    <defs>
+        <!-- Gold Gradient -->
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFF5C3;stop-opacity:1" />
+            <stop offset="20%" style="stop-color:#FFD700;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#FDB931;stop-opacity:1" />
+            <stop offset="80%" style="stop-color:#D4AF37;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#AA8022;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Bevel/Emboss Filter -->
+        <filter id="bevel" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+            <feOffset in="blur" dx="2" dy="2" result="offsetBlur"/>
+            <feSpecularLighting in="blur" surfaceScale="5" specularConstant="1" specularExponent="20" lighting-color="#ffffff" result="specOut">
+                <fePointLight x="-5000" y="-10000" z="20000"/>
+            </feSpecularLighting>
+            <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+            <feMerge>
+                <feMergeNode in="offsetBlur"/>
+                <feMergeNode in="litPaint"/>
+            </feMerge>
+            <!-- Drop Shadow -->
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.5"/>
+        </filter>
+    </defs>
+
+    <!-- Main Text: 数治理方 -->
+    <text x="50%" y="140" 
+          font-family="'Songti SC', 'SimSun', serif" 
+          font-weight="bold" 
+          font-size="120" 
+          fill="url(#goldGradient)" 
+          stroke="#AA8022" 
+          stroke-width="1"
+          text-anchor="middle" 
+          filter="url(#bevel)"
+          letter-spacing="10">数治理方</text>
+    
+    <!-- Sub Text: — DAOQ — -->
+    <text x="50%" y="240" 
+          font-family="'Times New Roman', serif" 
+          font-weight="bold" 
+          font-size="60" 
+          fill="url(#goldGradient)" 
+          stroke="#AA8022" 
+          stroke-width="0.5"
+          text-anchor="middle" 
+          filter="url(#bevel)"
+          letter-spacing="6">— DAOQ —</text>
+</svg>

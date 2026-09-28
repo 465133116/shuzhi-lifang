@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>数治理方 · 运营端</title><style>*{margin:0;padding:0;box-sizing:border-box}:root{--p:#2563eb;--d:#dc2626;--s:#16a34a;--w:#f59e0b;--bg:#f1f5f9;--c:#fff;--t:#1e293b;--sub:#64748b;--b:#e2e8f0;--r:10px}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+.tn{background:#1e293b;color:#fff;display:flex;align-items:center;padding:0 20px;height:52px;gap:12px}
+.tn span{font-weight:700;font-size:15px}.tn .info{font-size:11px;opacity:0.7;margin-left:auto}
+.ct{max-width:1400px;margin:0 auto;padding:16px}
+.side{width:200px;background:var(--c);border-radius:var(--r);padding:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.side a{display:block;padding:10px 20px;font-size:13px;color:var(--t);text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:.15s}
+.side a:hover,.side a.on{background:#eff6ff;color:var(--p);border-left-color:var(--p);font-weight:600}
+.main{flex:1;min-width:0}
+.card{background:var(--c);border-radius:var(--r);padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.stat{text-align:center;padding:12px}.stat .n{font-size:24px;font-weight:700}.stat .l{font-size:11px;color:var(--sub);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--b)}th{background:#f8fafc;font-weight:600;color:var(--sub)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}.tag-r{background:#fef2f2;color:var(--d)}.tag-g{background:#f0fdf4;color:var(--s)}.tag-y{background:#fffbeb;color:var(--w)}.tag-b{background:#eff6ff;color:var(--p)}
+.btn{display:inline-block;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-size:12px;transition:.15s}.btn:hover{opacity:.85}.btn-p{background:var(--p);color:#fff}.btn-d{background:var(--d);color:#fff}.btn-o{background:transparent;border:1px solid var(--b);color:var(--t)}
+.mo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:200}
+.md{background:#fff;border-radius:var(--r);padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
+.progress{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}.progress>div{height:100%;border-radius:3px;transition:width 0.5s}
+.h{display:none!important}.flex{display:flex;gap:16px}
+</style></head><body>
+<div class="tn"><span>数治理方 · 运营端</span><span class="info">运营管理员 | 2026-06-25</span></div>
+<div class="ct"><div class="flex">
+<div class="side">
+<a onclick="showTab('dashboard')" class="on" id="tab-dashboard">工作台</a>
+<a onclick="showTab('agents')" id="tab-agents">客服管理</a>
+<a onclick="showTab('quality')" id="tab-quality">质检中心</a>
+<a onclick="showTab('collection')" id="tab-collection">催收监控</a>
+<a onclick="showTab('stats')" id="tab-stats">数据统计</a>
+<a onclick="showTab('config')" id="tab-config">运营配置</a>
+</div>
+<div class="main" id="main"></div>
+</div></div>
+<script>
+
+// ===== DATA =====
+var D={agents:[
+{id:'CS001',n:'客服小安',calls:45,conn:28,time:168,satisfaction:4.5,complaints:0,status:'active'},
+{id:'CS002',n:'客服小李',calls:38,conn:22,time:195,satisfaction:3.8,complaints:1,status:'active'},
+{id:'CS003',n:'客服小王',calls:42,conn:25,time:155,satisfaction:4.0,complaints:0,status:'active'},
+{id:'CS004',n:'客服小张',calls:30,conn:18,time:210,satisfaction:3.2,complaints:2,status:'warning'}
+],
+collections:[
+{id:'CT001',owner:'张建国',room:'3-1502',amount:3600,node:2,status:'in_progress',risk:'high'},
+{id:'CT002',owner:'李芳',room:'5-801',amount:1800,node:1,status:'pending',risk:'medium'},
+{id:'CT003',owner:'周大明',room:'3-502',amount:12000,node:4,status:'in_progress',risk:'urgent'},
+{id:'CT004',owner:'孙丽',room:'6-502',amount:2400,node:3,status:'paused',risk:'medium'},
+{id:'CT005',owner:'王强',room:'2-603',amount:6000,node:1,status:'disputed',risk:'high'}
+],
+quality:[
+{id:'QC001',agent:'CS004',type:'催收合规',score:75,result:'fail',issue:'夜间22:15外呼',date:'2026-06-25'},
+{id:'QC002',agent:'CS001',type:'工单回访',score:92,result:'pass',issue:'',date:'2026-06-25'},
+{id:'QC003',agent:'CS002',type:'信用复核',score:85,result:'conditional',issue:'画像评分偏高',date:'2026-06-24'}
+],
+alerts:[
+{msg:'催收任务CT003 欠费12000元 进入刚性催收节点4',level:'urgent'},
+{msg:'客服CS004 本月投诉2次 触发警告阈值',level:'high'},
+{msg:'翠苑新村(A类) 退管遗留争议3户未处理',level:'medium'}
+]
+};
+
+// ===== TABS =====
+function showTab(t){
+document.querySelectorAll('.side a').forEach(function(a){a.classList.remove('on')});
+document.getElementById('tab-'+t).classList.add('on');
+if(t==='dashboard')renderDashboard();
+else if(t==='agents')renderAgents();
+else if(t==='quality')renderQuality();
+else if(t==='collection')renderCollection();
+else if(t==='stats')renderStats();
+else if(t==='config')renderConfig();
+}
+
+function renderDashboard(){
+var ca=D.agents.filter(function(a){return a.status==='active'}).length;
+var cw=D.agents.filter(function(a){return a.status==='warning'}).length;
+var ct=D.collections.length;
+var cu=D.collections.filter(function(c){return c.risk==='urgent'}).length;
+var qc=D.quality.length;
+var qf=D.quality.filter(function(q){return q.result==='fail'}).length;
+var h='<h2 style="margin-bottom:16px">工作台</h2>'+
+'<div class="g4" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+ca+'</div><div class="l">在岗客服</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+cw+'</div><div class="l">预警客服</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">'+ct+'</div><div class="l">催收任务</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+cu+'</div><div class="l">紧急催收</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+qc+'</div><div class="l">质检任务</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+qf+'</div><div class="l">质检不合格</div></div>'+
+'</div>'+
+'<div class="card"><h3 style="margin-bottom:8px">实时告警</h3>';
+D.alerts.forEach(function(a){
+h+='<div style="padding:8px 0;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px"><span class="tag '+(a.level==='urgent'?'tag-r':'tag-y')+'">'+(a.level==='urgent'?'紧急':'高')+'</span><span style="font-size:13px">'+a.msg+'</span></div>';
+});
+h+='</div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function renderAgents(){
+var h='<h2 style="margin-bottom:16px">客服管理</h2>'+
+'<div class="card"><table><tr><th>工号</th><th>姓名</th><th>今日外呼</th><th>接通</th><th>接通率</th><th>平均时长(s)</th><th>满意度</th><th>投诉</th><th>状态</th></tr>';
+D.agents.forEach(function(a){
+var rate=a.calls>0?Math.round(a.conn/a.calls*100):0;
+h+='<tr><td>'+a.id+'</td><td>'+a.n+'</td><td>'+a.calls+'</td><td>'+a.conn+'</td><td>'+rate+'%</td><td>'+a.time+'</td><td>'+a.satisfaction+'</td><td>'+a.complaints+'</td><td><span class="tag '+(a.status==='active'?'tag-g':'tag-r')+'">'+(a.status==='active'?'正常':'预警')+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function renderQuality(){
+var h='<h2 style="margin-bottom:16px">质检中心</h2><div class="g3" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--s)">'+D.quality.filter(function(q){return q.result==='pass'}).length+'</div><div class="l">通过</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.quality.filter(function(q){return q.result==='fail'}).length+'</div><div class="l">不通过</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">'+D.quality.filter(function(q){return q.result==='conditional'}).length+'</div><div class="l">有条件通过</div></div>'+
+'</div><div class="card"><table><tr><th>编号</th><th>客服</th><th>类型</th><th>评分</th><th>结果</th><th>问题</th><th>日期</th></tr>';
+D.quality.forEach(function(q){
+h+='<tr><td>'+q.id+'</td><td>'+q.agent+'</td><td>'+q.type+'</td><td>'+q.score+'</td><td><span class="tag '+(q.result==='pass'?'tag-g':q.result==='fail'?'tag-r':'tag-y')+'">'+q.result+'</span></td><td>'+q.issue+'</td><td>'+q.date+'</td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function renderCollection(){
+var h='<h2 style="margin-bottom:16px">催收监控</h2>'+
+'<div class="g4" style="margin-bottom:16px">'+
+'<div class="card stat"><div class="n" style="color:var(--p)">'+D.collections.length+'</div><div class="l">总任务</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">'+D.collections.filter(function(c){return c.status==='in_progress'}).length+'</div><div class="l">进行中</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.collections.filter(function(c){return c.status==='paused'||c.status==='disputed'}).length+'</div><div class="l">暂停/争议</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">'+D.collections.filter(function(c){return c.risk==='urgent'}).length+'</div><div class="l">紧急</div></div>'+
+'</div><div class="card"><table><tr><th>任务</th><th>业主</th><th>房号</th><th>金额</th><th>节点</th><th>状态</th><th>风险</th></tr>';
+D.collections.forEach(function(c){
+var rs=c.risk==='urgent'?'tag-r':c.risk==='high'?'tag-y':'tag-g';
+h+='<tr><td>'+c.id+'</td><td>'+c.owner+'</td><td>'+c.room+'</td><td>'+c.amount+'</td><td>节点'+c.node+'</td><td><span class="tag tag-b">'+c.status+'</span></td><td><span class="tag '+rs+'">'+c.risk+'</span></td></tr>';
+});
+h+='</table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function renderStats(){
+var h='<h2 style="margin-bottom:16px">数据统计</h2><div class="g3">'+
+'<div class="card stat"><div class="n" style="color:var(--p)">125</div><div class="l">今日总外呼</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--s)">62%</div><div class="l">总接通率</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--w)">38</div><div class="l">今日草稿</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--p)">85%</div><div class="l">质检合格率</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--d)">3</div><div class="l">本月投诉</div></div>'+
+'<div class="card stat"><div class="n" style="color:var(--s)">45万</div><div class="l">本月回款</div></div>'+
+'</div>';
+document.getElementById('main').innerHTML=h;
+}
+
+function renderConfig(){
+var h='<h2 style="margin-bottom:16px">运营配置</h2>'+
+'<div class="card"><h3 style="margin-bottom:8px">催收参数</h3>'+
+'<table><tr><td>外呼每日上限</td><td>3次/户</td></tr><tr><td>夜间禁止时段</td><td>22:00-08:00</td></tr><tr><td>节假日禁止外呼</td><td>是</td></tr><tr><td>触达轮次上限</td><td>4轮</td></tr></table></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">工单自动关闭</h3>'+
+'<table><tr><td>待验收超时</td><td>7天</td></tr><tr><td>待评价超时</td><td>7天</td></tr><tr><td>业主失联</td><td>14天</td></tr></table></div>'+
+'<div class="card"><h3 style="margin-bottom:8px">信用评估</h3>'+
+'<table><tr><td>评估间隔</td><td>7天</td></tr><tr><td>每日重算时间</td><td>02:00</td></tr><tr><td>分期最低金额</td><td>500元</td></tr><tr><td>分期最大期数</td><td>12期</td></tr></table></div>';
+document.getElementById('main').innerHTML=h;
+}
+
+// Init
+renderDashboard();
+
+</script></body></html>

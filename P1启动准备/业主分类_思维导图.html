@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>业主分类 · 思维导图 · 数治理方</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;background:#0a0e17;color:#e2e8f0;overflow-x:auto;min-height:100vh}
+svg{display:block}
+
+.node-text{font-size:12px;dominant-baseline:middle}
+.node-title{font-size:14px;font-weight:700}
+.node-sub{font-size:10px;opacity:.7}
+.conn{stroke:#1e293b;stroke-width:1.5;fill:none}
+.conn-highlight{stroke-width:2}
+
+/* Tooltip */
+.tip{position:fixed;display:none;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:6px;font-size:11px;max-width:280px;pointer-events:none;z-index:999;line-height:1.6}
+.tip.show{display:block}
+
+.legend-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:16px;padding:8px 16px;background:rgba(15,23,42,.9);border-radius:8px;border:1px solid #1e293b;font-size:10px;z-index:10}
+.leg-dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+</style>
+</head>
+<body>
+
+<svg id="mindmap"></svg>
+<div class="tip" id="tip"></div>
+
+<div class="legend-bar">
+  <span><span class="leg-dot" style="background:#3b82f6"></span> 小程序轨道</span>
+  <span><span class="leg-dot" style="background:#a855f7"></span> 客服轨道</span>
+  <span><span class="leg-dot" style="background:#f59e0b"></span> 判定节点</span>
+  <span><span class="leg-dot" style="background:#10b981"></span> 分类结果</span>
+  <span><span class="leg-dot" style="background:#64748b"></span> 辅助/输出</span>
+</div>
+
+<script>
+const SVG = document.getElementById('mindmap');
+const TIP = document.getElementById('tip');
+const W = 2200, H = 1600;
+SVG.setAttribute('viewBox', `0 0 ${W} ${H}`);
+SVG.style.width = '100%';
+SVG.style.maxWidth = `${W}px`;
+SVG.style.height = 'auto';
+
+const NS = 'http://www.w3.org/2000/svg';
+
+// ============ HELPERS ============
+let uid = 0;
+function g(cls){ uid++; return `g-${uid}-${cls}`; }
+
+function rect(x,y,w,h,rx,fill,stroke){
+  let el = document.createElementNS(NS,'rect');
+  el.setAttribute('x',x); el.setAttribute('y',y);
+  el.setAttribute('width',w); el.setAttribute('height',h);
+  el.setAttribute('rx',rx||6); el.setAttribute('ry',rx||6);
+  el.setAttribute('fill',fill); el.setAttribute('stroke',stroke||'none');
+  el.setAttribute('stroke-width','1.5');
+  return el;
+}
+
+function text(x,y,content,opts={}){
+  let el = document.createElementNS(NS,'text');
+  el.setAttribute('x',x); el.setAttribute('y',y);
+  el.setAttribute('fill',opts.fill||'#e2e8f0');
+  el.setAttribute('font-size',opts.size||11);
+  el.setAttribute('font-weight',opts.weight||'normal');
+  el.setAttribute('text-anchor',opts.anchor||'start');
+  el.setAttribute('dominant-baseline','middle');
+  el.textContent = content;
+  return el;
+}
+
+function line(x1,y1,x2,y2,color){
+  let el = document.createElementNS(NS,'path');
+  let mx = (x1+x2)/2;
+  let d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+  el.setAttribute('d',d);
+  el.setAttribute('stroke',color||'#1e293b');
+  el.setAttribute('stroke-width','1.5');
+  el.setAttribute('fill','none');
+  return el;
+}
+
+function multiline(x,y,lines,opts={}){
+  let g = document.createElementNS(NS,'g');
+  let fs = opts.size||11;
+  let lh = fs*1.6;
+  let fw = opts.weight||'normal';
+  let fc = opts.fill||'#e2e8f0';
+  lines.forEach((l,i)=>{
+    g.appendChild(text(x,y+i*lh,l,{fill:fc,size:fs,weight:fw,anchor:'start'}));
+  });
+  return g;
+}
+
+// ============ BUILD MIND MAP ============
+
+// ---- CENTER ----
+const CX = 320, CY = 780;
+SVG.appendChild(rect(CX-110,CY-30,220,60,12,'#1e293b','#334155'));
+SVG.appendChild(text(CX,CY-6,'🏷️ 业主分类',{size:16,weight:'700',anchor:'middle'}));
+SVG.appendChild(text(CX,CY+16,'双轨合并 · F>E>A>B>D>C',{size:10,fill:'#64748b',anchor:'middle'}));
+
+// ---- BRANCH 1: 数据来源 (left-top) ----
+let B1X = CX - 320, B1Y = CY - 520;
+// Connector
+SVG.appendChild(line(CX-110,CY-20,B1X+200,B1Y+20));
+// Label on connector
+SVG.appendChild(text(B1X+60,B1Y-6,'数据来源 · 双轨独立',{size:11,weight:'600',fill:'#64748b'}));
+
+// Box
+SVG.appendChild(rect(B1X,B1Y,400,340,10,'#0f172a','#1e293b'));
+SVG.appendChild(text(B1X+12,B1Y-14,'双轨数据采集',{size:13,weight:'700',fill:'#94a3b8'}));
+
+// Sub-branch 1A: 小程序
+let s1x = B1X+20, s1y = B1Y+32;
+SVG.appendChild(rect(s1x,s1y,175,28,6,'#0f274440','#3b82f650'));
+SVG.appendChild(text(s1x+10,s1y+14,'📱 小程序轨道',{size:12,weight:'700',fill:'#3b82f6'}));
+SVG.appendChild(text(s1x+10,s1y+34,'采集字段',{size:10,weight:'600',fill:'#3b82f6'}));
+let mpFields = ['li · 是否登录','tp · 工单类型','st · 工单状态','rt · 满意度','de · 描述文本','ca · 问题分类','sr · 工单来源'];
+mpFields.forEach((f,i)=>{
+  SVG.appendChild(text(s1x+14,s1y+50+i*16,f,{size:10,fill:'#94a3b8'}));
+});
+let mpy = s1y+50+mpFields.length*16+8;
+SVG.appendChild(text(s1x+10,mpy,'可单独产生信号',{size:10,weight:'600',fill:'#3b82f6'}));
+let mpSigs = ['A · 未闭环工单','E · 攻击投诉/差评','C4 · 信任缺失','C5 · 已解决'];
+mpSigs.forEach((s,i)=>{
+  SVG.appendChild(text(s1x+14,mpy+16+i*16,s,{size:10,fill:'#f59e0b'}));
+});
+SVG.appendChild(text(s1x+10,mpy+16+mpSigs.length*16+8,'衰减: 30天半衰',{size:9,fill:'#475569'}));
+
+// Sub-branch 1B: 客服
+let s2x = B1X+210, s2y = B1Y+32;
+SVG.appendChild(rect(s2x,s2y,175,28,6,'#2d1a3a40','#a855f750'));
+SVG.appendChild(text(s2x+10,s2y+14,'🎧 客服轨道',{size:12,weight:'700',fill:'#a855f7'}));
+SVG.appendChild(text(s2x+10,s2y+34,'采集字段',{size:10,weight:'600',fill:'#a855f7'}));
+let csFields = ['rs · 通话结果','nt · 通话备注','t  · 通话时间'];
+csFields.forEach((f,i)=>{
+  SVG.appendChild(text(s2x+14,s2y+50+i*16,f,{size:10,fill:'#94a3b8'}));
+});
+let csy = s2y+50+csFields.length*16+8;
+SVG.appendChild(text(s2x+10,csy,'可单独产生信号',{size:10,weight:'600',fill:'#a855f7'}));
+let csSigs = ['B  · 经济困难','D  · 惯性失约','E  · 拒接/拒缴','C1 · 从众观望','C2 · 拖延观望','C3 · 对比观望'];
+csSigs.forEach((s,i)=>{
+  SVG.appendChild(text(s2x+14,csy+16+i*16,s,{size:10,fill:'#10b981'}));
+});
+SVG.appendChild(text(s2x+10,csy+16+csSigs.length*16+8,'衰减: 14天半衰',{size:9,fill:'#475569'}));
+
+// Cross influence box
+let cix = B1X+20, ciy = B1Y+260;
+SVG.appendChild(text(cix,ciy,'交叉影响',{size:10,weight:'600',fill:'#f59e0b'}));
+let ci = ['小程序登录 → D消除','小程序工单 → E拒接修正','新通话nt → 覆盖旧B信号','rs=无争议 → D计数+1'];
+ci.forEach((c,i)=>{
+  SVG.appendChild(text(cix+10,ciy+16+i*16,c,{size:9,fill:'#64748b'}));
+});
+
+// ---- BRANCH 2: 判定流水线 (right-top) ----
+let B2X = CX + 160, B2Y = CY - 540;
+SVG.appendChild(line(CX+110,CY-20,B2X,B2Y+20));
+SVG.appendChild(text(B2X-60,B2Y-6,'判定流水线',{size:11,weight:'600',fill:'#64748b'}));
+
+// Pipeline nodes
+let pipeX = B2X, pipeY = B2Y+32;
+let steps = [
+  {n:'①',q:'lb含特殊关键词?',r:'F·历史复杂',sub:'号码无效/产权变更/继承/出租',c:'#8b5cf6',w:310},
+  {n:'②',q:'有对抗信号?',r:'E·对抗态度',sub:'E1拒接/E2攻击/E3拒缴/E4差评',c:'#ef4444',w:310},
+  {n:'③',q:'有未闭环工单?',r:'A·有具体争议',sub:'报修/投诉/混合/反复/首次/高优先',c:'#f59e0b',w:350},
+  {n:'④',q:'通话中表达困难?',r:'B·经济困难',sub:'B1自述/B2反复/B3可验证',c:'#10b981',w:310},
+  {n:'⑤',q:'无争议承诺≥2次?',r:'D·惯性失约',sub:'D1轻度/D2中度/D3重度/D4沉默',c:'#f97316',w:330},
+  {n:'⑥',q:'C类细分判定',r:'C·无信号(兜底)',sub:'C1从众/C2拖延/C3对比/C4信任缺失/C5已解决/C6不足',c:'#64748b',w:380},
+];
+
+steps.forEach((s,i)=>{
+  let xx = pipeX, yy = pipeY + i*54;
+  // Node box
+  SVG.appendChild(rect(xx,yy,s.w,48,6,`${s.c}15`,`${s.c}40`));
+  SVG.appendChild(text(xx+8,yy+12,`${s.n}  ${s.q}`,{size:11,weight:'600',fill:s.c}));
+  SVG.appendChild(text(xx+8,yy+30,`→ ${s.r}`,{size:10,fill:'#e2e8f0'}));
+  // Sub note
+  SVG.appendChild(text(xx+8,yy+44,s.sub,{size:9,fill:'#475569'}));
+  // Arrow between steps
+  if (i<steps.length-1){
+    SVG.appendChild(text(xx+s.w/2,yy+58,'↓',{size:12,fill:'#334155',anchor:'middle'}));
+  }
+});
+
+// Source markers on pipeline
+let srcMarks = [
+  {step:3,x:pipeX+320,y:pipeY+2*54+16,src:'📱',note:'小程序产生'},
+  {step:4,x:pipeX+280,y:pipeY+3*54+16,src:'🎧',note:'客服产生'},
+  {step:5,x:pipeX+300,y:pipeY+4*54+16,src:'🎧',note:'客服产生'},
+];
+srcMarks.forEach(m=>{
+  SVG.appendChild(text(m.x,m.y,`${m.src} ${m.note}`,{size:9,fill:'#64748b'}));
+});
+
+// ---- BRANCH 3: 辅助维度 (left-bottom) ----
+let B3X = CX - 500, B3Y = CY + 80;
+SVG.appendChild(line(CX-110,CY+30,B3X+300,B3Y+110));
+SVG.appendChild(text(B3X+40,B3Y+70,'辅助维度',{size:11,weight:'600',fill:'#64748b'}));
+
+// Signal strength
+let ssx = B3X+10, ssy = B3Y+30;
+SVG.appendChild(rect(ssx,ssy,240,100,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(ssx+10,ssy+20,'信号强度(五级)',{size:11,weight:'700',fill:'#94a3b8'}));
+let strengths = ['○ 0·无 → 无此信号','◐ 1·弱 → 得分 1-25','◑ 2·中 → 得分 26-50','● 3·强 → 得分 51-75','⬤ 4·极强 → 得分 76-100'];
+strengths.forEach((s,i)=>{
+  SVG.appendChild(text(ssx+14,ssy+38+i*14,s,{size:9,fill:'#94a3b8'}));
+});
+
+// Cross patterns
+let cpx = B3X+10, cpy = ssy+112;
+SVG.appendChild(rect(cpx,cpy,240,138,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(cpx+10,cpy+20,'交叉模式(8种)',{size:11,weight:'700',fill:'#94a3b8'}));
+let patterns = [
+  '争议+困难  · 争议+惯性',
+  '对抗+困难  · 对抗+惯性',
+  '困难+惯性',
+  '恶化中(C→A C→E A→E)',
+  '好转中(E→A A→C D→C)',
+  '首次信号(新行为)',
+];
+patterns.forEach((p,i)=>{
+  SVG.appendChild(text(cpx+14,cpy+38+i*16,p,{size:9,fill:'#64748b'}));
+});
+
+// Response levels
+let rlx = B3X+260, rly = B3Y+30;
+SVG.appendChild(rect(rlx,rly,330,138,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(rlx+10,rly+20,'响应级别(拨号优先级)',{size:11,weight:'700',fill:'#94a3b8'}));
+let rlevels = [
+  {l:'R0·紧急',c:'#ef4444',d:'24h内 · A≥3未闭环 或 E新触发'},
+  {l:'R1·优先',c:'#f97316',d:'48h内 · 主分类得分≥70'},
+  {l:'R2·常规',c:'#f59e0b',d:'本周内 · 普通活跃信号'},
+  {l:'R3·观察',c:'#10b981',d:'延后   · C类 或 得分<40'},
+  {l:'R4·静默',c:'#94a3b8',d:'不主动 · 沉睡>60天 或 F类'},
+];
+rlevels.forEach((r,i)=>{
+  SVG.appendChild(text(rlx+14,rly+38+i*18,r.l,{size:10,weight:'700',fill:r.c}));
+  SVG.appendChild(text(rlx+80,rly+38+i*18,r.d,{size:9,fill:'#64748b'}));
+});
+
+// Priority formula
+let pfx = rlx, pfy = rly+152;
+SVG.appendChild(rect(pfx,pfy,330,60,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(pfx+10,pfy+18,'优先级分公式',{size:10,weight:'700',fill:'#94a3b8'}));
+SVG.appendChild(text(pfx+14,pfy+36,'紧急度(40) + 恶化风险(35) + 影响力(25) + 响应加成(R0:+20,R4:-20)',{size:9,fill:'#64748b'}));
+
+// Trajectory
+let trx = B3X+10, trpy = cpy+152;
+SVG.appendChild(rect(trx,trpy,240,68,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(trx+10,trpy+20,'轨迹追踪',{size:11,weight:'700',fill:'#94a3b8'}));
+SVG.appendChild(text(trx+14,trpy+36,'近3次分类: C→C→A',{size:10,fill:'#e2e8f0'}));
+SVG.appendChild(text(trx+14,trpy+52,'趋势: 恶化/稳定/改善  ·  速度: 快/慢',{size:9,fill:'#64748b'}));
+
+// ---- BRANCH 4: 输出结构 (right-bottom) ----
+let B4X = CX + 100, B4Y = CY + 80;
+SVG.appendChild(line(CX+110,CY+30,B4X+80,B4Y+150));
+SVG.appendChild(text(B4X-20,B4Y+100,'分类输出',{size:11,weight:'600',fill:'#64748b'}));
+
+let outx = B4X+10, outy = B4Y+30;
+SVG.appendChild(rect(outx,outy,460,310,10,'#0f172a','#334155'));
+SVG.appendChild(text(outx+12,outy-14,'📦 分类输出对象 classify(owner) →',{size:12,weight:'700',fill:'#f59e0b'}));
+
+// Output fields as a styled block
+let outFields = [
+  {k:'main_class',v:'"A"',d:'主分类',c:'#f59e0b'},
+  {k:'cls_sub',v:'"A·报修型"',d:'细分子类型(29种)',c:'#fbbf24'},
+  {k:'signal_strength',v:'{A:3,B:1,C:0,D:2,E:0,F:0}',d:'各信号强度0-4',c:'#94a3b8'},
+  {k:'aux_signals',v:'["B","D"]',d:'辅助信号列表',c:'#94a3b8'},
+  {k:'cross_pattern',v:'"争议+困难"',d:'交叉模式(8种)',c:'#a78bfa'},
+  {k:'response_level',v:'"R1"',d:'响应级别R0-R4',c:'#ef4444'},
+  {k:'trajectory',v:'{recent_3:["C","C","A"],trend:"worsening"}',d:'轨迹追踪',c:'#64748b'},
+  {k:'freshness',v:'"just_now"',d:'新鲜度',c:'#64748b'},
+  {k:'source_breakdown',v:'{A:{mp:true,cs:false},B:{mp:false,cs:true}}',d:'双轨溯源',c:'#3b82f6'},
+  {k:'mp_snapshot',v:'{work_orders_open:1,logged_in:true,...}',d:'📱小程序轨道快照',c:'#3b82f6'},
+  {k:'cs_snapshot',v:'{total_calls:3,rejected:0,...}',d:'🎧客服轨道快照',c:'#a855f7'},
+  {k:'priority_score',v:'95',d:'优先级分(含响应加成)',c:'#10b981'},
+  {k:'suggested_action',v:'"等待物业处理，待验收时回访"',d:'一行建议',c:'#10b981'},
+];
+
+outFields.forEach((f,i)=>{
+  let oy = outy+22+i*21;
+  SVG.appendChild(text(outx+14,oy,f.k,{size:9,fill:f.c,weight:'600'}));
+  SVG.appendChild(text(outx+130,oy,f.v,{size:9,fill:'#e2e8f0'}));
+  SVG.appendChild(text(outx+330,oy,f.d,{size:9,fill:'#475569'}));
+});
+
+// ---- EXTRA: signal merge logic ----
+let mgx = B4X+10, mgy = outy+330;
+SVG.appendChild(rect(mgx,mgy,460,42,8,'#0f172a','#1e293b'));
+SVG.appendChild(text(mgx+12,mgy+16,'🔀 信号合并: 两轨道各自算完 → OR逻辑合并(任一轨道有=信号on) → 走F>E>A>B>D>C流水线',{size:10,fill:'#64748b'}));
+SVG.appendChild(text(mgx+12,mgy+32,'衰减各自独立: 工单类30天半衰 · 通话类14天半衰 · 互不干扰',{size:9,fill:'#475569'}));
+
+// ---- EXTRA: flow summary strip at top ----
+let topX = 250, topY = 30;
+SVG.appendChild(rect(topX,topY,1700,40,8,'#0f172a','#1e293b'));
+let flowSteps = [
+  {label:'双轨采集',color:'#3b82f6'},
+  {label:'信号合并(OR)',color:'#f59e0b'},
+  {label:'F判定',color:'#8b5cf6'},
+  {label:'E判定',color:'#ef4444'},
+  {label:'A判定',color:'#f59e0b'},
+  {label:'B判定',color:'#10b981'},
+  {label:'D判定',color:'#f97316'},
+  {label:'C细分',color:'#64748b'},
+  {label:'强度+交叉+响应',color:'#94a3b8'},
+  {label:'输出画像',color:'#10b981'},
+];
+let fsx = topX+20;
+flowSteps.forEach((f,i)=>{
+  SVG.appendChild(text(fsx,topY+20,f.label,{size:11,weight:'600',fill:f.color}));
+  fsx += f.label.length*14 + 20;
+  if (i<flowSteps.length-1){
+    SVG.appendChild(text(fsx-15,topY+20,'→',{size:10,fill:'#334155'}));
+  }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · AI社区模拟 — 概念架构</title>
+<style>
+  :root {
+    --bg-deep: #0b1120;
+    --bg-panel: #0f172a;
+    --bg-card: #1e293b;
+    --border: #334155;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --purple: #8b5cf6;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --green: #10b981;
+    --orange: #f97316;
+    --gray: #64748b;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    line-height: 1.7;
+    padding: 40px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.4em;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 1.5em;
+    margin: 48px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  h3 { font-size: 1.15em; margin: 24px 0 12px; color: var(--text-primary); }
+  .subtitle { color: var(--text-muted); font-size: 1.05em; margin-bottom: 40px; }
+  
+  /* 核心公式 */
+  .formula-box {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 182, 212, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 28px 36px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .formula-box .formula {
+    font-size: 1.35em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .formula-box .formula .mul { color: var(--purple); }
+  .formula-box .desc { color: var(--text-secondary); font-size: 0.9em; }
+
+  /* 卡片网格 */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .card.purple { border-left: 3px solid var(--purple); }
+  .card.red { border-left: 3px solid var(--red); }
+  .card.yellow { border-left: 3px solid var(--yellow); }
+  .card.green { border-left: 3px solid var(--green); }
+  .card.orange { border-left: 3px solid var(--orange); }
+  .card.cyan { border-left: 3px solid var(--cyan); }
+  .card h4 { font-size: 1em; margin-bottom: 10px; }
+
+  /* before/after */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 24px 0; }
+  .compare-card {
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .compare-card.before {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(100, 116, 139, 0.05));
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+  .compare-card.after {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(139, 92, 246, 0.05));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .compare-card h3 {
+    font-size: 1.3em;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .compare-card .sub { color: var(--text-muted); font-size: 0.85em; margin-bottom: 20px; }
+
+  /* 指标条 */
+  .metric-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .metric-row .label {
+    width: 110px; font-size: 0.85em; text-align: right;
+    color: var(--text-secondary); flex-shrink: 0;
+  }
+  .metric-row .bar-bg {
+    flex: 1; height: 22px; background: rgba(255,255,255,0.05);
+    border-radius: 11px; overflow: hidden;
+  }
+  .metric-row .bar-fill {
+    height: 100%; border-radius: 11px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 10px; font-size: 0.75em; font-weight: 700;
+    transition: width 0.3s;
+  }
+  .bar-bad { background: rgba(239,68,68,0.6); }
+  .bar-mid { background: rgba(245,158,11,0.6); }
+  .bar-good { background: rgba(16,185,129,0.6); }
+  .bar-info { background: rgba(59,130,246,0.6); }
+
+  /* 时间线 */
+  .timeline {
+    display: flex; gap: 0; margin: 24px 0;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; top: 18px; left: 0; right: 0;
+    height: 1px; background: var(--border); z-index: 0;
+  }
+  .tl-phase {
+    flex: 1; text-align: center; z-index: 1;
+  }
+  .tl-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85em;
+  }
+  .tl-dot.purple { background: var(--purple); color: #fff; }
+  .tl-dot.cyan { background: var(--cyan); color: #000; }
+  .tl-dot.green { background: var(--green); color: #fff; }
+  .tl-dot.yellow { background: var(--yellow); color: #000; }
+  .tl-label { font-size: 0.8em; color: var(--text-secondary); margin-top: 4px; }
+
+  /* 因果链 */
+  .causal-chain {
+    display: flex; align-items: center; gap: 0;
+    flex-wrap: wrap; justify-content: center;
+    margin: 20px 0;
+  }
+  .causal-node {
+    padding: 8px 16px; border-radius: 20px;
+    font-size: 0.82em; font-weight: 600;
+    white-space: nowrap;
+  }
+  .causal-arrow {
+    color: var(--text-muted); font-size: 1.2em;
+    margin: 0 2px;
+  }
+
+  /* agent roster */
+  .agent-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .agent-emoji { font-size: 2em; margin-bottom: 6px; }
+  .agent-type { font-weight: 700; font-size: 0.9em; }
+  .agent-count { color: var(--text-muted); font-size: 0.78em; }
+
+  /* 实验组 */
+  .exp-table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+  }
+  .exp-table th {
+    background: var(--bg-card); color: var(--text-secondary);
+    padding: 10px 14px; text-align: left; font-size: 0.8em;
+    border-bottom: 1px solid var(--border);
+  }
+  .exp-table td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(51,65,85,0.4);
+    font-size: 0.85em;
+  }
+  .exp-table .ctrl { color: var(--red); }
+  .exp-table .treat { color: var(--green); }
+
+  /* 涌现行为 */
+  .emergence-box {
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(6,182,212,0.05));
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px; padding: 20px 24px; margin: 12px 0;
+  }
+  .emergence-box h5 { color: var(--purple); margin-bottom: 6px; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 0.7em; font-weight: 700; margin-right: 4px;
+  }
+  .tag-purple { background: rgba(139,92,246,0.2); color: var(--purple); }
+  .tag-red { background: rgba(239,68,68,0.2); color: var(--red); }
+  .tag-green { background: rgba(16,185,129,0.2); color: var(--green); }
+  .tag-yellow { background: rgba(245,158,11,0.2); color: var(--yellow); }
+
+  .divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+  @media (max-width: 1000px) {
+    body { padding: 20px 24px; }
+    .grid-2, .grid-3, .grid-5, .grid-6 { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🏙️ 数治理方 · AI社区模拟</h1>
+<p class="subtitle">基于 Generative Agents 范式，构建中国城市社区智能体模拟——观察制度型信用治理的涌现效应</p>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 核心公式 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="formula-box">
+  <div class="formula">
+    社区秩序 = <span style="color:var(--purple)">收费正当性</span> <span class="mul">×</span>
+    <span style="color:var(--cyan)">履约可信度</span> <span class="mul">×</span>
+    <span style="color:var(--blue)">价值感知度</span> <span class="mul">×</span>
+    <span style="color:var(--green)">守约共识度</span> <span class="mul">×</span>
+    <span style="color:var(--yellow)">分类精准度</span>
+  </div>
+  <div class="desc">任何一个因子趋近于零，整体崩塌。传统物业只抓最后一个，前四个为零→年年催年年塌。</div>
+  <div class="desc" style="margin-top:6px">数治理方的解法：<strong>五个因子同时做功</strong>。AI模拟将量化验证这一假说。</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 模拟架构总览 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🧬 一、模拟架构总览</h2>
+
+<div class="grid-3">
+  <div class="card purple">
+    <h4>🏘️ 业主智能体</h4>
+    <p style="color:var(--text-secondary);font-size:0.85em;">
+      500~2000户，每户一个Agent。<br>
+      内嵌：缴费历史、投诉记录、社交网络（楼栋/微信群）、人格参数、对物业的信任值。<br>
+      自主行为：报修、缴费、投诉、邻里讨论、查看平台。
+    </p>
+  </div>
+  <div class="card cyan">
+    <h4>🏢 物业智能体</h4>
+    <p style="color:var(--text-secondary);font-size:0.85em;">
+      物业经理+维修工+NPC客服。<br>
+      内嵌：响应效率、工单处理能力、沟通策略。<br>
+      自主行为：接单、派单、处理、回访、催缴。
+    </p>
+  </div>
+  <div class="card green">
+    <h4>🔧 数治理方平台层</h4>
+    <p style="color:var(--text-secondary);font-size:0.85em;">
+      双轨分类引擎 + 工单系统 + 信用记录。<br>
+      向所有Agent提供：信息透明度、证据留存、分类标签、履约记录。<br>
+      <strong>这是实验变量——对照组没有，实验组有。</strong>
+    </p>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-top:24px;">
+  <div class="card orange">
+    <h4>📱 小程序轨道（行为数据）</h4>
+    <p style="color:var(--text-secondary);font-size:0.85em;">
+      追踪业主在平台上的操作行为：报修、评价、缴费、登录频率。<br>
+      30天衰减。产生A/E攻击/C4/C5信号。<br>
+      <span class="tag tag-yellow">什么是业主做的</span>
+    </p>
+  </div>
+  <div class="card" style="border-left:3px solid var(--gray);">
+    <h4>🎧 客服轨道（通话数据）</h4>
+    <p style="color:var(--text-secondary);font-size:0.85em;">
+      记录客服与业主的通话结果：承诺、拒绝、情绪、诉求。<br>
+      14天衰减。产生B/D/E拒接拒缴/C1~C3信号。<br>
+      <span class="tag tag-yellow">什么是业主说的</span>
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 实验设计 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🧪 二、实验设计</h2>
+
+<p style="color:var(--text-secondary);margin-bottom:20px;">
+  采用<strong style="color:var(--text-primary)">A/B对照实验</strong>：两个完全相同的社区初始化，唯一变量是是否引入数治理方平台。运行N个模拟周期（每周期=1天），观察涌现差异。
+</p>
+
+<table class="exp-table">
+  <tr>
+    <th>参数</th>
+    <th>🅰️ 对照组（传统物业）</th>
+    <th>🅱️ 实验组（引入数治理方）</th>
+  </tr>
+  <tr>
+    <td>业主户数</td>
+    <td class="ctrl">500户</td>
+    <td class="treat">500户（同样本）</td>
+  </tr>
+  <tr>
+    <td>初始欠费率</td>
+    <td class="ctrl">~32%</td>
+    <td class="treat">~32%（同分布）</td>
+  </tr>
+  <tr>
+    <td>业主分类分布</td>
+    <td class="ctrl">E:18% A:15% B:12% D:20% C:35%（随机）</td>
+    <td class="treat">同分布启动</td>
+  </tr>
+  <tr>
+    <td>工单系统</td>
+    <td class="ctrl">电话报修，无闭环追踪</td>
+    <td class="treat">数治理方工单闭环+证据留存</td>
+  </tr>
+  <tr>
+    <td>信息透明度</td>
+    <td class="ctrl">业主看不到处理进度</td>
+    <td class="treat">业主可实时查看工单状态</td>
+  </tr>
+  <tr>
+    <td>信用记录</td>
+    <td class="ctrl">无制度化信用</td>
+    <td class="treat">履约记录+分类标签+响应等级</td>
+  </tr>
+  <tr>
+    <td>客服介入</td>
+    <td class="ctrl">物业前台被动接电话</td>
+    <td class="treat">客服主动回访+分类引导</td>
+  </tr>
+  <tr>
+    <td>运行周期</td>
+    <td class="ctrl">90天（一个季度）</td>
+    <td class="treat">90天（同周期）</td>
+  </tr>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 模拟时间线 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>⏳ 三、模拟时间线与关键事件</h2>
+
+<div class="timeline">
+  <div class="tl-phase">
+    <div class="tl-dot purple">1</div>
+    <div style="font-weight:700;font-size:0.85em;">Day 0-7</div>
+    <div class="tl-label">初始化·基线采集<br>业主行为模式建立<br>首次报修/缴费事件</div>
+  </div>
+  <div class="tl-phase">
+    <div class="tl-dot cyan">2</div>
+    <div style="font-weight:700;font-size:0.85em;">Day 8-30</div>
+    <div class="tl-label">干预生效期<br>工单闭环开始运转<br>分类标签首次产生<br>客服首轮回访</div>
+  </div>
+  <div class="tl-phase">
+    <div class="tl-dot yellow">3</div>
+    <div style="font-weight:700;font-size:0.85em;">Day 31-60</div>
+    <div class="tl-label">信用效应期<br>履约记录积累<br>D类业主惯性打破<br>邻里共识形成</div>
+  </div>
+  <div class="tl-phase">
+    <div class="tl-dot green">4</div>
+    <div style="font-weight:700;font-size:0.85em;">Day 61-90</div>
+    <div class="tl-label">稳态涌现期<br>社区秩序新均衡<br>分类分布迁移<br>自发治理行为出现</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 业主Agent类型定义 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>👥 四、六类业主Agent — 行为参数定义</h2>
+
+<div class="grid-6">
+  <div class="agent-card" style="border-top: 3px solid var(--purple);">
+    <div class="agent-emoji">🔮</div>
+    <div class="agent-type" style="color:var(--purple)">F · 历史复杂</div>
+    <div class="agent-count">约2%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">诉讼/群访/媒体记录<br>独立通道处理<br>常规分类不适用</div>
+  </div>
+  <div class="agent-card" style="border-top: 3px solid var(--red);">
+    <div class="agent-emoji">🔥</div>
+    <div class="agent-type" style="color:var(--red)">E · 对抗态度</div>
+    <div class="agent-count">约18%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">拒接/差评/群内攻击<br>高冲突概率<br>需要降级策略</div>
+  </div>
+  <div class="agent-card" style="border-top: 3px solid var(--yellow);">
+    <div class="agent-emoji">⚡</div>
+    <div class="agent-type" style="color:var(--yellow)">A · 具体争议</div>
+    <div class="agent-count">约15%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">有未闭环工单<br>问题解决即消除<br>最易转化</div>
+  </div>
+  <div class="agent-card" style="border-top: 3px solid var(--green);">
+    <div class="agent-emoji">🌱</div>
+    <div class="agent-type" style="color:var(--green)">B · 经济困难</div>
+    <div class="agent-count">约12%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">表达经济困难<br>需要帮扶通道<br>非对抗性</div>
+  </div>
+  <div class="agent-card" style="border-top: 3px solid var(--orange);">
+    <div class="agent-emoji">⏰</div>
+    <div class="agent-type" style="color:var(--orange)">D · 惯性失约</div>
+    <div class="agent-count">约20%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">承诺≥2次未兑现<br>登录小程序即消除<br>惯性最易打破</div>
+  </div>
+  <div class="agent-card" style="border-top: 3px solid var(--gray);">
+    <div class="agent-emoji">📋</div>
+    <div class="agent-type" style="color:var(--gray)">C · 沉默多数</div>
+    <div class="agent-count">约33%</div>
+    <div style="font-size:0.72em;color:var(--text-muted);margin-top:4px;">C1~C6六分法<br>无明确信号<br>默认守约或观望</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- Before vs After -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>📊 五、核心指标 — 引入前 vs 引入后（预测）</h2>
+
+<div class="compare-grid">
+  <!-- BEFORE -->
+  <div class="compare-card before">
+    <h3>🔴 无 数治理方</h3>
+    <div class="sub">传统物业模式 · 信息不透明 · 无信用记录</div>
+
+    <div class="metric-row">
+      <div class="label">物业费收缴率</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:62%">62%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">工单闭环率</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:38%">38%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">业主满意度</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:31%">31%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">投诉升级率</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:73%">73%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">D类→A类转化</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:12%">12%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">信息透明度</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:8%">8%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">邻里信任指数</div>
+      <div class="bar-bg"><div class="bar-fill bar-bad" style="width:22%">22%</div></div>
+    </div>
+
+    <div style="margin-top:20px;padding:16px;background:rgba(239,68,68,0.06);border-radius:8px;">
+      <p style="color:var(--red);font-weight:700;font-size:0.85em;">⚠️ 典型恶性循环</p>
+      <p style="font-size:0.78em;color:var(--text-secondary);margin-top:6px;">
+        不缴费→服务差→更不缴费→物业摆烂→投诉→升级冲突→社区秩序崩塌<br>
+        五个因子全部趋近于零，负向正反馈锁定。
+      </p>
+    </div>
+  </div>
+
+  <!-- AFTER -->
+  <div class="compare-card after">
+    <h3>🟢 引入 数治理方</h3>
+    <div class="sub">工单闭环 · 证据透明 · 信用记录 · 客服分类介入</div>
+
+    <div class="metric-row">
+      <div class="label">物业费收缴率</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:78%">78%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">工单闭环率</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:85%">85%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">业主满意度</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:64%">64%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">投诉升级率</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:28%">28%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">D类→A类转化</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:67%">67%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">信息透明度</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:91%">91%</div></div>
+    </div>
+    <div class="metric-row">
+      <div class="label">邻里信任指数</div>
+      <div class="bar-bg"><div class="bar-fill bar-good" style="width:58%">58%</div></div>
+    </div>
+
+    <div style="margin-top:20px;padding:16px;background:rgba(16,185,129,0.06);border-radius:8px;">
+      <p style="color:var(--green);font-weight:700;font-size:0.85em;">✅ 正向循环启动</p>
+      <p style="font-size:0.78em;color:var(--text-secondary);margin-top:6px;">
+        工单闭环→信任积累→A类争议减少→D类惯性打破→缴费意愿回升→服务改善<br>
+        五个因子同时做功，负向循环被打破，新的正反馈建立。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 五因子×因果链 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🔗 六、五因子因果链——数治理方如何逐个做功</h2>
+
+<div class="grid-5">
+  <div class="card purple" style="text-align:center;">
+    <h4 style="color:var(--purple)">收费正当性 ↑</h4>
+    <div class="causal-chain" style="flex-direction:column;gap:6px;">
+      <span class="causal-node" style="background:rgba(139,92,246,0.15);">工单证据留存</span>
+      <span style="color:var(--purple);">→</span>
+      <span class="causal-node" style="background:rgba(139,92,246,0.15);">服务可追溯</span>
+      <span style="color:var(--purple);">→</span>
+      <span class="causal-node" style="background:rgba(139,92,246,0.15);">"物业确实干了活"</span>
+    </div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-top:10px;">每次服务都有证据，费用不是"白交的"</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--cyan);text-align:center;">
+    <h4 style="color:var(--cyan)">履约可信度 ↑</h4>
+    <div class="causal-chain" style="flex-direction:column;gap:6px;">
+      <span class="causal-node" style="background:rgba(6,182,212,0.12);">工单闭环率 38%→85%</span>
+      <span style="color:var(--cyan);">→</span>
+      <span class="causal-node" style="background:rgba(6,182,212,0.12);">报修真的有人管</span>
+      <span style="color:var(--cyan);">→</span>
+      <span class="causal-node" style="background:rgba(6,182,212,0.12);">信任积累</span>
+    </div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-top:10px;">每一次闭环都是一次信任充值</p>
+  </div>
+
+  <div class="card" style="border-left:3px solid var(--blue);text-align:center;">
+    <h4 style="color:var(--blue)">价值感知度 ↑</h4>
+    <div class="causal-chain" style="flex-direction:column;gap:6px;">
+      <span class="causal-node" style="background:rgba(59,130,246,0.12);">月度简报</span>
+      <span style="color:var(--blue);">→</span>
+      <span class="causal-node" style="background:rgba(59,130,246,0.12);">服务可视化</span>
+      <span style="color:var(--blue);">→</span>
+      <span class="causal-node" style="background:rgba(59,130,246,0.12);">"原来做了这么多"</span>
+    </div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-top:10px;">信息不对等被打破，沉默的服务被看见</p>
+  </div>
+
+  <div class="card green" style="text-align:center;">
+    <h4 style="color:var(--green)">守约共识度 ↑</h4>
+    <div class="causal-chain" style="flex-direction:column;gap:6px;">
+      <span class="causal-node" style="background:rgba(16,185,129,0.12);">D类惯性打破</span>
+      <span style="color:var(--green);">→</span>
+      <span class="causal-node" style="background:rgba(16,185,129,0.12);">邻里守约率上升</span>
+      <span style="color:var(--green);">→</span>
+      <span class="causal-node" style="background:rgba(16,185,129,0.12);">"大家都在交"</span>
+    </div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-top:10px;">社会规范效应：别人守约，我也守约</p>
+  </div>
+
+  <div class="card yellow" style="text-align:center;">
+    <h4 style="color:var(--yellow)">分类精准度 ↑</h4>
+    <div class="causal-chain" style="flex-direction:column;gap:6px;">
+      <span class="causal-node" style="background:rgba(245,158,11,0.12);">双轨数据</span>
+      <span style="color:var(--yellow);">→</span>
+      <span class="causal-node" style="background:rgba(245,158,11,0.12);">精准分类</span>
+      <span style="color:var(--yellow);">→</span>
+      <span class="causal-node" style="background:rgba(245,158,11,0.12);">A类争议≠E类对抗</span>
+    </div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-top:10px;">不把争议者当对抗者，不把困难者当失信者</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 涌现行为预测 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🌊 七、预期涌现行为——模拟可能揭示的现象</h2>
+
+<div class="grid-2">
+  <div class="emergence-box">
+    <h5>🔄 1. D类→C类的大规模迁移</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      D类（惯性失约）是"最大可转化群体"。传统物业把D当"老赖"催收→逆反→D不降反升。
+      数治理方：工单闭环→有证据→客服回访→"您上次说的事我们记着呢"→惯性破窗。
+      <strong style="color:var(--green)">预计D类占比从20%降至8%以下。</strong>
+    </p>
+  </div>
+
+  <div class="emergence-box">
+    <h5>🛡️ 2. E类对抗的降级效应</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      E类对抗≠坏人。很多是A类争议长期未解决升级而成。
+      数治理方通过双轨数据区分真E（价值观对抗）和伪E（A类升级）。
+      <strong style="color:var(--green)">伪E回调为A→解决→消除。真E通过分类隔离减少对其他业主的传染。</strong>
+    </p>
+  </div>
+
+  <div class="emergence-box">
+    <h5>📈 3. 信息透明的"沉默螺旋反转"</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      传统物业：负面声音在业主群放大→沉默多数不敢说话→"全小区都不交"的错觉。
+      数治理方：月度简报+工单公开展示→"原来物业做了这么多"→沉默多数开始发声。
+      <strong style="color:var(--green)">微信群里的舆论风向从"物业真烂"变成"这次处理得还挺快"。</strong>
+    </p>
+  </div>
+
+  <div class="emergence-box">
+    <h5>🤝 4. 邻里信用共识的自发形成</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      当足够多业主通过平台看到"本楼栋缴费率85%"，会产生社会规范压力。
+      Agent模拟可能揭示：<strong style="color:var(--green)">临界点在~65%</strong>——一旦缴费率超过这个阈值，
+      剩下观望的C类业主会主动跟进，形成自发秩序。
+    </p>
+  </div>
+
+  <div class="emergence-box">
+    <h5>⚡ 5. 客服介入的杠杆效应</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      一次5分钟的回访电话=一个A类争议降级为D类=避免了潜在的群内投诉升级。
+      模拟可能量化这个杠杆比率：<strong style="color:var(--green)">每1次客服介入，平均避免2.3次群内冲突事件</strong>。
+    </p>
+  </div>
+
+  <div class="emergence-box">
+    <h5>🏚️ 6. 物业公司的行为转型</h5>
+    <p style="font-size:0.85em;color:var(--text-secondary);">
+      传统物业的动力结构是"省事"——多做多错。平台透明化后变成"做了有记录"→
+      工单闭环成为物业内部KPI→<strong style="color:var(--green)">物业从被动应付变为主动服务</strong>。
+      这是Agent模拟中最有趣的二阶效应。
+    </p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 技术路径 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🛠️ 八、技术实现路径</h2>
+
+<div class="grid-3">
+  <div class="card cyan">
+    <h4>Level 1 · 概念验证</h4>
+    <p style="font-size:0.82em;color:var(--text-secondary);">
+      <strong>纯Python脚本</strong>，基于agentpy或Mesa库。<br>
+      简化的Agent行为规则（if-else决策树），不需要LLM。<br>
+      500个Agent × 90周期 × 统计输出。<br>
+      <span class="tag tag-green">1~2周</span>
+    </p>
+  </div>
+  <div class="card purple">
+    <h4>Level 2 · LLM驱动</h4>
+    <p style="font-size:0.82em;color:var(--text-secondary);">
+      每个Agent接入LLM决策（类似Generative Agents架构）。<br>
+      Agent有记忆、有社交、有自然语言交互。<br>
+      50~100个Agent规模（LLM调用成本限制）。<br>
+      <span class="tag tag-yellow">2~4周</span>
+    </p>
+  </div>
+  <div class="card green">
+    <h4>Level 3 · 可视化沙盒</h4>
+    <p style="font-size:0.82em;color:var(--text-secondary);">
+      类似AI Town的可视化界面。<br>
+      实时观察Agent在小镇地图上的行为和交互。<br>
+      可调节参数，A/B对照。<br>
+      <span class="tag tag-purple">1~2月</span>
+    </p>
+  </div>
+</div>
+
+<div style="margin-top:32px;"></div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 下一步 -->
+<!-- ═══════════════════════════════════════════ -->
+<h2>🎯 九、建议的下一步</h2>
+
+<div class="card" style="border-left:3px solid var(--purple);margin-bottom:60px;">
+  <p style="font-size:0.95em;line-height:2;">
+    <strong>1.</strong> 确定模拟精度——<span style="color:var(--cyan)">Level 1规则驱动</span>还是<span style="color:var(--purple)">Level 2 LLM驱动</span>？<br>
+    <strong>2.</strong> 确定关键假设参数——五因子的初始值、各Agent行为概率分布——这些需要校准。<br>
+    <strong>3.</strong> 从D类迁移（惯性打破）作为第一个验证场景——这是数治理方理论最可量化的预测。<br>
+    <strong>4.</strong> 输出形式——是学术论文风格的实验报告，还是可交互的Web沙盒？
+  </p>
+</div>
+
+</body>
+</html>

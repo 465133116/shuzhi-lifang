@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数治理方 · 六端完整样貌</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #0b1120;
+    color: #e2e8f0;
+    line-height: 1.8;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+    padding: 64px 24px 48px;
+    text-align: center;
+    border-bottom: 1px solid rgba(147,197,253,0.15);
+  }
+  .hero h1 { font-size: 36px; font-weight: 700; letter-spacing: 2px; }
+  .hero h1 span { color: #93c5fd; }
+  .hero .tagline {
+    font-size: 18px; color: #94a3b8; margin-top: 12px;
+    max-width: 640px; margin-left: auto; margin-right: auto;
+  }
+  .hero .meta {
+    display: flex; gap: 24px; justify-content: center; margin-top: 20px;
+    font-size: 13px; color: #64748b; flex-wrap: wrap;
+  }
+  .hero .meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Section ── */
+  .section {
+    max-width: 1000px; margin: 0 auto; padding: 48px 24px;
+  }
+  .section+.section { border-top: 1px solid rgba(255,255,255,0.06); }
+  .section h2 {
+    font-size: 22px; font-weight: 700; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(37,99,235,0.2); color: #60a5fa; font-size: 14px; font-weight: 700;
+  }
+
+  /* ── 模式卡片 ── */
+  .mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .mode-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .mode-card:hover { border-color: rgba(147,197,253,0.3); }
+  .mode-card .mc-label {
+    display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px;
+    font-weight: 600; margin-bottom: 12px;
+  }
+  .mc-label.active { background: rgba(16,185,129,0.2); color: #34d399; }
+  .mc-label.plan { background: rgba(100,116,139,0.2); color: #94a3b8; }
+  .mode-card h3 { font-size: 17px; margin-bottom: 8px; }
+  .mode-card p { font-size: 13px; color: #94a3b8; }
+
+  /* ── 端口详情 ── */
+  .port-block {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+  }
+  .port-header {
+    display: flex; align-items: center; gap: 16px; padding: 20px 24px;
+    cursor: pointer; user-select: none;
+  }
+  .port-header:hover { background: rgba(255,255,255,0.02); }
+  .port-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .pi-owner { background: #3b82f6; }
+  .pi-prop { background: #059669; }
+  .pi-cs { background: #f59e0b; }
+  .pi-council { background: #6366f1; }
+  .pi-comm { background: #0ea5e9; }
+  .pi-ai { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+  .port-header h3 { font-size: 18px; flex: 1; }
+  .port-header .port-who { font-size: 12px; color: #64748b; }
+  .port-body { padding: 0 24px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { .port-body { grid-template-columns: 1fr; } }
+
+  .port-body .pb-col h4 {
+    font-size: 13px; color: #93c5fd; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .port-body .pb-col ul {
+    list-style: none; font-size: 13px; color: #cbd5e1;
+  }
+  .port-body .pb-col ul li {
+    padding: 5px 0; display: flex; gap: 8px;
+  }
+  .port-body .pb-col ul li::before { content: "▸"; color: #475569; flex-shrink: 0; }
+
+  /* 界面描述块 */
+  .screen-desc {
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 14px 16px; margin-top: 12px;
+    font-size: 12px; color: #94a3b8; font-style: italic;
+  }
+  .screen-desc b { color: #e2e8f0; font-style: normal; }
+
+  /* ── 场景表格 ── */
+  .scene-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;
+  }
+  .scene-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 16px;
+  }
+  .scene-card .sc-num {
+    font-size: 11px; color: #475569; margin-bottom: 6px;
+  }
+  .scene-card .sc-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .scene-card .sc-desc { font-size: 12px; color: #94a3b8; }
+
+  /* ── 闭环 ── */
+  .flow-row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    justify-content: center; padding: 24px 0;
+  }
+  .flow-node {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 14px 18px; font-size: 13px; text-align: center;
+    min-width: 100px;
+  }
+  .flow-node .fn-icon { font-size: 20px; margin-bottom: 4px; }
+  .flow-arrow { color: #475569; font-size: 18px; }
+
+  /* ── 独特能力 ── */
+  .usp-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;
+  }
+  .usp-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 18px;
+  }
+  .usp-card .usp-icon { font-size: 22px; margin-bottom: 8px; }
+  .usp-card h4 { font-size: 15px; margin-bottom: 6px; }
+  .usp-card p { font-size: 12px; color: #94a3b8; }
+
+  /* ── 对比表 ── */
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  .cmp-table th {
+    text-align: left; padding: 10px 14px; background: rgba(255,255,255,0.04);
+    color: #93c5fd; font-weight: 600; font-size: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .cmp-table td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #cbd5e1;
+  }
+  .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .cmp-table .cap-yes { color: #34d399; }
+  .cmp-table .cap-no { color: #64748b; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; padding: 32px; font-size: 12px; color: #475569;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ Hero ════════════ -->
+<section class="hero">
+  <h1>数治理方<span> · 六端完整样貌</span></h1>
+  <div class="tagline">
+    社区制度型信用治理系统平台——用制度代替人情、用数据代替解释、用信用代替催收
+  </div>
+  <div class="meta">
+    <span>🏢 杭州个信数治信用管理有限公司</span>
+    <span>🌐 mingjian.sh.cn</span>
+    <span>📐 五因子 × 六分类 × 双轨 × 八端口</span>
+  </div>
+</section>
+
+<!-- ════════════ 一、产品定义 ════════════ -->
+<section class="section">
+  <h2><span class="num">一</span> 产品定义</h2>
+  <p style="font-size: 15px; max-width: 800px;">
+    数治理方不是一套物业管理系统，而是一套<strong style="color:#93c5fd;">社区制度型信用治理系统平台</strong>。
+    它不替代物业公司已有的ERP、道闸、门禁——它在这些系统之上，建立一层<strong style="color:#f59e0b;">制度规则层</strong>：
+    让每一次服务都有证据、每一次履约都有记录、每一次违约都有后果。
+  </p>
+  <p style="font-size: 13px; color: #64748b; margin-top: 12px; max-width: 800px;">
+    <b>核心比喻：</b>给社区装一套"制度交通规则"——不是摄像头抓违章，而是让每个人知道规则、遵守规则、违约有记录。
+    物业是"路面"，数治理方是"交规+驾照分"。
+  </p>
+</section>
+
+<!-- ════════════ 二、平台形态 ════════════ -->
+<section class="section">
+  <h2><span class="num">二</span> 平台形态（三种部署模式）</h2>
+  <div class="mode-cards">
+    <div class="mode-card">
+      <span class="mc-label active">● 当前阶段</span>
+      <h3>P1 物业入口模式</h3>
+      <p>纯物业通道，工单优先切入。物业公司授权后，数治理方客服以物业名义接触业主，建工单、做回访、记标签。15个P1字段驱动，不依赖小程序行为数据。</p>
+    </div>
+    <div class="mode-card">
+      <span class="mc-label plan">○ 规划中</span>
+      <h3>双轨过渡模式</h3>
+      <p>小程序上线后，📱行为轨道 + 🎧客服轨道并行，双轨独立计算后OR合并。适用于退管物业交接期，旧数据不丢、新数据续上。</p>
+    </div>
+    <div class="mode-card">
+      <span class="mc-label plan">○ 规划中</span>
+      <h3>全模式（在管）</h3>
+      <p>六端全开，AI六类自动分类+信号强度+交叉模式+响应级别R0~R4+数字秘书SaaS。五因子同时做功，覆盖业主大会→物业→业委会→社区全链路。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ 三、六端入口（系统形态） ════════════ -->
+<section class="section">
+  <h2><span class="num">三</span> 六端入口（系统形态）</h2>
+  <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
+    数治理方没有物理硬件盒子——它的"形态"是<b>六个独立端口</b>，每个端口对应一类使用者，各有独立界面、独立权限、独立数据视图。六端通过 <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;">ecosystem-bridge.js</code> 跨端通信，共享 <code style="background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:4px;">sgzf_</code> 前缀数据。
+  </p>
+
+  <!-- 业主端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-owner">📱</div>
+      <div>
+        <h3>业主端</h3>
+        <div class="port-who">使用者：小区业主 · 形态：微信小程序 / 手机H5</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          手机竖屏，底部四Tab栏：<b>首页</b>（工单卡片+快捷入口）· <b>服务</b>（报修/投诉/建议）· <b>消息</b>（工单进度+平台通知）· <b>我的</b>（房屋绑定+服务记录+评价）。顶部小区名+天气，中间滚动卡片流，底部固定Tab栏56px，适配iPhone安全区。
+        </div>
+        <div class="screen-desc" style="margin-top:8px;">
+          <b>核心交互：</b>一键报修（拍照+语音+定位）、工单进度跟踪（时间轴式）、验收确认+星级评分、平台短信通知接收。P1阶段通过物业授权的公众号/小程序入口触达。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>一键报修：拍照+语音+选择故障类型，30秒提交</li>
+          <li>工单全程可视：接单→处理→验收 三阶段时间轴</li>
+          <li>服务记录存档：历史工单可回溯，形成服务证据链</li>
+          <li>验收+评价：业主验收确认→星级评分→差评回访触发</li>
+          <li>平台通知：工单状态变更、处理结果提交，短信+站内信双通道</li>
+          <li>（P2+）小程序行为轨道：登录频率、浏览深度、工单打开率→自动标签</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 物业端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-prop">🏢</div>
+      <div>
+        <h3>物业端</h3>
+        <div class="port-who">使用者：物业公司经理/客服/工程人员 · 形态：PC后台管理</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          宽屏PC后台，左侧深蓝渐变导航栏（240px），右侧白色操作区。模块：<b>工作台</b>（概览数据+待办）· <b>工单管理</b>（待处理/处理中/待验收/已完成 四队列+接单/分派/处理/提交验收）· <b>业主管理</b>（业主列表+标签+沟通记录）· <b>数据看板</b>（工单闭环率/响应时效/评价分布）。顶部固定56px头栏显示小区名称+在线状态。
+        </div>
+        <div class="screen-desc" style="margin-top:8px;">
+          <b>退管专用版：</b>独立界面（物业端_退管.html），用于物业更替场景——新物业导入历史欠费数据，旧工单存档只读，退管交接进度跟踪。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>工单全生命周期：接单→分派工程人员→处理→提交验收→闭环</li>
+          <li>业主标签查看：数治理方客服标记的标签+沟通记录，辅助物业研判</li>
+          <li>退管数据承接：前物业欠费数据一键导入，历史工单存档</li>
+          <li>数据看板：闭环率、平均响应时间、评价分布、超时工单预警</li>
+          <li>信用分查看：业主履约/违约记录→信用分→物业自定响应策略</li>
+          <li>人员管理：工程人员排班+技能标签+接单量统计</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客服端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-cs">🎧</div>
+      <div>
+        <h3>客服端</h3>
+        <div class="port-who">使用者：数治理方客服（宁波个信运营人员） · 形态：PC工作台</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          深色顶栏（#1e293b），下方白色操作区。核心布局：<b>左侧任务队列</b>（待回访→超时工单→待处理→业主列表，按优先级排列）→ 选中业主后<b>右侧一屏工作区</b>展开：分类网格+双轨详情+通话引导+操作按钮+快捷建单+关联记录。不做弹窗、不滚动分页，所有操作在一屏完成。
+        </div>
+        <div class="screen-desc" style="margin-top:8px;">
+          <b>来电弹屏：</b>点击业主号码→来电通知弹窗→接听/挂断→自动选中该业主+加载分类信息+通话引导提示。弹窗仅用于"来电通知"瞬态事件，核心操作不弹窗。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>任务队列驱动：待回访/超时/待处理三级优先级，自动排序</li>
+          <li>业主分类研判：P1用sc标签（守约/困难/观望/历史/—），P2+用六类自动分类</li>
+          <li>一键通话标注：接通/拒接/空号/需回访，点即标注+记日志</li>
+          <li>内联快捷建单：下拉选类型+输入标题+回车，一键创建草稿</li>
+          <li>草稿→业主确认→正式工单：客服不替业主做决定，只记录+推送确认</li>
+          <li>通话引导：基于业主分类展示差异化话术提示（不说催收话术）</li>
+          <li>短信发送：浮层选模板→即发即记，不离开当前工作页</li>
+          <li>多小区切换：3个Demo小区（阳光花园/翠苑新村/锦绣家园），数据隔离</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 业委会端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-council">🏛</div>
+      <div>
+        <h3>业委会端</h3>
+        <div class="port-who">使用者：业委会委员/主任/秘书 · 形态：PC后台管理</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          白色PC后台，左侧紫色主题导航栏（260px），右侧操作区。模块：<b>监管看板</b>（物业工单闭环率+响应时效+业主满意度趋势，Chart.js图表）· <b>业主档案</b>（分类分布+履约记录+欠费明细，不可编辑仅查看）· <b>会议管理</b>（业主大会/业委会会议纪要+决议追踪+投票记录）· <b>数据上传</b>（历史欠费报表导入+业主名册同步+合同备案）· <b>秘书工作台</b>（P2+）。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>物业监管：工单响应时效+闭环率+差评率，实时可查，超时自动标红</li>
+          <li>业主履约档案：缴费记录+违约次数+工单评价，分类分布看板</li>
+          <li>数据上传导入：欠费明细表+业主名册+物业合同，一键导入平台</li>
+          <li>会议数字化：业委会会议纪要归档+决议追踪+业主大会投票记录</li>
+          <li>秘书管理：P2+配备数字秘书，接待/工单/催缴/短信 4+1模块</li>
+          <li>合规基准：基于沪房物业〔2026〕36号文，每月接待日+联席会议记录</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 社区端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-comm">🏘</div>
+      <div>
+        <h3>社区端</h3>
+        <div class="port-who">使用者：街道/社区网格员/居委会 · 形态：PC工作台（Vue 3 + Tailwind + ECharts）</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          Vue 3单页应用，Tailwind浅色主题。核心模块：<b>社区总览大屏</b>（辖区小区地图+工单热力图+分类分布饼图+欠费率趋势，ECharts可视化）· <b>物业监管</b>（各小区物业工单闭环率排名+超时工单预警列表）· <b>事务协同</b>（联席会议记录+待办事项+政策文件库）· <b>社区工作台</b>（多小区一键切换，网格员管辖范围数据聚合）。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>多小区聚合监管：一个界面看辖区所有小区物业表现排名</li>
+          <li>工单预警：超时工单自动推送至社区端，触发网格员介入</li>
+          <li>联席会议协同：居村两委+业委会+物业月度联席会议记录数字化</li>
+          <li>政策文件库：36号文+地方物业管理条例+街道通知，全文检索</li>
+          <li>物业治理委员会补位：在管物业缺失时，社区端启动补位救济流程</li>
+          <li>（P2+）五因子社区级看板：收费正当性/履约可信度/价值感知度 分小区对比</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI端 -->
+  <div class="port-block">
+    <div class="port-header">
+      <div class="port-icon pi-ai">🧠</div>
+      <div>
+        <h3>AI端</h3>
+        <div class="port-who">使用者：平台运营管理员 · 形态：PC后台 + 外呼面板</div>
+      </div>
+    </div>
+    <div class="port-body">
+      <div class="pb-col">
+        <h4>👁 界面样貌</h4>
+        <div class="screen-desc">
+          紫色主题PC后台。核心模块：<b>分类引擎监控</b>（六类业主实时分布+信号强度分布+分类变更日志+双轨溯源面板）· <b>外呼面板</b>（外呼队列+通话记录+接通率+挂机短信触发+差评回访触发）· <b>规则引擎配置</b>（标签规则阈值调节+响应级别R0~R4映射+衰减周期设置）· <b>模型训练</b>（通话文本标注→分类模型迭代→准确率追踪）。
+        </div>
+      </div>
+      <div class="pb-col">
+        <h4>⚙ 核心能力</h4>
+        <ul>
+          <li>六类自动分类：基于双轨数据（📱行为+🎧通话），AI自动判定F/E/A/B/D/C</li>
+          <li>信号强度计算：0~4级，标签叠加+衰减+交叉修正</li>
+          <li>外呼队列管理：待外呼业主优先级排序→自动拨号→通话结果回写客服端</li>
+          <li>响应级别R0~R4映射：分类+信号→自动匹配响应策略（R0静默观察~R4制度启动）</li>
+          <li>交叉模式检测：同一业主双轨数据出现矛盾信号→标记交叉模式→人工研判</li>
+          <li>分类变更追踪：业主从C→D、A→E等迁移路径可视化</li>
+          <li>（P1暂不启用）P1阶段AI端仅做规则配置+数据查看，不运行自动分类引擎</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ 四、核心功能场景清单 ════════════ -->
+<section class="section">
+  <h2><span class="num">四</span> 核心功能场景清单</h2>
+
+  <h3 style="font-size:15px; margin-bottom:12px; color:#60a5fa;">模块1：工单闭环（6场景）</h3>
+  <div class="scene-grid">
+    <div class="scene-card">
+      <div class="sc-num">场景 1.1</div>
+      <div class="sc-title">业主报修</div>
+      <div class="sc-desc">业主小程序拍照+语音+选择故障类型→提交→自动生成工单→推送到物业端</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 1.2</div>
+      <div class="sc-title">客服代建草稿</div>
+      <div class="sc-desc">客服通话中记录业主诉求→建草稿→推送业主确认→业主确认后转正式工单</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 1.3</div>
+      <div class="sc-title">物业接单分派</div>
+      <div class="sc-desc">物业经理查看工单→分派给对应工程人员→设置预计处理时间→业主收到通知</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 1.4</div>
+      <div class="sc-title">处理结果提交</div>
+      <div class="sc-desc">工程人员处理完成→提交处理结果+现场照片→推送业主验收→短信通知业主</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 1.5</div>
+      <div class="sc-title">业主验收评价</div>
+      <div class="sc-desc">业主查看处理结果→确认验收（或拒绝）→星级评分→差评触发客服回访</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 1.6</div>
+      <div class="sc-title">超时工单预警</div>
+      <div class="sc-desc">工单超过承诺处理时间→自动标红→推送物业+业委会+社区→超时记录计入信用</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px; margin:24px 0 12px; color:#f59e0b;">模块2：业主分类（6场景 · P2+）</h3>
+  <div class="scene-grid">
+    <div class="scene-card">
+      <div class="sc-num">场景 2.1</div>
+      <div class="sc-title">F·历史复杂型识别</div>
+      <div class="sc-desc">标签含诉讼/信访/媒体/公安关键词→独立判定通道→R4最高响应</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 2.2</div>
+      <div class="sc-title">E·对抗失信型识别</div>
+      <div class="sc-desc">拒接≥3次 或 攻击性语言 或 差评无理由→合并对抗信号→R3响应</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 2.3</div>
+      <div class="sc-title">A·合理争议型识别</div>
+      <div class="sc-desc">有未闭环工单+业主明确提出服务问题→暂停催缴→优先解决争议</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 2.4</div>
+      <div class="sc-title">B·现实困难型识别</div>
+      <div class="sc-desc">业主表达经济困难（大病/失业/低保）→标记困难→差异化方案</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 2.5</div>
+      <div class="sc-title">D·惯性失约型识别</div>
+      <div class="sc-desc">无争议但承诺≥2次未兑现→失约计数递增→7天衰减/28天归零/登录消除</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 2.6</div>
+      <div class="sc-title">C·观望拖延型细分</div>
+      <div class="sc-desc">无明确信号→按通话结果分C1~C6子类型（已接通无争议/已接通有争议/未接通…）</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px; margin:24px 0 12px; color:#10b981;">模块3：数字秘书（P1 MVP 4+1模块）</h3>
+  <div class="scene-grid">
+    <div class="scene-card">
+      <div class="sc-num">场景 3.1</div>
+      <div class="sc-title">业主接待</div>
+      <div class="sc-desc">接待日业主来访→秘书查询业主档案+工单记录→记录诉求→转工单或归档</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 3.2</div>
+      <div class="sc-title">工单协同</div>
+      <div class="sc-desc">秘书追踪业委会关注的工单→超时提醒物业→闭环确认→汇报业委会</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 3.3</div>
+      <div class="sc-title">催缴辅助</div>
+      <div class="sc-desc">秘书查看欠费业主分类→按优先级排序→辅助业委会制定沟通策略</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 3.4</div>
+      <div class="sc-title">短信发送</div>
+      <div class="sc-desc">秘书选择模板→填入变量→发送→记录发送日志（11条P1模板，4类场景）</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 3.5</div>
+      <div class="sc-title">合规审核</div>
+      <div class="sc-desc">秘书审核物业提交的工单闭环材料→确认符合36号文规范→归档备查</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:15px; margin:24px 0 12px; color:#8b5cf6;">模块4：双轨数据架构（核心基础设施）</h3>
+  <div class="scene-grid">
+    <div class="scene-card">
+      <div class="sc-num">场景 4.1</div>
+      <div class="sc-title">📱 小程序行为轨道</div>
+      <div class="sc-desc">记录登录频率+工单打开率+浏览深度+缴费行为→结构化行为数据→自动标签</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 4.2</div>
+      <div class="sc-title">🎧 客服通话轨道</div>
+      <div class="sc-desc">记录通话结果+通话备注+情绪标注→非结构化对话数据→人工标签</div>
+    </div>
+    <div class="scene-card">
+      <div class="sc-num">场景 4.3</div>
+      <div class="sc-title">双轨OR合并</div>
+      <div class="sc-desc">两轨独立计算分类→OR合并取更高级别→保留各自快照→交叉模式检测</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ 五、六端角色与数据权限 ════════════ -->
+<section class="section">
+  <h2><span class="num">五</span> 六端角色与数据权限</h2>
+  <div style="overflow-x:auto;">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>端口</th>
+          <th>使用者</th>
+          <th>看到的数据</th>
+          <th>能做的事</th>
+          <th>不能做的事</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>📱 业主端</td>
+          <td>小区业主</td>
+          <td>自己的工单+自己的服务记录+自己的评价</td>
+          <td>报修、验收、评价、查记录</td>
+          <td>看其他业主信息、看物业后台</td>
+        </tr>
+        <tr>
+          <td>🏢 物业端</td>
+          <td>物业公司</td>
+          <td>本小区业主标签+工单全量+信用分+欠费数据</td>
+          <td>接单、分派、处理、提交验收、导入数据</td>
+          <td>看其他小区、改分类规则、删工单记录</td>
+        </tr>
+        <tr>
+          <td>🎧 客服端</td>
+          <td>数治理方客服</td>
+          <td>多小区业主标签+双轨数据+外呼队列+工单</td>
+          <td>通话标注、建草稿、发短信、分类研判</td>
+          <td>替业主做决定、替物业做承诺</td>
+        </tr>
+        <tr>
+          <td>🏛 业委会端</td>
+          <td>业委会</td>
+          <td>物业工单闭环率+响应时效+业主满意度+欠费统计（脱敏）</td>
+          <td>监管物业、导入数据、查看档案、会议记录</td>
+          <td>编辑业主标签、直接分派工单</td>
+        </tr>
+        <tr>
+          <td>🏘 社区端</td>
+          <td>街道/网格员</td>
+          <td>多小区物业表现排名+工单热力图+欠费率趋势（聚合级）</td>
+          <td>监管多小区、预警介入、联席会议记录</td>
+          <td>查看单个业主详情、编辑数据</td>
+        </tr>
+        <tr>
+          <td>🧠 AI端</td>
+          <td>平台管理员</td>
+          <td>全量分类数据+信号强度+双轨溯源+模型训练数据</td>
+          <td>配置规则、训练模型、运营外呼、调阈值</td>
+          <td>——（全权限，仅限平台管理员）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════ 六、独有核心能力 ════════════ -->
+<section class="section">
+  <h2><span class="num">六</span> 独有核心能力</h2>
+  <div class="usp-grid">
+    <div class="usp-card">
+      <div class="usp-icon">📐</div>
+      <h4>五因子乘法模型</h4>
+      <p>收费秩序 = 正当性 × 履约可信度 × 价值感知度 × 守约共识度 × 分类精准度。传统物业只做"分类"一个因子（且用错方法），数治理方五个因子同时做功——任一因子趋零，整体崩塌。</p>
+    </div>
+    <div class="usp-card">
+      <div class="usp-icon">🔀</div>
+      <h4>双轨数据架构</h4>
+      <p>📱小程序行为轨道 + 🎧客服通话轨道独立计算，OR合并后走统一判定流水线。每条信号标注数据来源，双轨交叉验证防数据污染。</p>
+    </div>
+    <div class="usp-card">
+      <div class="usp-icon">🏷</div>
+      <h4>六类精准分类</h4>
+      <p>F·历史复杂型 / E·对抗失信型 / A·合理争议型 / B·现实困难型 / D·惯性失约型 / C·观望拖延型。基于实际交互数据判定，不是静态画像。</p>
+    </div>
+    <div class="usp-card">
+      <div class="usp-icon">⚖</div>
+      <h4>制度型信用治理（不是催收）</h4>
+      <p>禁滞纳金威胁、禁门禁恐吓、禁信用施压。客服只做三件事：引导看服务记录、记录诉求、确认工单闭环。把焦点从"欠多少钱"转移到"遇到什么问题"。</p>
+    </div>
+    <div class="usp-card">
+      <div class="usp-icon">👩‍💼</div>
+      <h4>数字秘书 SaaS 多小区</h4>
+      <p>秘书不必是业主（有法律依据：36号文第4条vs第6条立法区分 + 沪住建建议复〔2018〕23号）。一个秘书可服务多个小区，SaaS模式低成本覆盖。</p>
+    </div>
+    <div class="usp-card">
+      <div class="usp-icon">🔌</div>
+      <h4>开放端口架构</h4>
+      <p>六端通过 ecosystem-bridge.js 跨端通信，业委会/社区/街道可独立接入。不是封闭系统，是社区治理的基础设施层。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ 七、完整工作闭环 ════════════ -->
+<section class="section">
+  <h2><span class="num">七</span> 完整工作闭环</h2>
+  <p style="font-size:13px;color:#64748b;margin-bottom:16px;text-align:center;">
+    数据从哪来 → 经过什么 → 变成什么 → 谁用什么 → 回到哪去
+  </p>
+  <div class="flow-row">
+    <div class="flow-node">
+      <div class="fn-icon">📥</div>
+      <div>数据采集</div>
+      <div style="font-size:11px;color:#64748b;">业主报修+客服通话</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">🏷</div>
+      <div>双轨计算</div>
+      <div style="font-size:11px;color:#64748b;">📱独立 + 🎧独立</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">🔀</div>
+      <div>OR合并</div>
+      <div style="font-size:11px;color:#64748b;">取更高级别</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">🧠</div>
+      <div>六类判定</div>
+      <div style="font-size:11px;color:#64748b;">F>E>A>B>D>C</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">⚙</div>
+      <div>策略匹配</div>
+      <div style="font-size:11px;color:#64748b;">话术+优先级+R级</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">📋</div>
+      <div>工单执行</div>
+      <div style="font-size:11px;color:#64748b;">接单→处理→验收</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="fn-icon">🔄</div>
+      <div>闭环回访</div>
+      <div style="font-size:11px;color:#64748b;">评价+归档+信用</div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:#64748b;text-align:center;margin-top:16px;">
+    每次闭环的数据回到双轨系统，更新业主标签→下次判定更精准——数据越用越聪明。
+  </p>
+</section>
+
+<!-- ════════════ 八、当前进度与代际演进 ════════════ -->
+<section class="section">
+  <h2><span class="num">八</span> 当前进度与代际演进</h2>
+  <table class="cmp-table">
+    <thead>
+      <tr>
+        <th>版本</th>
+        <th>状态</th>
+        <th>核心能力</th>
+        <th>覆盖端口</th>
+        <th>数据驱动</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>原型 V3.12</b></td>
+        <td><span class="cap-yes">✅ 已交付</span></td>
+        <td>八端口HTML原型 + localStorage全闭环 + ecosystem-bridge</td>
+        <td>8端</td>
+        <td>Demo数据（纯前端）</td>
+      </tr>
+      <tr>
+        <td><b>P1 当前</b></td>
+        <td><span class="cap-yes">● 推进中</span></td>
+        <td>物业工单闭环 + 客服通话标注 + P1标签 + 短信通知</td>
+        <td>物业端+客服端（核心）</td>
+        <td>15个P1字段（sc/cs/cr/ct/li/lb+st/rt/rc/sr+tp+t/rs）</td>
+      </tr>
+      <tr>
+        <td><b>P2 规划</b></td>
+        <td><span class="cap-no">○ 待启动</span></td>
+        <td>小程序上线 + 双轨数据启动 + 六类自动分类 + 业主端完整功能</td>
+        <td>+业主端+业委会端</td>
+        <td>双轨实时数据</td>
+      </tr>
+      <tr>
+        <td><b>P3 目标</b></td>
+        <td><span class="cap-no">○ 待启动</span></td>
+        <td>AI全自动分类 + 信号强度0~4 + 交叉模式 + R0~R4 + 数字秘书SaaS全模块</td>
+        <td>六端全开</td>
+        <td>五因子实时计算</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════ Footer ════════════ -->
+<div class="footer">
+  数治理方 · 社区制度型信用治理系统平台 · 杭州个信数治信用管理有限公司 · mingjian.sh.cn
+</div>
+
+</body>
+</html>
